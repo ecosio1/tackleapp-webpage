@@ -26,7 +26,7 @@ An interactive, animated landing page for the Tackle fishing app featuring cutti
 git clone https://github.com/[your-username]/tackle-app-webpage.git
 ```
 
-2. Open `iteration5.html` in your browser
+2. Open `index.html` in your browser
 
 3. Or view the showcase page: `superdesign-canvas.html`
 
@@ -34,7 +34,7 @@ git clone https://github.com/[your-username]/tackle-app-webpage.git
 
 ```
 tackle-app-webpage/
-├── iteration5.html          # Main landing page
+├── index.html              # Main landing page
 ├── superdesign-canvas.html  # Design showcase page
 ├── logo.jpeg               # Tackle app logo
 ├── fish-id-video.mp4       # Demo video for carousel
@@ -43,7 +43,7 @@ tackle-app-webpage/
 
 ## Adding Videos
 
-To add more videos to the carousel, place your video files in the root directory and update the carousel slides in `iteration5.html`.
+To add more videos to the carousel, place your video files in the root directory and update the carousel slides in `index.html`.
 
 ## Browser Support
 
