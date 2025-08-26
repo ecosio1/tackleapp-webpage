@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tackle App - Final Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .canvas-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px 40px;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .canvas-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .canvas-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .canvas-title-text {
+            background: linear-gradient(45deg, #2D7FF9, #34d399, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .view-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #2D7FF9, #34d399);
+            border: none;
+            color: #000;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(45, 127, 249, 0.4);
+        }
+
+        .canvas-container {
+            padding: 100px 40px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .final-design {
+            text-align: center;
+            margin-top: 40px;
+            display: block;
+        }
+
+        .design-showcase {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            display: block;
+        }
+
+        .design-showcase:hover {
+            transform: translateY(-10px);
+            border-color: rgba(45, 127, 249, 0.5);
+            box-shadow: 0 20px 40px rgba(45, 127, 249, 0.2);
+        }
+
+        .design-preview {
+            height: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .design-iframe {
+            width: 125%;
+            height: 125%;
+            border: none;
+            transform: scale(0.8);
+            transform-origin: top center;
+            margin-left: -12.5%;
+            margin-top: -12.5%;
+            pointer-events: none;
+        }
+
+        .design-info {
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .design-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #2D7FF9, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .design-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .design-tags {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            background: rgba(45, 127, 249, 0.2);
+            border: 1px solid rgba(45, 127, 249, 0.4);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #2D7FF9;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .action-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #2D7FF9, #34d399);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(45, 127, 249, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            color: #2D7FF9;
+            border: 2px solid #2D7FF9;
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(45, 127, 249, 0.1);
+        }
+
+        .fullscreen-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .fullscreen-view.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .fullscreen-title {
+            font-size: 24px;
+            color: #2D7FF9;
+        }
+
+        .close-btn {
+            padding: 10px 20px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 0, 0, 0.4);
+        }
+
+        .fullscreen-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(45, 127, 249, 0.3);
+            border-top: 3px solid #2D7FF9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .intro-text {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .intro-text h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #2D7FF9, #34d399, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro-text p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <header class="canvas-header">
+        <div class="header-content">
+            <h1 class="canvas-title">
+                <img src="logo.jpeg" alt="Tackle" class="canvas-logo">
+                <span class="canvas-title-text">Tackle App - Final Design</span>
+            </h1>
+            <div class="view-controls">
+                <a href="iteration5.html" class="view-btn" target="_blank">View Full Page</a>
+                <a href="#" class="view-btn" onclick="openFullscreen(); return false;">Preview</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="canvas-container">
+        <div class="intro-text">
+            <h1>Tackle - Interactive Fishing Experience</h1>
+            <p>The perfect blend of cutting-edge animations, video carousel showcase, and stunning visual effects for your Tackle fishing app.</p>
+        </div>
+
+        <div class="final-design">
+            <div class="design-showcase" onclick="openFullscreen('iteration5.html')">
+                <div class="design-preview">
+                    <div class="loading-spinner"></div>
+                    <iframe src="iteration5.html" class="design-iframe" onload="this.previousElementSibling.style.display='none'"></iframe>
+                </div>
+                <div class="design-info">
+                    <h2 class="design-title">Tackle App - Interactive Design</h2>
+                    <p class="design-description">
+                        Horizontal layout with phone on the left featuring video carousel, 2x2 feature grid, and interactive animations throughout.
+                    </p>
+                    <div class="design-tags">
+                        <span class="tag">Video Carousel</span>
+                        <span class="tag">Left Phone</span>
+                        <span class="tag">2x2 Grid</span>
+                        <span class="tag">Interactive</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-view" id="fullscreenView">
+        <div class="fullscreen-header">
+            <h2 class="fullscreen-title">Tackle App - Interactive Design</h2>
+            <button class="close-btn" onclick="closeFullscreen()">Close</button>
+        </div>
+        <iframe id="fullscreenIframe" class="fullscreen-iframe"></iframe>
+    </div>
+
+    <script>
+        function openFullscreen(filePath = 'iteration5.html') {
+            const fullscreenView = document.getElementById('fullscreenView');
+            const fullscreenIframe = document.getElementById('fullscreenIframe');
+
+            fullscreenIframe.src = filePath;
+            fullscreenView.classList.add('active');
+        }
+
+        function closeFullscreen() {
+            const fullscreenView = document.getElementById('fullscreenView');
+            const fullscreenIframe = document.getElementById('fullscreenIframe');
+
+            fullscreenView.classList.remove('active');
+            setTimeout(() => {
+                fullscreenIframe.src = '';
+            }, 300);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeFullscreen();
+            }
+        });
+
+        // Prevent iframe interaction in preview mode
+        document.querySelectorAll('.design-iframe').forEach((iframe, index) => {
+            console.log(`Setting up iframe ${index + 1}: ${iframe.src}`);
+            
+            iframe.addEventListener('load', function() {
+                console.log(`Iframe ${index + 1} loaded: ${this.src}`);
+                try {
+                    this.contentDocument.body.style.pointerEvents = 'none';
+                } catch(e) {
+                    // Cross-origin iframe, can't modify
+                    console.log('Iframe loaded successfully (cross-origin)');
+                }
+            });
+            
+            iframe.addEventListener('error', function() {
+                console.error('Failed to load iframe:', this.src);
+                const spinner = this.previousElementSibling;
+                if (spinner) {
+                    spinner.innerHTML = '<div style="color: #ff6b6b; padding: 20px;">Design preview failed to load: ' + this.src + '</div>';
+                }
+            });
+            
+            // Set a timeout to check if iframe loads
+            setTimeout(() => {
+                if (!iframe.contentDocument && !iframe.contentWindow) {
+                    console.warn(`Iframe ${index + 1} may have failed to load: ${iframe.src}`);
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
