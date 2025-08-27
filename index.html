@@ -95,11 +95,11 @@
         }
 
         .hero {
-            min-height: 75vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 120px 2rem 2rem;
+            padding: 100px 2rem 2rem;
             position: relative;
             margin-top: 0;
         }
@@ -138,12 +138,12 @@
         }
 
         .hero-content {
-            max-width: 1200px;
+            max-width: 1400px;
             z-index: 2;
             position: relative;
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 4rem;
+            grid-template-columns: 300px 1fr;
+            gap: 3rem;
             align-items: center;
             width: 100%;
         }
@@ -225,7 +225,7 @@
 
         .interactive-demo {
             margin: 0;
-            max-width: 320px;
+            max-width: 300px;
             opacity: 0;
             animation: fadeInUp 1s ease forwards 0.9s;
             grid-column: 1;
@@ -233,8 +233,8 @@
         }
 
         .phone-3d {
-            width: 280px;
-            height: 560px;
+            width: 260px;
+            height: 520px;
             margin: 0 auto;
             perspective: 1000px;
         }
@@ -643,15 +643,36 @@
             margin-top: 5rem;
         }
 
+        /* Laptop screens */
+        @media (max-width: 1440px) and (min-width: 1025px) {
+            .hero {
+                min-height: 90vh;
+                padding: 90px 2rem 2rem;
+            }
+            
+            .hero-content {
+                max-width: 1200px;
+                gap: 2.5rem;
+            }
+            
+            .phone-3d {
+                width: 240px;
+                height: 480px;
+            }
+        }
+
+        /* Tablets and smaller laptops */
         @media (max-width: 1024px) {
             .hero {
-                padding: 100px 2rem 2rem;
+                min-height: 85vh;
+                padding: 90px 2rem 2rem;
             }
             
             .hero-content {
                 grid-template-columns: 1fr;
                 gap: 2rem;
                 text-align: center;
+                max-width: 900px;
             }
             
             .hero-content-area {
@@ -661,11 +682,12 @@
             
             .interactive-demo {
                 grid-column: 1;
+                order: -1;
             }
             
             .hero-features-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
             }
             
             .cta-buttons {
@@ -673,22 +695,35 @@
             }
         }
 
+        /* Mobile phones */
         @media (max-width: 768px) {
             nav {
                 padding: 1rem 1.5rem;
             }
             
             .hero {
-                padding: 90px 1.5rem 2rem;
+                min-height: 100vh;
+                padding: 80px 1.5rem 2rem;
             }
             
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
+            }
+            
+            .hero-features-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .phone-3d {
+                width: 220px;
+                height: 440px;
             }
             
             .cta-buttons {
                 flex-direction: column;
                 align-items: center;
+                gap: 1rem;
             }
             
             .feature-cards {
