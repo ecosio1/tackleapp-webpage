@@ -580,6 +580,38 @@
             margin-bottom: 1rem;
             display: inline-block;
             animation: bounce 2s ease infinite;
+            color: #2D7FF9;
+            font-weight: normal;
+        }
+
+        .icon-svg {
+            width: 48px;
+            height: 48px;
+            stroke: #2D7FF9;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .hero-icon {
+            width: 24px;
+            height: 24px;
+            stroke: #2D7FF9;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .video-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: pulse 2s ease infinite;
+            color: #2D7FF9;
+            font-weight: normal;
         }
 
         @keyframes bounce {
@@ -776,7 +808,11 @@
                                                 <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
                                                     <source src="weather-video.mp4" type="video/mp4">
                                                     <div class="video-placeholder">
-                                                        <div class="video-icon">📹</div>
+                                                        <div class="video-icon">
+                                                            <svg style="width: 48px; height: 48px; stroke: #2D7FF9; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+                                                                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                                                            </svg>
+                                                        </div>
                                                         <div class="video-title">Weather View</div>
                                                         <p style="font-size: 0.7rem; opacity: 0.8;">Live conditions</p>
                                                     </div>
@@ -786,7 +822,12 @@
                                                 <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
                                                     <source src="fish-id-video.mp4" type="video/mp4">
                                                     <div class="video-placeholder">
-                                                        <div class="video-icon">🎣</div>
+                                                        <div class="video-icon">
+                                                            <svg style="width: 48px; height: 48px; stroke: #2D7FF9; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+                                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                                                <circle cx="12" cy="13" r="4"/>
+                                                            </svg>
+                                                        </div>
                                                         <div class="video-title">Fish ID</div>
                                                         <p style="font-size: 0.7rem; opacity: 0.8;">Species detection</p>
                                                     </div>
@@ -796,7 +837,12 @@
                                                 <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
                                                     <source src="navigation-video.mp4" type="video/mp4">
                                                     <div class="video-placeholder">
-                                                        <div class="video-icon">🗺️</div>
+                                                        <div class="video-icon">
+                                                            <svg style="width: 48px; height: 48px; stroke: #2D7FF9; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+                                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                                                <circle cx="12" cy="10" r="3"/>
+                                                            </svg>
+                                                        </div>
                                                         <div class="video-title">Navigation</div>
                                                         <p style="font-size: 0.7rem; opacity: 0.8;">AR guidance</p>
                                                     </div>
@@ -806,7 +852,13 @@
                                                 <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
                                                     <source src="ai-captain-video.mp4" type="video/mp4">
                                                     <div class="video-placeholder">
-                                                        <div class="video-icon">💬</div>
+                                                        <div class="video-icon">
+                                                            <svg style="width: 48px; height: 48px; stroke: #2D7FF9; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+                                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                                                <path d="M9 10h6"/>
+                                                                <path d="M9 14h3"/>
+                                                            </svg>
+                                                        </div>
                                                         <div class="video-title">AI Captain</div>
                                                         <p style="font-size: 0.7rem; opacity: 0.8;">Smart assistant</p>
                                                     </div>
@@ -853,19 +905,45 @@
                 
                 <div class="hero-features-grid">
                     <div class="hero-feature">
-                        <h3>🌊 Real-Time Data</h3>
+                        <h3>
+                            <svg class="hero-icon" viewBox="0 0 24 24">
+                                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                                <path d="M22 10a3 3 0 0 0-3-3v.5a2.5 2.5 0 0 1-2.4 2.48"/>
+                                <path d="m7 13 4.93 2.93a2 2 0 0 0 2.07 0L19 13"/>
+                            </svg>
+                            Real-Time Data
+                        </h3>
                         <p>Live weather, tides, and marine conditions updated every minute</p>
                     </div>
                     <div class="hero-feature">
-                        <h3>🎯 Smart Predictions</h3>
+                        <h3>
+                            <svg class="hero-icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12,6 12,12 16,14"/>
+                            </svg>
+                            Smart Predictions
+                        </h3>
                         <p>AI-powered fishing forecasts based on historical data</p>
                     </div>
                     <div class="hero-feature">
-                        <h3>📸 Instant ID</h3>
+                        <h3>
+                            <svg class="hero-icon" viewBox="0 0 24 24">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                            Instant ID
+                        </h3>
                         <p>Snap a photo to identify any fish species with 97% accuracy</p>
                     </div>
                     <div class="hero-feature">
-                        <h3>💬 AI Captain</h3>
+                        <h3>
+                            <svg class="hero-icon" viewBox="0 0 24 24">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                <path d="M9 10h6"/>
+                                <path d="M9 14h3"/>
+                            </svg>
+                            AI Captain
+                        </h3>
                         <p>Get personalized fishing tips and bait recommendations</p>
                     </div>
                 </div>
@@ -888,32 +966,70 @@
         <h2 style="text-align: center; font-size: 3rem; margin-bottom: 2rem; color: #2D7FF9;">Interactive Features</h2>
         <div class="feature-cards">
             <div class="feature-card-3d" onmouseover="animateCard(this)">
-                <div class="feature-icon-animated">🌊</div>
+                <div class="feature-icon-animated">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                        <path d="M22 10a3 3 0 0 0-3-3v.5a2.5 2.5 0 0 1-2.4 2.48"/>
+                        <path d="m7 13 4.93 2.93a2 2 0 0 0 2.07 0L19 13"/>
+                    </svg>
+                </div>
                 <h3>Live Ocean Data</h3>
                 <p>Real-time conditions update every minute with precision accuracy</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
-                <div class="feature-icon-animated">🎯</div>
+                <div class="feature-icon-animated">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="m12 1 3 6 6 3-6 3-3 6-3-6-6-3 6-3 3-6Z"/>
+                    </svg>
+                </div>
                 <h3>AI Predictions</h3>
                 <p>Machine learning algorithms predict the best fishing times and locations</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
-                <div class="feature-icon-animated">📸</div>
+                <div class="feature-icon-animated">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                </div>
                 <h3>Instant Fish ID</h3>
                 <p>Point, shoot, and identify any fish species in seconds</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
-                <div class="feature-icon-animated">🗺️</div>
+                <div class="feature-icon-animated">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                </div>
                 <h3>AR Navigation</h3>
                 <p>Augmented reality guides you to the best fishing spots</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
-                <div class="feature-icon-animated">🏆</div>
+                <div class="feature-icon-animated">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                        <path d="M4 22h16"/>
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                    </svg>
+                </div>
                 <h3>Gamification</h3>
                 <p>Compete with friends, earn badges, and track your achievements</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
-                <div class="feature-icon-animated">🤖</div>
+                <div class="feature-icon-animated">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path d="M12 8V4H8"/>
+                        <path d="m8 4-4 4 4 4"/>
+                        <path d="M4 8h16"/>
+                        <path d="m16 20-4-4 4-4"/>
+                        <path d="M20 16H4"/>
+                    </svg>
+                </div>
                 <h3>Smart Assistant</h3>
                 <p>Voice-activated AI captain answers all your fishing questions</p>
             </div>
