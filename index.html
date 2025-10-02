@@ -6,6 +6,13 @@
     <title>Tackle - Interactive Fishing Experience</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="wave-animation.js"></script>
+    <!-- Error Handling & Network Resilience -->
+    <script src="js/error-handler.js"></script>
+    <script src="js/network-resilience.js"></script>
+    <script src="js/subscription-handler.js"></script>
+    <script src="js/error-logger.js"></script>
+    <script src="js/trial-manager.js"></script>
+    <script src="js/trial-verification.js"></script>
     <style>
         * {
             margin: 0;
@@ -67,6 +74,33 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .trial-status {
+            font-size: 14px;
+        }
+
+        .trial-status.active .trial-badge {
+            background: #34d399;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            animation: pulse 2s infinite;
+        }
+
+        .trial-status.expired .trial-badge {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
         }
 
         .logo {
@@ -814,7 +848,10 @@
                 <img src="logo.png" alt="Tackle Logo" class="logo-img">
                 <span class="logo-text">tackle.</span>
             </div>
-            <a href="#" class="btn-3d">Get Started</a>
+            <div class="nav-right">
+                <div class="trial-status"></div>
+                <a href="#" class="btn-3d" onclick="handleTrialSignup(event)">Get Started</a>
+            </div>
         </div>
     </nav>
 
@@ -929,8 +966,8 @@
             </div>
             
             <div class="hero-content-area">
-                <h1>Experience <span class="glitch">Fishing</span> Reimagined</h1>
-                <p>Interactive. Intelligent. Immersive.</p>
+                <h1>Turn Your Phone Into The Ultimate <span class="glitch">Fishing</span> Tool</h1>
+                <p>AI-powered fish identification, real-time conditions, and expert advice. Never fish blind again.</p>
                 
                 <div class="hero-features-grid">
                     <div class="hero-feature">
@@ -940,9 +977,9 @@
                                 <path d="M22 10a3 3 0 0 0-3-3v.5a2.5 2.5 0 0 1-2.4 2.48"/>
                                 <path d="m7 13 4.93 2.93a2 2 0 0 0 2.07 0L19 13"/>
                             </svg>
-                            Real-Time Data
+                            99% Accurate Fish ID
                         </h3>
-                        <p>Live weather, tides, and marine conditions updated every minute</p>
+                        <p>Snap a photo, know your catch instantly with advanced AI</p>
                     </div>
                     <div class="hero-feature">
                         <h3>
@@ -950,9 +987,9 @@
                                 <circle cx="12" cy="12" r="10"/>
                                 <polyline points="12,6 12,12 16,14"/>
                             </svg>
-                            Smart Predictions
+                            Daily Fishing Score
                         </h3>
-                        <p>AI-powered fishing forecasts based on historical data</p>
+                        <p>Get 0-100% fishing conditions based on weather, tides & moon phases</p>
                     </div>
                     <div class="hero-feature">
                         <h3>
@@ -960,9 +997,9 @@
                                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                                 <circle cx="12" cy="13" r="4"/>
                             </svg>
-                            Instant ID
+                            7-Day Forecasts
                         </h3>
-                        <p>Snap a photo to identify any fish species with 97% accuracy</p>
+                        <p>Plan your fishing trips with confidence using detailed predictions</p>
                     </div>
                     <div class="hero-feature">
                         <h3>
@@ -971,15 +1008,18 @@
                                 <path d="M9 10h6"/>
                                 <path d="M9 14h3"/>
                             </svg>
-                            AI Captain
+                            AI Captain Chat
                         </h3>
-                        <p>Get personalized fishing tips and bait recommendations</p>
+                        <p>Ask "What bait should I use?" - get expert advice 24/7</p>
                     </div>
                 </div>
 
                 <div class="cta-buttons">
-                    <a href="#" class="btn-3d">Download for iOS</a>
+                    <a href="#" class="btn-3d" onclick="handleTrialSignup(event)">Start 7-Day Free Trial</a>
                     <a href="#" class="btn-3d secondary" style="background: transparent; border: 2px solid #34d399; color: #34d399;">Coming to Android</a>
+                </div>
+                <div style="text-align: center; margin-top: 1rem; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+                    Free trial • No commitment • Cancel anytime
                 </div>
             </div>
         </div>
@@ -992,7 +1032,7 @@
     </section>
 
     <section class="features-interactive">
-        <h2 style="text-align: center; font-size: 3rem; margin-bottom: 2rem; color: #2D7FF9;">Interactive Features</h2>
+        <h2 style="text-align: center; font-size: 3rem; margin-bottom: 2rem; color: #2D7FF9;">Why Fishers Love Tackle</h2>
         <div class="feature-cards">
             <div class="feature-card-3d" onmouseover="animateCard(this)">
                 <div class="feature-icon-animated">
@@ -1002,8 +1042,8 @@
                         <path d="m7 13 4.93 2.93a2 2 0 0 0 2.07 0L19 13"/>
                     </svg>
                 </div>
-                <h3>Live Ocean Data</h3>
-                <p>Real-time conditions update every minute with precision accuracy</p>
+                <h3>Daily Fishing Score (0-100%)</h3>
+                <p>Get instant conditions rating based on weather, tides, moon phases, and barometric pressure</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
                 <div class="feature-icon-animated">
@@ -1012,8 +1052,8 @@
                         <path d="m12 1 3 6 6 3-6 3-3 6-3-6-6-3 6-3 3-6Z"/>
                     </svg>
                 </div>
-                <h3>AI Predictions</h3>
-                <p>Machine learning algorithms predict the best fishing times and locations</p>
+                <h3>Ask the AI Captain Anything</h3>
+                <p>"What bait for bass here?" "When's the best time to fish?" Get expert advice 24/7</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
                 <div class="feature-icon-animated">
@@ -1022,8 +1062,8 @@
                         <circle cx="12" cy="13" r="4"/>
                     </svg>
                 </div>
-                <h3>Instant Fish ID</h3>
-                <p>Point, shoot, and identify any fish species in seconds</p>
+                <h3>Never Wonder "What Did I Catch?"</h3>
+                <p>99% accurate AI identifies any fish instantly with size limits, seasons, and fun facts</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
                 <div class="feature-icon-animated">
@@ -1032,8 +1072,8 @@
                         <circle cx="12" cy="10" r="3"/>
                     </svg>
                 </div>
-                <h3>AR Navigation</h3>
-                <p>Augmented reality guides you to the best fishing spots</p>
+                <h3>GPS Catch Logging & Mapping</h3>
+                <p>Mark exactly where you caught each fish, track success patterns over time</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
                 <div class="feature-icon-animated">
@@ -1046,8 +1086,8 @@
                         <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
                     </svg>
                 </div>
-                <h3>Gamification</h3>
-                <p>Compete with friends, earn badges, and track your achievements</p>
+                <h3>Personal Fishing Records</h3>
+                <p>Photo memories, GPS locations, and detailed species info for every catch</p>
             </div>
             <div class="feature-card-3d" onmouseover="animateCard(this)">
                 <div class="feature-icon-animated">
@@ -1059,8 +1099,8 @@
                         <path d="M20 16H4"/>
                     </svg>
                 </div>
-                <h3>Smart Assistant</h3>
-                <p>Voice-activated AI captain answers all your fishing questions</p>
+                <h3>Works Offline & Syncs Everywhere</h3>
+                <p>Core features available without internet, data syncs across all your devices</p>
             </div>
         </div>
     </section>
@@ -1068,7 +1108,7 @@
     <footer>
         <div style="margin-bottom: 1rem;">
             <a href="privacy-policy.html" style="color: #34d399; text-decoration: none; margin: 0 1rem; transition: color 0.3s ease;">Privacy Policy</a>
-            <a href="#" style="color: #34d399; text-decoration: none; margin: 0 1rem; transition: color 0.3s ease;">Terms of Service</a>
+            <a href="terms-of-service.html" style="color: #34d399; text-decoration: none; margin: 0 1rem; transition: color 0.3s ease;">Terms of Service</a>
             <a href="mailto:support@tackleapp.com" style="color: #34d399; text-decoration: none; margin: 0 1rem; transition: color 0.3s ease;">Contact</a>
         </div>
         <p>&copy; 2024 Tackle. Making waves in fishing technology.</p>
@@ -1206,6 +1246,122 @@
                 waveAnimation.destroy();
             }
         });
+
+        // Trial signup handler - NO subscription service needed
+        async function handleTrialSignup(event) {
+            event.preventDefault();
+            
+            // Track user action for error context
+            if (window.errorLogger) {
+                errorLogger.trackUserAction('trial_signup_clicked');
+            }
+            
+            try {
+                // Use local trial manager instead of subscription service
+                if (window.trialManager) {
+                    const result = await trialManager.startFreeTrial();
+                    
+                    if (result && result.success) {
+                        console.log('Trial started successfully:', result);
+                        return result;
+                    }
+                } else {
+                    // Fallback - still start trial even if manager not loaded
+                    console.warn('Trial manager not loaded, using fallback');
+                    startFallbackTrial();
+                }
+            } catch (error) {
+                console.error('Trial signup error:', error);
+                // Even on error, try to start trial locally
+                startFallbackTrial();
+            }
+        }
+        
+        // Fallback trial start that always works
+        function startFallbackTrial() {
+            // Simple local trial without any dependencies
+            const trialData = {
+                startDate: new Date().toISOString(),
+                expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                status: 'active'
+            };
+            
+            localStorage.setItem('tackle_trial_data', JSON.stringify(trialData));
+            
+            // Show success message
+            showSimpleSuccessMessage('Your 7-day free trial has started! 🎉');
+            
+            // Navigate after delay
+            setTimeout(() => {
+                if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        action: 'trialStarted',
+                        trialData: trialData
+                    }));
+                } else {
+                    // For web, could redirect to app
+                    console.log('Trial started, ready to use app');
+                }
+            }, 2000);
+        }
+        
+        function showSimpleSuccessMessage(message) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 30px 40px;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                z-index: 10000;
+                text-align: center;
+                animation: bounceIn 0.5s ease;
+            `;
+            
+            modal.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+                <h3 style="margin: 0 0 12px 0; color: #1a1a1a; font-size: 20px;">${message}</h3>
+                <p style="margin: 0; color: #666; font-size: 16px;">You now have access to all premium features!</p>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                modal.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => modal.remove(), 300);
+            }, 3000);
+        }
+
+        // Example: Simulate different error scenarios (for testing)
+        if (window.location.search.includes('test=')) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const testType = urlParams.get('test');
+            
+            setTimeout(() => {
+                switch(testType) {
+                    case 'network':
+                        window.tackleErrorHandler.handleError('NETWORK_ERROR');
+                        break;
+                    case 'payment':
+                        window.tackleErrorHandler.handleError('PAYMENT_DECLINED');
+                        break;
+                    case 'trial':
+                        window.tackleErrorHandler.handleError('TRIAL_ALREADY_USED');
+                        break;
+                    case 'expired':
+                        window.tackleErrorHandler.handleError('SUBSCRIPTION_EXPIRED');
+                        break;
+                    case 'store':
+                        window.tackleErrorHandler.handleError('STORE_CONNECTION_ERROR');
+                        break;
+                    default:
+                        console.log('Test mode: Add ?test=network|payment|trial|expired|store to URL');
+                }
+            }, 1000);
+        }
     </script>
 </body>
 </html>
