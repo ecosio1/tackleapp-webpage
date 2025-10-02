@@ -6,13 +6,6 @@
     <title>Tackle - Interactive Fishing Experience</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="wave-animation.js"></script>
-    <!-- Error Handling & Network Resilience -->
-    <script src="js/error-handler.js"></script>
-    <script src="js/network-resilience.js"></script>
-    <script src="js/subscription-handler.js"></script>
-    <script src="js/error-logger.js"></script>
-    <script src="js/trial-manager.js"></script>
-    <script src="js/trial-verification.js"></script>
     <style>
         * {
             margin: 0;
@@ -80,27 +73,6 @@
             display: flex;
             align-items: center;
             gap: 20px;
-        }
-
-        .trial-status {
-            font-size: 14px;
-        }
-
-        .trial-status.active .trial-badge {
-            background: #34d399;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-            animation: pulse 2s infinite;
-        }
-
-        .trial-status.expired .trial-badge {
-            background: #ef4444;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 500;
         }
 
         .logo {
@@ -308,7 +280,7 @@
             background: linear-gradient(135deg, #2563eb, #34d399);
             border-radius: 35px;
             padding: 15px;
-            box-shadow: 
+            box-shadow:
                 0 20px 60px rgba(0, 0, 0, 0.3),
                 inset 0 0 20px rgba(52, 211, 153, 0.2);
         }
@@ -318,9 +290,12 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
             border-radius: 25px;
-            padding: 20px;
+            padding: 0;
             overflow: hidden;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .rating-interactive {
@@ -367,16 +342,17 @@
         }
 
         .video-carousel {
-            margin: 10px 0;
+            width: 100%;
+            height: 100%;
         }
 
         .carousel-container {
             position: relative;
             overflow: hidden;
-            border-radius: 15px;
-            background: rgba(45, 127, 249, 0.1);
-            height: 280px;
-            margin-bottom: 10px;
+            border-radius: 25px;
+            background: rgba(0, 0, 0, 1);
+            height: 100%;
+            width: 100%;
         }
 
         .carousel-track {
@@ -849,8 +825,7 @@
                 <span class="logo-text">tackle.</span>
             </div>
             <div class="nav-right">
-                <div class="trial-status"></div>
-                <a href="#" class="btn-3d" onclick="handleTrialSignup(event)">Get Started</a>
+                <a href="#" class="btn-3d">Download on App Store</a>
             </div>
         </div>
     </nav>
@@ -862,101 +837,30 @@
                     <div class="phone-container">
                         <div class="phone-face">
                             <div class="phone-screen">
-                                <div style="text-align: center; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <img src="logo.png" alt="Tackle" style="width: 30px; height: 30px; object-fit: cover;">
-                                    <span style="color: #2D7FF9; font-size: 1.5rem; font-weight: bold;">tackle.</span>
-                                </div>
-                                
                                 <div class="video-carousel">
                                     <div class="carousel-container">
                                         <div class="carousel-track" id="carouselTrack">
                                             <div class="carousel-slide active">
-                                                <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                                                <video autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;">
                                                     <source src="weather-video.mp4" type="video/mp4">
-                                                    <div class="video-placeholder">
-                                                        <div class="video-icon">
-                                                            <svg style="width: 48px; height: 48px; stroke: #fbbf24; fill: none; stroke-width: 2.5; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.4));" viewBox="0 0 24 24">
-                                                                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-                                                            </svg>
-                                                        </div>
-                                                        <div class="video-title">Weather View</div>
-                                                        <p style="font-size: 0.7rem; opacity: 0.8;">Live conditions</p>
-                                                    </div>
                                                 </video>
                                             </div>
                                             <div class="carousel-slide">
-                                                <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                                                <video autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;">
                                                     <source src="fish-id-video.mp4" type="video/mp4">
-                                                    <div class="video-placeholder">
-                                                        <div class="video-icon">
-                                                            <svg style="width: 48px; height: 48px; stroke: #fbbf24; fill: none; stroke-width: 2.5; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.4));" viewBox="0 0 24 24">
-                                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                                                <circle cx="12" cy="13" r="4"/>
-                                                            </svg>
-                                                        </div>
-                                                        <div class="video-title">Fish ID</div>
-                                                        <p style="font-size: 0.7rem; opacity: 0.8;">Species detection</p>
-                                                    </div>
                                                 </video>
                                             </div>
                                             <div class="carousel-slide">
-                                                <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                                                <video autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;">
                                                     <source src="navigation-video.mp4" type="video/mp4">
-                                                    <div class="video-placeholder">
-                                                        <div class="video-icon">
-                                                            <svg style="width: 48px; height: 48px; stroke: #fbbf24; fill: none; stroke-width: 2.5; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.4));" viewBox="0 0 24 24">
-                                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                                                <circle cx="12" cy="10" r="3"/>
-                                                            </svg>
-                                                        </div>
-                                                        <div class="video-title">Navigation</div>
-                                                        <p style="font-size: 0.7rem; opacity: 0.8;">AR guidance</p>
-                                                    </div>
                                                 </video>
                                             </div>
                                             <div class="carousel-slide">
-                                                <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                                                <video autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;">
                                                     <source src="ai-captain-video.mp4" type="video/mp4">
-                                                    <div class="video-placeholder">
-                                                        <div class="video-icon">
-                                                            <svg style="width: 48px; height: 48px; stroke: #fbbf24; fill: none; stroke-width: 2.5; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.4));" viewBox="0 0 24 24">
-                                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                                                <path d="M9 10h6"/>
-                                                                <path d="M9 14h3"/>
-                                                            </svg>
-                                                        </div>
-                                                        <div class="video-title">AI Captain</div>
-                                                        <p style="font-size: 0.7rem; opacity: 0.8;">Smart assistant</p>
-                                                    </div>
                                                 </video>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="carousel-controls">
-                                        <button class="carousel-btn prev" onclick="prevSlide()">&lt;</button>
-                                        <div class="carousel-dots">
-                                            <span class="dot active" onclick="currentSlide(1)"></span>
-                                            <span class="dot" onclick="currentSlide(2)"></span>
-                                            <span class="dot" onclick="currentSlide(3)"></span>
-                                            <span class="dot" onclick="currentSlide(4)"></span>
-                                        </div>
-                                        <button class="carousel-btn next" onclick="nextSlide()">&gt;</button>
-                                    </div>
-                                </div>
-                                
-                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px;">
-                                    <div class="mini-stat">
-                                        <div style="font-size: 1.2rem; color: #2D7FF9;">86°F</div>
-                                        <div style="font-size: 0.6rem; opacity: 0.7;">Temp</div>
-                                    </div>
-                                    <div class="mini-stat">
-                                        <div style="font-size: 1.2rem; color: #34d399;">2.3ft</div>
-                                        <div style="font-size: 0.6rem; opacity: 0.7;">Waves</div>
-                                    </div>
-                                    <div class="mini-stat">
-                                        <div style="font-size: 1.2rem; color: #2D7FF9;">5mph</div>
-                                        <div style="font-size: 0.6rem; opacity: 0.7;">Wind</div>
                                     </div>
                                 </div>
                             </div>
@@ -1015,11 +919,8 @@
                 </div>
 
                 <div class="cta-buttons">
-                    <a href="#" class="btn-3d" onclick="handleTrialSignup(event)">Start 7-Day Free Trial</a>
+                    <a href="#" class="btn-3d">Download on App Store</a>
                     <a href="#" class="btn-3d secondary" style="background: transparent; border: 2px solid #34d399; color: #34d399;">Coming to Android</a>
-                </div>
-                <div style="text-align: center; margin-top: 1rem; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
-                    Free trial • No commitment • Cancel anytime
                 </div>
             </div>
         </div>
@@ -1246,122 +1147,6 @@
                 waveAnimation.destroy();
             }
         });
-
-        // Trial signup handler - NO subscription service needed
-        async function handleTrialSignup(event) {
-            event.preventDefault();
-            
-            // Track user action for error context
-            if (window.errorLogger) {
-                errorLogger.trackUserAction('trial_signup_clicked');
-            }
-            
-            try {
-                // Use local trial manager instead of subscription service
-                if (window.trialManager) {
-                    const result = await trialManager.startFreeTrial();
-                    
-                    if (result && result.success) {
-                        console.log('Trial started successfully:', result);
-                        return result;
-                    }
-                } else {
-                    // Fallback - still start trial even if manager not loaded
-                    console.warn('Trial manager not loaded, using fallback');
-                    startFallbackTrial();
-                }
-            } catch (error) {
-                console.error('Trial signup error:', error);
-                // Even on error, try to start trial locally
-                startFallbackTrial();
-            }
-        }
-        
-        // Fallback trial start that always works
-        function startFallbackTrial() {
-            // Simple local trial without any dependencies
-            const trialData = {
-                startDate: new Date().toISOString(),
-                expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-                status: 'active'
-            };
-            
-            localStorage.setItem('tackle_trial_data', JSON.stringify(trialData));
-            
-            // Show success message
-            showSimpleSuccessMessage('Your 7-day free trial has started! 🎉');
-            
-            // Navigate after delay
-            setTimeout(() => {
-                if (window.ReactNativeWebView) {
-                    window.ReactNativeWebView.postMessage(JSON.stringify({
-                        action: 'trialStarted',
-                        trialData: trialData
-                    }));
-                } else {
-                    // For web, could redirect to app
-                    console.log('Trial started, ready to use app');
-                }
-            }, 2000);
-        }
-        
-        function showSimpleSuccessMessage(message) {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: white;
-                padding: 30px 40px;
-                border-radius: 20px;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                z-index: 10000;
-                text-align: center;
-                animation: bounceIn 0.5s ease;
-            `;
-            
-            modal.innerHTML = `
-                <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
-                <h3 style="margin: 0 0 12px 0; color: #1a1a1a; font-size: 20px;">${message}</h3>
-                <p style="margin: 0; color: #666; font-size: 16px;">You now have access to all premium features!</p>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            setTimeout(() => {
-                modal.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => modal.remove(), 300);
-            }, 3000);
-        }
-
-        // Example: Simulate different error scenarios (for testing)
-        if (window.location.search.includes('test=')) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const testType = urlParams.get('test');
-            
-            setTimeout(() => {
-                switch(testType) {
-                    case 'network':
-                        window.tackleErrorHandler.handleError('NETWORK_ERROR');
-                        break;
-                    case 'payment':
-                        window.tackleErrorHandler.handleError('PAYMENT_DECLINED');
-                        break;
-                    case 'trial':
-                        window.tackleErrorHandler.handleError('TRIAL_ALREADY_USED');
-                        break;
-                    case 'expired':
-                        window.tackleErrorHandler.handleError('SUBSCRIPTION_EXPIRED');
-                        break;
-                    case 'store':
-                        window.tackleErrorHandler.handleError('STORE_CONNECTION_ERROR');
-                        break;
-                    default:
-                        console.log('Test mode: Add ?test=network|payment|trial|expired|store to URL');
-                }
-            }, 1000);
-        }
     </script>
 </body>
 </html>
