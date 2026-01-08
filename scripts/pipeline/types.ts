@@ -147,6 +147,26 @@ export interface Job {
 /**
  * Base content document structure
  */
+export interface VibeTest {
+  primaryScore: {
+    name: string; // e.g., "Catchability Score", "Difficulty Rating"
+    value: number; // 0-100
+    explanation: string;
+    factors: string[];
+    lastUpdated: string;
+  };
+  secondaryScores?: Array<{
+    name: string;
+    value: number;
+    explanation: string;
+    factors: string[];
+    lastUpdated: string;
+  }>;
+  uniqueInsights: string[];
+  realWorldNotes: string[];
+  comparisonContext?: string;
+}
+
 export interface BaseDoc {
   id: string; // UUID
   slug: string;
@@ -177,6 +197,18 @@ export interface BaseDoc {
     draft: boolean;
     noindex: boolean;
   };
+  vibeTest?: VibeTest; // Unique authority signal - proprietary scoring & insights
+  alternativeRecommendations?: Array<{
+    title: string;
+    slug: string;
+    reason: string;
+    relevanceScore: number;
+  }>; // Internal linking loop - alternative recommendations
+  embeddedTools?: Array<{
+    name: string;
+    type: string;
+    componentPath: string;
+  }>; // Interactive micro-tools embedded in page
 }
 
 /**
@@ -271,5 +303,6 @@ export interface SiteIndex {
   locations: Array<{ slug: string; state: string; city: string; keywords: string[] }>;
   blogPosts: Array<{ slug: string; category: string; keywords: string[]; tags?: string[] }>;
 }
+
 
 

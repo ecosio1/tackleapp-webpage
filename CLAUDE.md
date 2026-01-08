@@ -135,6 +135,110 @@ Modern dark mode style like vercel, linear
 }
 </modern-dark-mode-style>
 
+## Tackle App Color Palette
+
+**MUST USE these colors for all Tackle app frontend work to maintain brand consistency.**
+
+### Primary Colors
+
+**Deep Blue (Primary Brand Color)**
+- Hex: `#2563EB`
+- RGB: `rgb(37, 99, 235)`
+- Used for: Buttons, headers, primary accents
+
+**Seafoam Green (Secondary Accent)**
+- Hex: `#34D399`
+- RGB: `rgb(52, 211, 153)`
+- Used for: Success states, positive indicators
+
+**Sunrise Orange (Tertiary Accent)**
+- Hex: `#FBBF24`
+- RGB: `rgb(251, 191, 36)`
+- Used for: Highlights, calls-to-action, warnings
+
+### Background Colors
+
+**Soft Sky (Light Background)**
+- Hex: `#E0F2FE`
+- RGB: `rgb(224, 242, 254)`
+- Used for: Card backgrounds, light sections
+
+**Wave Gray (Neutral Background)**
+- Hex: `#F3F4F6`
+- RGB: `rgb(243, 244, 246)`
+- Used for: Secondary backgrounds, dividers
+
+### Pastel/Onboarding Colors
+
+**Soft Lavender**
+- Hex: `#C4B5FD`
+- RGB: `rgb(196, 181, 253)`
+
+**Mint Green**
+- Hex: `#34D399`
+- RGB: `rgb(52, 211, 153)`
+
+**Peach Pink**
+- Hex: `#FDBA8C`
+- RGB: `rgb(253, 186, 140)`
+
+**Sky Blue**
+- Hex: `#93C5FD`
+- RGB: `rgb(147, 197, 253)`
+
+### CSS/Tailwind Format
+
+```css
+:root {
+  /* Primary */
+  --deep-blue: #2563EB;
+  --seafoam-green: #34D399;
+  --sunrise-orange: #FBBF24;
+
+  /* Backgrounds */
+  --soft-sky: #E0F2FE;
+  --wave-gray: #F3F4F6;
+
+  /* Pastels */
+  --soft-lavender: #C4B5FD;
+  --mint-green: #34D399;
+  --peach-pink: #FDBA8C;
+  --sky-blue: #93C5FD;
+}
+```
+
+### Recommended Usage for Website
+
+- **Hero Section**: Deep Blue background (`#2563EB`) with white text
+- **CTA Buttons**: Deep Blue (`#2563EB`) or Sunrise Orange (`#FBBF24`)
+- **Cards/Features**: Soft Sky backgrounds (`#E0F2FE`) with Deep Blue accents
+- **Success/Features**: Seafoam Green (`#34D399`)
+- **Highlights/Badges**: Sunrise Orange (`#FBBF24`)
+
+This creates a fresh, oceanic fishing vibe that matches the Tackle app perfectly! 🎣
+
+## Frontend Aesthetics - Avoiding Generic AI Design
+
+<frontend_aesthetics>
+You tend to converge toward generic, "on distribution" outputs. In frontend design, this creates what users call the "AI slop" aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight. Focus on:
+
+Typography: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics.
+
+Color & Theme: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes. Draw from IDE themes and cultural aesthetics for inspiration.
+
+Motion: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions.
+
+Backgrounds: Create atmosphere and depth rather than defaulting to solid colors. Layer CSS gradients, use geometric patterns, or add contextual effects that match the overall aesthetic.
+
+Avoid generic AI-generated aesthetics:
+- Overused font families (Inter, Roboto, Arial, system fonts)
+- Clichéd color schemes (particularly purple gradients on white backgrounds)
+- Predictable layouts and component patterns
+- Cookie-cutter design that lacks context-specific character
+
+Interpret creatively and make unexpected choices that feel genuinely designed for the context. Vary between light and dark themes, different fonts, different aesthetics. You still tend to converge on common choices (Space Grotesk, for example) across generations. Avoid this: it is critical that you think outside the box!
+</frontend_aesthetics>
+
 ## Images & icons
 1. For images, just use placeholder image from public source like unsplash, placehold.co or others that you already know exact image url; Don't make up urls
 2. For icons, we should use lucid icons or other public icons, import like <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>

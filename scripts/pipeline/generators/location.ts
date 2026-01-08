@@ -6,6 +6,7 @@ import { LocationDoc, ContentBrief } from '../types';
 import { DEFAULT_AUTHOR_NAME, DEFAULT_AUTHOR_URL } from '../config';
 import { logger } from '../logger';
 import { generateWithLLM } from '../llm';
+import { generateVibeTest } from '../vibe-test';
 import crypto from 'crypto';
 
 /**
@@ -34,6 +35,19 @@ Include all required sections, FAQs, and internal links naturally in the content
   
   // Extract geo information
   const geo = extractGeoInfo(stateSlug, citySlug);
+  
+  // Generate Vibe Test (Location Quality Score)
+  let vibeTest;
+  try {
+    const locationName = `${geo.city}, ${geo.state}`;
+    const species = extractSpeciesFromBrief(brief);
+    vibeTest = await generateVibeTest('location', locationName, {
+      species,
+    });
+    logger.info(`Generated Vibe Test for location: ${locationName}`);
+  } catch (error) {
+    logger.warn('Vibe Test generation failed, continuing without it:', error);
+  }
   
   // Build document
   const doc: LocationDoc = {
@@ -64,9 +78,26 @@ Include all required sections, FAQs, and internal links naturally in the content
       draft: false,
       noindex: false,
     },
+    vibeTest,
   };
   
   return doc;
+}
+
+/**
+ * Extract species from brief
+ */
+function extractSpeciesFromBrief(brief: ContentBrief): string | undefined {
+  const species = ['redfish', 'snook', 'tarpon', 'bass', 'grouper', 'snapper', 'trout', 'flounder'];
+  const allText = `${brief.title} ${brief.primaryKeyword}`.toLowerCase();
+  
+  for (const sp of species) {
+    if (allText.includes(sp)) {
+      return sp;
+    }
+  }
+  
+  return undefined;
 }
 
 /**
@@ -125,6 +156,14 @@ OUTPUT FORMAT:
 - End with "What to do next" CTA linking to /download
 - End with prominent "See local regulations" link block (REQUIRED)
 - End with "Sources consulted" list
+
+IMPORTANT - Vibe Test Section:
+Include a "Vibe Test: Location Quality Score" section that shows:
+- A proprietary Location Quality Score (0-100) for this fishing location
+- Unique insights from "real-world fishing experience" at this location
+- Real-world notes from actual fishing trips here
+- Factors that contribute to the quality rating
+- Make it sound authentic and experience-based, not generic location data
 
 Write the complete location guide now:`;
 }
@@ -223,5 +262,6 @@ function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
 
 

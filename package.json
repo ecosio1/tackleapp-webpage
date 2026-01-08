@@ -2,23 +2,39 @@
   "name": "tackleapp-webpage",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
   "dependencies": {
     "next": "^14.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "tsx": "^4.7.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "pipeline:test-connection": "tsx scripts/run.ts test-dataforseo",
+    "pipeline:test-perplexity": "tsx scripts/run.ts test-perplexity",
+    "pipeline:discover-entities": "tsx scripts/run.ts discover-entities",
+    "pipeline:discover-concepts": "tsx scripts/run.ts discover-concepts",
+    "pipeline:generate-matrix": "tsx scripts/run.ts generate-matrix",
+    "pipeline:discover-tools": "tsx scripts/run.ts discover-tools",
+    "pipeline:generate-tool": "tsx scripts/run.ts generate-tool",
+    "pipeline:generate-prd": "tsx scripts/run.ts generate-prd",
+    "pipeline:test-ideation": "tsx scripts/run.ts test-ideation",
+    "pipeline:seed": "tsx scripts/run.ts seed",
+    "pipeline:run": "tsx scripts/run.ts run",
+    "pipeline:status": "tsx scripts/run.ts status"
   }
 }
+
 
 

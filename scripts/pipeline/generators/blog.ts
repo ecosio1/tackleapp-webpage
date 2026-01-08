@@ -6,6 +6,8 @@ import { BlogPostDoc, ContentBrief } from '../types';
 import { generateWithLLM } from '../llm';
 import { DEFAULT_AUTHOR_NAME, DEFAULT_AUTHOR_URL } from '../config';
 import { logger } from '../logger';
+import { generateVibeTest } from '../vibe-test';
+import { generateAlternativeRecommendations } from '../alternative-recommendations';
 import crypto from 'crypto';
 
 /**
@@ -28,6 +30,44 @@ Include all required sections, FAQs, and internal links naturally in the content
   const body = typeof generated === 'string' ? generated : generated.body || '';
   const faqs = generated.faqs || [];
   const headings = extractHeadings(body);
+  
+  // Generate Vibe Test for comparison/lure/technique posts
+  let vibeTest;
+  try {
+    const pageType = determinePageType(brief);
+    if (pageType) {
+      const primaryEntity = extractPrimaryEntity(brief);
+      vibeTest = await generateVibeTest(pageType, primaryEntity, {
+        species: extractSpeciesFromBrief(brief),
+        location: extractLocationFromBrief(brief),
+        comparison: extractComparisonFromBrief(brief),
+      });
+      logger.info(`Generated Vibe Test for ${pageType}: ${primaryEntity}`);
+    }
+  } catch (error) {
+    logger.warn('Vibe Test generation failed, continuing without it:', error);
+  }
+  
+  // Generate alternative recommendations
+  let alternativeRecommendations;
+  try {
+    const { generateAlternativeRecommendations } = await import('../alternative-recommendations');
+    const { loadSiteIndex } = await import('../internalLinks');
+    const siteIndex = await loadSiteIndex();
+    
+    // Convert site index to format needed
+    const availableContent = [
+      ...siteIndex.species.map(s => ({ ...s, type: 'species', title: s.slug })),
+      ...siteIndex.howTo.map(h => ({ ...h, type: 'how-to', title: h.slug })),
+      ...siteIndex.locations.map(l => ({ ...l, type: 'location', title: l.city || l.slug })),
+      ...siteIndex.blogPosts.map(b => ({ ...b, type: 'blog', title: b.slug })),
+    ];
+    
+    alternativeRecommendations = await generateAlternativeRecommendations(brief, availableContent);
+    logger.info(`Generated ${alternativeRecommendations.length} alternative recommendations`);
+  } catch (error) {
+    logger.warn('Alternative recommendations generation failed:', error);
+  }
   
   // Build document
   const doc: BlogPostDoc = {
@@ -57,9 +97,103 @@ Include all required sections, FAQs, and internal links naturally in the content
       draft: false,
       noindex: false,
     },
+    vibeTest,
+    alternativeRecommendations,
   };
   
   return doc;
+}
+
+/**
+ * Determine page type for vibe test
+ */
+function determinePageType(brief: ContentBrief): 'lure' | 'technique' | 'comparison' | null {
+  const titleLower = brief.title.toLowerCase();
+  const keywordLower = brief.primaryKeyword.toLowerCase();
+  const allText = `${titleLower} ${keywordLower}`;
+  
+  // Check for comparison patterns
+  if (allText.includes(' vs ') || allText.includes(' versus ') || allText.includes(' comparison')) {
+    return 'comparison';
+  }
+  
+  // Check for lure patterns
+  if (allText.includes('lure') || allText.includes('bait') || allText.includes('rod') || allText.includes('reel')) {
+    return 'lure';
+  }
+  
+  // Check for technique patterns
+  if (allText.includes('technique') || allText.includes('method') || allText.includes('how to')) {
+    return 'technique';
+  }
+  
+  return null;
+}
+
+/**
+ * Extract primary entity from brief
+ */
+function extractPrimaryEntity(brief: ContentBrief): string {
+  // Try to extract from title or keyword
+  const titleWords = brief.title.split(' ');
+  const keywordWords = brief.primaryKeyword.split(' ');
+  
+  // Look for nouns (capitalized words or common fishing terms)
+  const fishingTerms = ['lure', 'bait', 'rod', 'reel', 'technique', 'method', 'topwater', 'jig', 'spinnerbait'];
+  
+  for (const word of [...titleWords, ...keywordWords]) {
+    const lower = word.toLowerCase();
+    if (fishingTerms.some(term => lower.includes(term))) {
+      return word;
+    }
+  }
+  
+  // Fallback to first significant word from title
+  return titleWords.find(w => w.length > 4) || brief.primaryKeyword;
+}
+
+/**
+ * Extract species from brief
+ */
+function extractSpeciesFromBrief(brief: ContentBrief): string | undefined {
+  const species = ['redfish', 'snook', 'tarpon', 'bass', 'grouper', 'snapper', 'trout', 'flounder'];
+  const allText = `${brief.title} ${brief.primaryKeyword}`.toLowerCase();
+  
+  for (const sp of species) {
+    if (allText.includes(sp)) {
+      return sp;
+    }
+  }
+  
+  return undefined;
+}
+
+/**
+ * Extract location from brief
+ */
+function extractLocationFromBrief(brief: ContentBrief): string | undefined {
+  const locations = ['florida', 'texas', 'miami', 'tampa', 'key west', 'orlando'];
+  const allText = `${brief.title} ${brief.primaryKeyword}`.toLowerCase();
+  
+  for (const loc of locations) {
+    if (allText.includes(loc)) {
+      return loc;
+    }
+  }
+  
+  return undefined;
+}
+
+/**
+ * Extract comparison item from brief
+ */
+function extractComparisonFromBrief(brief: ContentBrief): string | undefined {
+  const title = brief.title.toLowerCase();
+  const vsMatch = title.match(/(.+?)\s+(?:vs|versus)\s+(.+)/);
+  if (vsMatch) {
+    return vsMatch[2].trim();
+  }
+  return undefined;
 }
 
 /**
@@ -199,5 +333,6 @@ function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
 
 

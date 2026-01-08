@@ -6,6 +6,7 @@ import { HowToDoc, ContentBrief } from '../types';
 import { generateWithLLM } from '../llm';
 import { DEFAULT_AUTHOR_NAME, DEFAULT_AUTHOR_URL } from '../config';
 import { logger } from '../logger';
+import { generateVibeTest } from '../vibe-test';
 import crypto from 'crypto';
 
 /**
@@ -31,6 +32,20 @@ Include all required sections, FAQs, and internal links naturally in the content
   
   // Determine category from slug
   const category = determineCategory(brief.slug);
+  
+  // Generate Vibe Test (Effectiveness Score for techniques)
+  let vibeTest;
+  try {
+    const techniqueName = extractTechniqueName(brief);
+    const species = extractSpeciesFromBrief(brief);
+    vibeTest = await generateVibeTest('technique', techniqueName, {
+      species,
+      location: extractLocationFromBrief(brief),
+    });
+    logger.info(`Generated Vibe Test for technique: ${techniqueName}`);
+  } catch (error) {
+    logger.warn('Vibe Test generation failed, continuing without it:', error);
+  }
   
   // Build document
   const doc: HowToDoc = {
@@ -59,9 +74,64 @@ Include all required sections, FAQs, and internal links naturally in the content
       draft: false,
       noindex: false,
     },
+    vibeTest,
   };
   
   return doc;
+}
+
+/**
+ * Extract technique name from brief
+ */
+function extractTechniqueName(brief: ContentBrief): string {
+  // Try to extract from title or keyword
+  const titleWords = brief.title.split(' ');
+  const keywordWords = brief.primaryKeyword.split(' ');
+  
+  // Look for technique indicators
+  const techniqueIndicators = ['jigging', 'trolling', 'casting', 'retrieving', 'bottom fishing'];
+  
+  for (const word of [...titleWords, ...keywordWords]) {
+    const lower = word.toLowerCase();
+    if (techniqueIndicators.some(indicator => lower.includes(indicator))) {
+      return word;
+    }
+  }
+  
+  // Fallback to first significant word
+  return titleWords.find(w => w.length > 4) || brief.primaryKeyword;
+}
+
+/**
+ * Extract species from brief
+ */
+function extractSpeciesFromBrief(brief: ContentBrief): string | undefined {
+  const species = ['redfish', 'snook', 'tarpon', 'bass', 'grouper', 'snapper', 'trout', 'flounder'];
+  const allText = `${brief.title} ${brief.primaryKeyword}`.toLowerCase();
+  
+  for (const sp of species) {
+    if (allText.includes(sp)) {
+      return sp;
+    }
+  }
+  
+  return undefined;
+}
+
+/**
+ * Extract location from brief
+ */
+function extractLocationFromBrief(brief: ContentBrief): string | undefined {
+  const locations = ['florida', 'texas', 'miami', 'tampa', 'key west'];
+  const allText = `${brief.title} ${brief.primaryKeyword}`.toLowerCase();
+  
+  for (const loc of locations) {
+    if (allText.includes(loc)) {
+      return loc;
+    }
+  }
+  
+  return undefined;
 }
 
 /**
@@ -216,5 +286,6 @@ function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
 
 

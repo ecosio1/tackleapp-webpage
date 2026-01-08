@@ -16,6 +16,8 @@ interface StickyBottomCTAProps {
   scrollThreshold?: number; // Percentage to trigger (default: 25)
 }
 
+const DISMISS_STORAGE_KEY = 'tackle_sticky_cta_dismissed';
+
 export function StickyBottomCTA({
   pageType,
   slug,
@@ -24,13 +26,21 @@ export function StickyBottomCTA({
   scrollThreshold = 25,
 }: StickyBottomCTAProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
+    // Check if user has dismissed the CTA before
+    const dismissed = localStorage.getItem(DISMISS_STORAGE_KEY);
+    if (dismissed === 'true') {
+      setIsDismissed(true);
+      return;
+    }
+
     const handleScroll = () => {
       const scrollPercent =
         (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
 
-      if (scrollPercent >= scrollThreshold && !isVisible) {
+      if (scrollPercent >= scrollThreshold && !isVisible && !isDismissed) {
         setIsVisible(true);
         trackEvent('cta_view', {
           pageType,
@@ -45,9 +55,23 @@ export function StickyBottomCTA({
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [scrollThreshold, isVisible, pageType, slug, location, species]);
+  }, [scrollThreshold, isVisible, isDismissed, pageType, slug, location, species]);
 
-  if (!isVisible) return null;
+  const handleDismiss = () => {
+    setIsVisible(false);
+    setIsDismissed(true);
+    localStorage.setItem(DISMISS_STORAGE_KEY, 'true');
+    trackEvent('cta_dismiss', {
+      pageType,
+      slug,
+      location,
+      species,
+      position: 'sticky',
+      ctaType: 'sticky_bottom',
+    });
+  };
+
+  if (!isVisible || isDismissed) return null;
 
   const appStoreUrl = generateAppStoreUrl({
     pageType,
@@ -69,6 +93,14 @@ export function StickyBottomCTA({
 
   return (
     <div className="sticky-bottom-cta">
+      <button
+        onClick={handleDismiss}
+        className="sticky-cta-close"
+        aria-label="Close"
+        title="Close"
+      >
+        ×
+      </button>
       <div className="sticky-cta-content">
         <p className="sticky-cta-text">Personalized fishing advice for your location.</p>
         <a

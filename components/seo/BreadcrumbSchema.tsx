@@ -3,9 +3,12 @@
  * Adds BreadcrumbList JSON-LD schema
  */
 
+import { absoluteUrl } from '@/lib/seo/utils';
+
 interface BreadcrumbItem {
   name: string;
-  item: string;
+  item?: string;
+  url?: string;
 }
 
 interface BreadcrumbSchemaProps {
@@ -20,7 +23,7 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: item.item,
+      item: item.item || absoluteUrl(item.url || '/'),
     })),
   };
 

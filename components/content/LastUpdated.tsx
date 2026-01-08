@@ -5,11 +5,11 @@
 
 interface LastUpdatedProps {
   date: string;
-  author: string;
+  author?: string;
   className?: string;
 }
 
-export function LastUpdated({ date, author, className = '' }: LastUpdatedProps) {
+export function LastUpdated({ date, author = 'Tackle Fishing Team', className = '' }: LastUpdatedProps) {
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);

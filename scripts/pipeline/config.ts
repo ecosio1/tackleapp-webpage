@@ -2,7 +2,15 @@
  * Pipeline configuration
  */
 
-import { STATE_REGULATION_LINKS } from '@/lib/regLinks/stateRegLinks';
+// Try to import state regulation links, use empty object if not available
+let STATE_REGULATION_LINKS: Record<string, string> = {};
+try {
+  // @ts-ignore - path may not resolve in scripts context
+  const stateRegLinks = require('../../lib/regLinks/stateRegLinks');
+  STATE_REGULATION_LINKS = stateRegLinks.STATE_REGULATION_LINKS || {};
+} catch (error) {
+  // Ignore if not available - not critical for pipeline
+}
 
 export const DAILY_PUBLISH_CAP = 20; // Maximum pages to publish per day
 export const DEFAULT_REVALIDATE_SECRET_NAME = 'REVALIDATION_SECRET';
@@ -80,5 +88,6 @@ export const RATE_LIMIT_CONFIG = {
   defaultRateLimitPerMin: 10,
   maxConcurrentFetches: 5,
 };
+
 
 

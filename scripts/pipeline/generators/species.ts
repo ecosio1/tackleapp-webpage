@@ -6,6 +6,8 @@ import { SpeciesDoc, ContentBrief } from '../types';
 import { generateWithLLM } from '../llm';
 import { DEFAULT_AUTHOR_NAME, DEFAULT_AUTHOR_URL } from '../config';
 import { logger } from '../logger';
+import { generateVibeTest } from '../vibe-test';
+import { generateAlternativeRecommendations } from '../alternative-recommendations';
 import crypto from 'crypto';
 
 /**
@@ -31,6 +33,35 @@ Include all required sections, FAQs, and internal links naturally in the content
   
   // Extract species metadata from facts
   const speciesMeta = extractSpeciesMetadata(brief);
+  
+  // Generate Vibe Test (unique authority signal)
+  let vibeTest;
+  try {
+    const speciesName = brief.primaryKeyword.split(' ')[0]; // Extract species name
+    vibeTest = await generateVibeTest('species', speciesName, {
+      location: extractLocationFromBrief(brief),
+    });
+    logger.info(`Generated Vibe Test for ${speciesName}`);
+  } catch (error) {
+    logger.warn('Vibe Test generation failed, continuing without it:', error);
+  }
+  
+  // Generate alternative recommendations
+  let alternativeRecommendations;
+  try {
+    const { loadSiteIndex } = await import('../internalLinks');
+    const siteIndex = await loadSiteIndex();
+    const availableContent = [
+      ...siteIndex.species.map(s => ({ ...s, type: 'species', title: s.slug })),
+      ...siteIndex.howTo.map(h => ({ ...h, type: 'how-to', title: h.slug })),
+      ...siteIndex.locations.map(l => ({ ...l, type: 'location', title: l.city || l.slug })),
+      ...siteIndex.blogPosts.map(b => ({ ...b, type: 'blog', title: b.slug })),
+    ];
+    alternativeRecommendations = await generateAlternativeRecommendations(brief, availableContent);
+    logger.info(`Generated ${alternativeRecommendations.length} alternative recommendations`);
+  } catch (error) {
+    logger.warn('Alternative recommendations generation failed:', error);
+  }
   
   // Build document
   const doc: SpeciesDoc = {
@@ -59,9 +90,28 @@ Include all required sections, FAQs, and internal links naturally in the content
       draft: false,
       noindex: false,
     },
+    vibeTest,
+    alternativeRecommendations,
   };
   
   return doc;
+}
+
+/**
+ * Extract location from brief for context
+ */
+function extractLocationFromBrief(brief: ContentBrief): string | undefined {
+  // Try to extract location from keywords or title
+  const locationKeywords = ['florida', 'texas', 'miami', 'tampa', 'key west'];
+  const allText = `${brief.title} ${brief.primaryKeyword} ${brief.secondaryKeywords.join(' ')}`.toLowerCase();
+  
+  for (const loc of locationKeywords) {
+    if (allText.includes(loc)) {
+      return loc;
+    }
+  }
+  
+  return undefined;
 }
 
 /**
@@ -113,10 +163,19 @@ OUTPUT FORMAT:
 - Markdown format
 - Use H2 for main sections, H3 for subsections
 - Include internal links naturally in content
+- Include a "Vibe Test: Difficulty Rating" section with proprietary scoring
 - End with FAQs section (5-8 questions)
 - End with "What to do next" CTA linking to /download
 - End with "See local regulations" link block
 - End with "Sources consulted" list
+
+IMPORTANT - Vibe Test Section:
+Include a "Vibe Test: Difficulty Rating" section that shows:
+- A proprietary Difficulty Rating score (0-100) for catching this species
+- Unique insights from "real-world fishing experience"
+- Real-world notes from actual fishing trips
+- Factors that contribute to the difficulty rating
+- Make it sound authentic and experience-based, not generic data
 
 Write the complete species guide now:`;
 }
@@ -223,5 +282,6 @@ function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
 
 

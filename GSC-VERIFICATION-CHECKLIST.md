@@ -305,3 +305,4 @@ curl https://tackleapp.ai/ | grep -i canonical
 **Status:** Ready for GSC verification
 
 
+
