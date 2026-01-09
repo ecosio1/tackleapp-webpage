@@ -1,5 +1,22 @@
 /**
- * Ideation Module - Generate blog ideas from DataForSEO
+ * Ideation Module - Traffic Engine (Upstream System)
+ *
+ * ROLE: Discover, validate, and rank blog opportunities
+ *
+ * DOES:
+ * - ✅ Discover low-competition, high-intent informational queries
+ * - ✅ Validate search volume and difficulty (DataForSEO)
+ * - ✅ Output ranked blog opportunities
+ *
+ * DOES NOT:
+ * - ❌ Generate content (that's the generation system)
+ * - ❌ Decide formatting (that's the generation system)
+ * - ❌ Handle publishing (that's the publishing system)
+ *
+ * OUTPUT: Ranked list of BlogIdea[] objects
+ * HANDOFF: Opportunities pass to generation system
+ *
+ * See: IDEATION-SYSTEM.md for full documentation
  */
 
 import { logger } from './logger';
