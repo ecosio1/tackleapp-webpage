@@ -31,6 +31,13 @@
     "pipeline:generate-tool": "tsx scripts/run.ts generate-tool",
     "pipeline:generate-prd": "tsx scripts/run.ts generate-prd",
     "pipeline:test-ideation": "tsx scripts/run.ts test-ideation",
+    "pipeline:generate-blog": "tsx scripts/run.ts generate-blog",
+    "pipeline:batch-publish": "tsx scripts/run.ts batch-publish",
+    "pipeline:verify-done": "tsx scripts/verify-done-done.ts",
+    "pipeline:migrate-index": "tsx scripts/migrate-index.ts",
+    "pipeline:rebuild-index": "tsx scripts/run.ts rebuild-index",
+    "pipeline:validate-index": "tsx scripts/run.ts validate-index",
+    "pipeline:metrics": "tsx scripts/run.ts metrics",
     "pipeline:seed": "tsx scripts/run.ts seed",
     "pipeline:run": "tsx scripts/run.ts run",
     "pipeline:status": "tsx scripts/run.ts status"

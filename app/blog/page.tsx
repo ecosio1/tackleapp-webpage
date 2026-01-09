@@ -1,5 +1,7 @@
 /**
- * Blog Index Page
+ * Blog Index Page with Pagination
+ * Reads blog posts from content index ONLY (never loads post JSON files)
+ * This allows the page to scale to thousands of posts efficiently
  */
 
 import { Metadata } from 'next';
@@ -7,20 +9,54 @@ import { generateCanonical } from '@/lib/seo/canonical';
 import Link from 'next/link';
 import { PrimaryCTA } from '@/components/conversion/PrimaryCTA';
 import { ModernBlogCard } from '@/components/blog/ModernBlogCard';
-import { loadAllBlogPosts, getAllBlogCategories } from '@/lib/content/blog';
+import { Pagination } from '@/components/blog/Pagination';
+import { getAllBlogCategories } from '@/lib/content/blog';
+import { getPaginatedBlogPosts } from '@/lib/content/blog-pagination';
 
-export const metadata: Metadata = {
-  title: 'Fishing Blog | Tips, Guides & Expert Advice',
-  description: 'Read the latest fishing tips, gear reviews, techniques, and expert advice from Tackle Fishing Team.',
-  alternates: {
-    canonical: generateCanonical('/blog'),
-  },
-};
+interface BlogIndexPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
 
-export default function BlogIndexPage() {
-  // Load blog posts from JSON files (Single Source of Truth)
-  const blogPosts = loadAllBlogPosts();
-  const categories = getAllBlogCategories();
+export async function generateMetadata({ searchParams }: BlogIndexPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const page = parseInt(params.page || '1', 10);
+  
+  // Canonical URL: page 1 = /blog, page 2+ = /blog?page=2
+  const canonical = page === 1 
+    ? generateCanonical('/blog')
+    : generateCanonical(`/blog?page=${page}`);
+
+  return {
+    title: page === 1 
+      ? 'Fishing Blog | Tips, Guides & Expert Advice'
+      : `Fishing Blog - Page ${page} | Tips, Guides & Expert Advice`,
+    description: 'Read the latest fishing tips, gear reviews, techniques, and expert advice from Tackle Fishing Team.',
+    alternates: {
+      canonical,
+    },
+    robots: page === 1 
+      ? undefined 
+      : {
+          // Allow indexing of paginated pages
+          index: true,
+          follow: true,
+        },
+  };
+}
+
+export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page || '1', 10));
+  
+  // Get paginated posts from index ONLY (no file reads)
+  const { posts: blogPosts, pagination } = await getPaginatedBlogPosts({
+    page,
+    pageSize: 24, // 20-30 range, using 24
+    sortBy: 'publishedAt',
+    sortOrder: 'desc', // Newest first (stable sorting)
+  });
+  
+  const categories = await getAllBlogCategories();
   return (
     <div className="home-main">
       <header className="page-header" style={{ textAlign: 'center' }}>
@@ -51,10 +87,19 @@ export default function BlogIndexPage() {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-3xl font-bold mb-6">Latest Posts</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-3xl font-bold">
+            {page === 1 ? 'Latest Posts' : `All Posts (Page ${page})`}
+          </h2>
+          {pagination.totalPosts > 0 && (
+            <p className="text-sm text-gray-600">
+              Showing {((page - 1) * pagination.pageSize) + 1}-{Math.min(page * pagination.pageSize, pagination.totalPosts)} of {pagination.totalPosts} posts
+            </p>
+          )}
+        </div>
 
-        {/* Featured Post */}
-        {blogPosts.length > 0 && (
+        {/* Featured Post (only on page 1) */}
+        {page === 1 && blogPosts.length > 0 && (
           <div className="mb-8">
             <ModernBlogCard
               slug={blogPosts[0].slug}
@@ -62,15 +107,17 @@ export default function BlogIndexPage() {
               description={blogPosts[0].description}
               category={blogPosts[0].category}
               date={blogPosts[0].publishedAt}
+              readTime={blogPosts[0].readTime}
+              author={blogPosts[0].author}
               featured={true}
               image={blogPosts[0].heroImage || '/images/blog/featured.jpg'}
             />
           </div>
         )}
 
-        {/* Regular Posts Grid */}
+        {/* Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.slice(1).map((post) => (
+          {(page === 1 ? blogPosts.slice(1) : blogPosts).map((post) => (
             <ModernBlogCard
               key={post.slug}
               slug={post.slug}
@@ -78,10 +125,21 @@ export default function BlogIndexPage() {
               description={post.description}
               category={post.category}
               date={post.publishedAt}
+              readTime={post.readTime}
+              author={post.author}
               image={post.heroImage || '/images/blog/default.jpg'}
             />
           ))}
         </div>
+
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            basePath="/blog"
+          />
+        )}
       </section>
 
       <PrimaryCTA

@@ -221,6 +221,8 @@ export async function pickLinksForBrief(brief: ContentBrief): Promise<{
 
 /**
  * Update content index (called after publishing)
+ * NOTE: This function is now DEPRECATED - use atomic index updates in publisher.ts
+ * Kept for backward compatibility but should not be used directly
  */
 export async function updateContentIndex(doc: {
   pageType: string;
@@ -231,10 +233,16 @@ export async function updateContentIndex(doc: {
   state?: string;
   city?: string;
 }): Promise<void> {
+  logger.warn('updateContentIndex is deprecated - publisher.ts now handles atomic index updates');
+  
   const index = await loadSiteIndex();
   
+  // Check for duplicates before adding
   switch (doc.pageType) {
     case 'species':
+      if (index.species.some((s: any) => s.slug === doc.slug)) {
+        throw new Error(`Duplicate slug in content index: ${doc.slug}`);
+      }
       index.species.push({
         slug: doc.slug,
         keywords: doc.keywords,
@@ -242,6 +250,9 @@ export async function updateContentIndex(doc: {
       });
       break;
     case 'how-to':
+      if (index.howTo.some((h: any) => h.slug === doc.slug)) {
+        throw new Error(`Duplicate slug in content index: ${doc.slug}`);
+      }
       index.howTo.push({
         slug: doc.slug,
         keywords: doc.keywords,
@@ -249,6 +260,9 @@ export async function updateContentIndex(doc: {
       });
       break;
     case 'location':
+      if (index.locations.some((l: any) => l.slug === doc.slug)) {
+        throw new Error(`Duplicate slug in content index: ${doc.slug}`);
+      }
       index.locations.push({
         slug: doc.slug,
         state: doc.state || '',
@@ -257,6 +271,9 @@ export async function updateContentIndex(doc: {
       });
       break;
     case 'blog':
+      if (index.blogPosts.some((b: any) => b.slug === doc.slug)) {
+        throw new Error(`Duplicate slug in content index: ${doc.slug}`);
+      }
       index.blogPosts.push({
         slug: doc.slug,
         category: doc.category || '',
@@ -266,10 +283,29 @@ export async function updateContentIndex(doc: {
       break;
   }
   
-  // Save updated index
+  // Save updated index (ATOMIC WRITE - even though deprecated, still needs to be safe)
   const dir = path.dirname(CONTENT_INDEX_PATH);
   await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(CONTENT_INDEX_PATH, JSON.stringify(index, null, 2), 'utf-8');
+  
+  // Atomic write: temp file → verify → rename (prevents corruption if process killed mid-write)
+  const tempPath = `${CONTENT_INDEX_PATH}.tmp`;
+  const jsonString = JSON.stringify(index, null, 2);
+  
+  // Validate JSON before writing
+  JSON.parse(jsonString); // Verify it's valid JSON
+  
+  // Write to temp file first
+  await fs.writeFile(tempPath, jsonString, 'utf-8');
+  
+  // Verify temp file was written correctly
+  const written = await fs.readFile(tempPath, 'utf-8');
+  if (written !== jsonString) {
+    await fs.unlink(tempPath).catch(() => {}); // Clean up temp file
+    throw new Error('Content index write verification failed - written data does not match');
+  }
+  
+  // Atomic rename (prevents corruption if process crashes)
+  await fs.rename(tempPath, CONTENT_INDEX_PATH);
   
   logger.info(`Updated content index with ${doc.pageType}:${doc.slug}`);
 }

@@ -1,210 +1,112 @@
 /**
- * Blog Content Loader
- *
- * Single source of truth for blog content.
- * All blog posts are stored as JSON files in content/blog/
+ * Blog content access functions
+ * Reads blog posts from the content system
  */
 
-import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { loadContentDoc, loadContentIndex, BlogPostIndexEntry } from './index';
+import { BlogPostDoc } from '@/scripts/pipeline/types';
+import fs from 'fs/promises';
+import path from 'path';
 
-const CONTENT_DIR = join(process.cwd(), 'content');
-const BLOG_DIR = join(CONTENT_DIR, 'blog');
-const BLOG_INDEX_PATH = join(CONTENT_DIR, '_system', 'blogIndex.json');
-
-// ============================================================================
-// Types
-// ============================================================================
-
-export interface BlogPost {
-  // Core Metadata
-  id: string;
+/**
+ * Blog post data for display
+ */
+export interface BlogPostDisplay {
   slug: string;
-  status: 'published' | 'draft' | 'archived';
-
-  // Content
   title: string;
   description: string;
-  body: string;
-  excerpt?: string;
-
-  // SEO
-  primaryKeyword: string;
-  secondaryKeywords: string[];
-  heroImage?: string;
-
-  // Organization
   category: string;
-  tags?: string[];
-
-  // Author & Dates
-  author: {
-    name: string;
-    url?: string;
-  };
   publishedAt: string;
-  updatedAt: string;
-
-  // Structure
-  headings: Array<{
-    level: 1 | 2 | 3;
-    text: string;
-    id?: string;
-  }>;
-
-  // FAQs
-  faqs: Array<{
-    question: string;
-    answer: string;
-  }>;
-
-  // Sources
-  sources: Array<{
-    label: string;
-    url: string;
-    retrievedAt: string;
-  }>;
-
-  // Related Content
-  related: {
-    speciesSlugs?: string[];
-    howToSlugs?: string[];
-    locationSlugs?: string[];
-    postSlugs?: string[];
-  };
-
-  // Advanced Features
-  vibeTest?: {
-    primaryScore: {
-      name: string;
-      value: number;
-      explanation: string;
-      factors: string[];
-      lastUpdated: string;
-    };
-    uniqueInsights: string[];
-    realWorldNotes: string[];
-  };
-
-  embeddedTools?: Array<{
-    name: string;
-    type: string;
-    componentPath: string;
-  }>;
-
-  alternativeRecommendations?: Array<{
-    title: string;
-    slug: string;
-    reason: string;
-    relevanceScore: number;
-  }>;
-
-  // Metadata
-  contentHash?: string;
-  wordCount?: number;
-  readingTimeMinutes?: number;
-}
-
-export interface BlogIndex {
-  version: string;
-  lastUpdated: string;
-  totalPosts: number;
-  posts: Array<{
-    slug: string;
-    title: string;
-    category: string;
-    publishedAt: string;
-    status: 'published' | 'draft' | 'archived';
-    filePath: string;
-  }>;
-}
-
-// ============================================================================
-// Content Loaders
-// ============================================================================
-
-/**
- * Load blog index
- */
-export function loadBlogIndex(): BlogIndex {
-  if (!existsSync(BLOG_INDEX_PATH)) {
-    return {
-      version: '1.0.0',
-      lastUpdated: new Date().toISOString(),
-      totalPosts: 0,
-      posts: [],
-    };
-  }
-
-  const content = readFileSync(BLOG_INDEX_PATH, 'utf-8');
-  return JSON.parse(content);
+  heroImage?: string;
+  readTime?: number;
+  author?: string;
 }
 
 /**
- * Load a single blog post by slug
+ * Blog category with post count
  */
-export function loadBlogPost(slug: string): BlogPost | null {
-  const filePath = join(BLOG_DIR, `${slug}.json`);
-
-  if (!existsSync(filePath)) {
-    return null;
-  }
-
-  const content = readFileSync(filePath, 'utf-8');
-  return JSON.parse(content);
+export interface BlogCategory {
+  slug: string;
+  name: string;
+  count: number;
 }
 
 /**
- * Load all published blog posts
+ * Load all blog posts from content index ONLY (no file reads)
+ * Filters out drafts and noindex posts
+ * Sorts by publishedAt (newest first)
  */
-export function loadAllBlogPosts(): BlogPost[] {
-  const index = loadBlogIndex();
-
-  return index.posts
-    .filter((post) => post.status === 'published')
-    .map((post) => loadBlogPost(post.slug))
-    .filter((post): post is BlogPost => post !== null);
+export async function loadAllBlogPosts(): Promise<BlogPostDisplay[]> {
+  const index = await loadContentIndex();
+  
+  return index.blogPosts
+    .filter((entry) => {
+      // Only include published posts
+      if (entry.flags?.draft || entry.flags?.noindex) {
+        return false;
+      }
+      
+      // Quarantine check: exclude posts with invalid structure in index
+      // If a post is in the index but has missing required fields, exclude it
+      if (!entry.slug || !entry.title || !entry.description || !entry.category) {
+        // Log quarantine (but don't spam - only log once per session)
+        console.warn(
+          `[CONTENT_QUARANTINE] ${new Date().toISOString()} - Excluding invalid post from listing\n` +
+          `  slug="${entry.slug || 'missing'}"\n` +
+          `  reason="Missing required fields in index entry"`
+        );
+        return false;
+      }
+      
+      return true;
+    })
+    .map((entry) => {
+      // Calculate read time from wordCount (if available) or estimate
+      const wordCount = entry.wordCount || 0;
+      const readTime = wordCount > 0 
+        ? Math.ceil(wordCount / 200) 
+        : Math.ceil((entry.description?.split(/\s+/).length || 0) * 10 / 200); // Estimate from description
+      
+      return {
+        slug: entry.slug,
+        title: entry.title,
+        description: entry.description,
+        category: entry.category,
+        publishedAt: entry.publishedAt,
+        heroImage: entry.featuredImage || entry.heroImage,
+        readTime: readTime || 5, // Default to 5 min if can't calculate
+        author: entry.author || 'Tackle Fishing Team',
+      };
+    })
+    .sort((a, b) => {
+      // Sort by publishedAt (newest first)
+      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+    });
 }
 
 /**
- * Load blog posts by category
+ * Get all blog categories with post counts
+ * Reads from index only (no file reads)
  */
-export function loadBlogPostsByCategory(category: string): BlogPost[] {
-  const allPosts = loadAllBlogPosts();
-  return allPosts.filter((post) => post.category === category);
-}
-
-/**
- * Load featured blog posts (for homepage, etc.)
- */
-export function loadFeaturedBlogPosts(limit: number = 3): BlogPost[] {
-  const allPosts = loadAllBlogPosts();
-
-  // Sort by publishedAt descending
-  const sorted = allPosts.sort((a, b) => {
-    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+export async function getAllBlogCategories(): Promise<BlogCategory[]> {
+  const posts = await loadAllBlogPosts(); // Already reads from index only
+  
+  // Count posts by category
+  const categoryMap = new Map<string, number>();
+  
+  posts.forEach((post) => {
+    const count = categoryMap.get(post.category) || 0;
+    categoryMap.set(post.category, count + 1);
   });
-
-  return sorted.slice(0, limit);
-}
-
-/**
- * Get all blog categories
- */
-export function getAllBlogCategories(): Array<{ slug: string; name: string; count: number }> {
-  const allPosts = loadAllBlogPosts();
-  const categoryCounts = new Map<string, number>();
-
-  allPosts.forEach((post) => {
-    const count = categoryCounts.get(post.category) || 0;
-    categoryCounts.set(post.category, count + 1);
-  });
-
-  return Array.from(categoryCounts.entries()).map(([slug, count]) => ({
-    slug,
-    name: formatCategoryName(slug),
-    count,
-  }));
+  
+  // Convert to array and format
+  return Array.from(categoryMap.entries())
+    .map(([slug, count]) => ({
+      slug,
+      name: formatCategoryName(slug),
+      count,
+    }))
+    .sort((a, b) => b.count - a.count); // Sort by count (most posts first)
 }
 
 /**
@@ -218,91 +120,96 @@ function formatCategoryName(slug: string): string {
 }
 
 /**
- * Get related blog posts
+ * Get blog post by slug
+ * Loads the full post file directly (not from index, since index doesn't have body)
+ * Logs all failures with slug, file path, and error reason
  */
-export function getRelatedBlogPosts(currentSlug: string, limit: number = 3): BlogPost[] {
-  const currentPost = loadBlogPost(currentSlug);
-  if (!currentPost) return [];
-
-  const allPosts = loadAllBlogPosts().filter((post) => post.slug !== currentSlug);
-
-  // Score posts by relevance
-  const scored = allPosts.map((post) => {
-    let score = 0;
-
-    // Same category: +10 points
-    if (post.category === currentPost.category) {
-      score += 10;
+export async function getBlogPostBySlug(slug: string): Promise<BlogPostDoc | null> {
+  // Load file directly (index doesn't contain body, so we need the file)
+  const filePath = path.join(process.cwd(), 'content', 'blog', `${slug}.json`);
+  
+  try {
+    // Check if file exists
+    await fs.access(filePath);
+  } catch (error) {
+    // File doesn't exist or cannot be accessed
+    const { logContentLoadError } = await import('./logger');
+    const fileError = error as NodeJS.ErrnoException;
+    
+    if (fileError.code === 'ENOENT') {
+      logContentLoadError({
+        slug,
+        filePath,
+        reason: 'File not found',
+        error: fileError,
+      });
+    } else {
+      logContentLoadError({
+        slug,
+        filePath,
+        reason: 'Cannot access file',
+        error: fileError,
+      });
     }
-
-    // Shared tags: +5 points per tag
-    const currentTags = currentPost.tags || [];
-    const postTags = post.tags || [];
-    const sharedTags = currentTags.filter((tag) => postTags.includes(tag));
-    score += sharedTags.length * 5;
-
-    // Shared keywords: +3 points per keyword
-    const currentKeywords = [
-      currentPost.primaryKeyword,
-      ...currentPost.secondaryKeywords,
-    ];
-    const postKeywords = [post.primaryKeyword, ...post.secondaryKeywords];
-    const sharedKeywords = currentKeywords.filter((kw) =>
-      postKeywords.some((pkw) => pkw.includes(kw) || kw.includes(pkw))
-    );
-    score += sharedKeywords.length * 3;
-
-    // Listed in related: +20 points
-    if (currentPost.related.postSlugs?.includes(post.slug)) {
-      score += 20;
-    }
-
-    return { post, score };
-  });
-
-  // Sort by score descending
-  scored.sort((a, b) => b.score - a.score);
-
-  return scored.slice(0, limit).map((item) => item.post);
+    
+    return null;
+  }
+  
+  // Load the file
+  const doc = await loadContentDoc(filePath);
+  
+  if (!doc) {
+    // loadContentDoc already logged the error
+    return null;
+  }
+  
+  // Runtime schema validation - protects renderer from bad JSON
+  const { validateAndQuarantine } = await import('./schema-validator');
+  const validatedDoc = validateAndQuarantine(doc, slug, filePath, 'blog');
+  
+  if (!validatedDoc) {
+    // Document is quarantined (invalid schema) - already logged
+    return null;
+  }
+  
+  // Additional slug validation
+  if (validatedDoc.slug !== slug) {
+    const { logContentValidationError } = await import('./logger');
+    logContentValidationError({
+      slug,
+      filePath,
+      reason: 'Slug mismatch',
+      validationErrors: [`Expected slug="${slug}", got "${validatedDoc.slug}"`],
+    });
+    return null;
+  }
+  
+  // Use validated document
+  doc = validatedDoc;
+  
+  // Filter out drafts and noindex (these are valid states, not errors)
+  if (doc.flags.draft || doc.flags.noindex) {
+    // Don't log this as an error - it's expected behavior
+    return null;
+  }
+  
+  return doc as BlogPostDoc;
 }
 
 /**
- * Search blog posts
+ * Get posts by category
  */
-export function searchBlogPosts(query: string): BlogPost[] {
-  const allPosts = loadAllBlogPosts();
-  const lowerQuery = query.toLowerCase();
-
-  return allPosts.filter((post) => {
-    return (
-      post.title.toLowerCase().includes(lowerQuery) ||
-      post.description.toLowerCase().includes(lowerQuery) ||
-      post.body.toLowerCase().includes(lowerQuery) ||
-      post.tags?.some((tag) => tag.toLowerCase().includes(lowerQuery))
-    );
-  });
+export async function getPostsByCategory(categorySlug: string): Promise<BlogPostDisplay[]> {
+  const posts = await loadAllBlogPosts();
+  return posts.filter((post) => post.category === categorySlug);
 }
 
 /**
- * Calculate reading time from word count
+ * Get related blog posts (excludes current post)
  */
-export function calculateReadingTime(wordCount: number): number {
-  // Average reading speed: 200 words per minute
-  return Math.ceil(wordCount / 200);
-}
-
-/**
- * Count words in markdown/HTML content
- */
-export function countWords(content: string): number {
-  // Remove HTML tags
-  const text = content.replace(/<[^>]*>/g, '');
-
-  // Remove markdown syntax
-  const cleaned = text
-    .replace(/[#*_`~\[\]()]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  return cleaned.split(' ').filter((word) => word.length > 0).length;
+export async function getRelatedBlogPosts(currentSlug: string, limit: number = 3): Promise<BlogPostDisplay[]> {
+  const posts = await loadAllBlogPosts();
+  return posts
+    .filter((post) => post.slug !== currentSlug)
+    .slice(0, limit);
 }

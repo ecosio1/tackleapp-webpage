@@ -1,13 +1,14 @@
 /**
  * Blog Category Page - Fully Dynamic
- * Reads from JSON files, no hardcoded data
+ * Reads from content index ONLY (never loads post JSON files)
+ * This allows the page to scale to thousands of posts efficiently
  */
 
 import { Metadata } from 'next';
 import { generateCanonical } from '@/lib/seo/canonical';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { loadBlogPostsByCategory, getAllBlogCategories } from '@/lib/content/blog';
+import { getPostsByCategory, getAllBlogCategories } from '@/lib/content/blog';
 
 // Helper function to format category slug to display name
 function formatCategoryName(slug: string): string {
@@ -39,8 +40,8 @@ interface CategoryPageProps {
  * Generate static params for all blog categories
  * This enables static generation at build time
  */
-export function generateStaticParams() {
-  const categories = getAllBlogCategories();
+export async function generateStaticParams() {
+  const categories = await getAllBlogCategories();
 
   return categories.map((category) => ({
     category: category.slug,
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const { category } = await params;
 
   // Load posts to verify category exists
-  const posts = loadBlogPostsByCategory(category);
+  const posts = await getPostsByCategory(category);
 
   if (posts.length === 0) {
     return {
@@ -74,8 +75,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = await params;
 
-  // Load posts from JSON files (Single Source of Truth)
-  const posts = loadBlogPostsByCategory(category);
+  // Load posts from index ONLY (no file reads - scales to 1000+ posts)
+  const posts = await getPostsByCategory(category);
 
   // Show 404 if category has no posts
   if (posts.length === 0) {
@@ -118,7 +119,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             </h2>
             <p className="text-gray-600 mb-4">{post.description}</p>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">{post.readingTimeMinutes || 5} min read</span>
+              <span className="text-sm text-gray-500">{post.readTime || 5} min read</span>
               <Link
                 href={`/blog/${post.slug}`}
                 className="text-blue-600 hover:text-blue-800 font-medium"

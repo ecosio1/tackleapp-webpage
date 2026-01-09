@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-09T19:32:58.792Z",
+  "species": [],
+  "howTo": [],
+  "locations": [],
+  "blogPosts": [
+    {
+      "slug": "how-to-tie-a-fishing-hook",
+      "title": "How to Tie a Fishing Hook: Complete Guide for Beginners",
+      "description": "Learn how to tie a fishing hook with our complete guide. Step-by-step instructions for the best fishing knots, pro tips, and troubleshooting advice.",
+      "category": "fishing-tips",
+      "publishedAt": "2024-01-15T00:00:00.000Z",
+      "updatedAt": "2024-01-15T00:00:00.000Z",
+      "wordCount": 1210,
+      "author": "Tackle Fishing Team",
+      "flags": {
+        "draft": false,
+        "noindex": false
+      },
+      "keywords": [
+        "how to tie a fishing hook",
+        "fishing hook knot",
+        "how to tie fishing hook to line",
+        "best fishing knot for hooks",
+        "fishing hook tying guide",
+        "strongest fishing knot",
+        "improved clinch knot",
+        "palomar knot",
+        "fishing knot tutorial"
+      ],
+      "tags": [
+        "fishing hook knot",
+        "how to tie fishing hook to line",
+        "best fishing knot for hooks",
+        "fishing hook tying guide",
+        "strongest fishing knot"
+      ]
+    }
+  ]
+}

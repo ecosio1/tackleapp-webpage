@@ -173,6 +173,136 @@ program
  * Status command - Show queue status
  */
 program
+  .command('rebuild-index')
+  .description('Rebuild content index from files (maintenance operation)')
+  .option('--backup', 'Create backup of current index before rebuilding', true)
+  .option('--dry-run', 'Show what would be rebuilt without saving', false)
+  .option('--force-lock', 'Force release any existing lock before rebuilding', false)
+  .action(async (options) => {
+    try {
+      const { rebuildIndexFromFiles, saveRebuiltIndex } = await import('../lib/content/index-rebuild');
+      const { backupContentIndex: backupFn } = await import('../lib/content/index-recovery');
+
+      logger.info('=== Rebuild Content Index ===\n');
+
+      // Force release lock if requested
+      if (options.forceLock) {
+        const { forceReleaseLock } = await import('../lib/content/index-lock');
+        logger.info('Force releasing any existing lock...');
+        await forceReleaseLock();
+        logger.info('✅ Lock released\n');
+      }
+
+      // Create backup if requested
+      if (options.backup && !options.dryRun) {
+        logger.info('Creating backup of current index...');
+        await backupFn();
+        logger.info('✅ Backup created\n');
+      }
+
+      // Rebuild index
+      const { index, stats } = await rebuildIndexFromFiles();
+
+      if (options.dryRun) {
+        console.log('\n🔍 DRY RUN - Index would be rebuilt with:');
+        console.log(`   ✅ Valid posts: ${stats.validPosts}`);
+        console.log(`   ❌ Invalid posts: ${stats.invalidPosts}`);
+        console.log(`   🚫 Quarantined posts: ${stats.quarantinedPosts}`);
+        console.log(`   📝 Draft/noindex posts: ${stats.draftPosts}`);
+        console.log(`   📋 Total would be indexed: ${index.blogPosts.length}\n`);
+        if (stats.errors.length > 0) {
+          console.log('⚠️  Invalid/Quarantined Posts:\n');
+          stats.errors.forEach((error) => {
+            console.log(`   - ${error.slug}: ${error.reason}`);
+          });
+          console.log('');
+        }
+        console.log('Run without --dry-run to save the rebuilt index.\n');
+        return; // Exit early in dry-run mode (don't save)
+      }
+      
+      // Save rebuilt index (only if not dry-run)
+      await saveRebuiltIndex(index);
+      
+      console.log('\n✅ Index rebuild complete!');
+      console.log(`   Valid posts indexed: ${stats.validPosts}`);
+      if (stats.invalidPosts > 0 || stats.quarantinedPosts > 0) {
+        console.log(`   ⚠️  ${stats.invalidPosts + stats.quarantinedPosts} posts were invalid/quarantined (see logs above)`);
+      }
+      console.log('');
+    } catch (error) {
+      console.error('❌ Index rebuild failed:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('metrics')
+  .description('Show publishing metrics (success/fail counts, failure reasons, timing)')
+  .option('--reset', 'Reset metrics to zero', false)
+  .action(async (options) => {
+    try {
+      const { getMetrics, printMetricsSummary, resetMetrics } = await import('./pipeline/metrics');
+
+      if (options.reset) {
+        await resetMetrics();
+        console.log('✅ Metrics reset\n');
+        return;
+      }
+
+      const metrics = await getMetrics();
+      printMetricsSummary(metrics);
+    } catch (error) {
+      console.error('❌ Failed to load metrics:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('validate-index')
+  .description('Validate index ↔ files drift (check for inconsistencies)')
+  .option('--fix', 'Automatically fix issues by rebuilding index', false)
+  .action(async (options) => {
+    try {
+      const { validateAndPrintDrift } = await import('../lib/content/index-drift-validator');
+      const { rebuildAndSaveIndex } = await import('../lib/content/index-rebuild');
+
+      logger.info('=== Index ↔ Files Drift Validation ===\n');
+
+      const report = await validateAndPrintDrift();
+
+      // Auto-fix if requested
+      if (options.fix) {
+        const hasIndexIssues = 
+          report.indexOnly.length > 0 ||
+          report.fileOnly.length > 0 ||
+          report.metadataMismatches.length > 0 ||
+          report.duplicates.length > 0;
+        
+        const hasSchemaIssues = report.invalidSchema.length > 0;
+
+        if (hasIndexIssues) {
+          console.log('\n🔧 Auto-fixing index issues by rebuilding index...\n');
+          await rebuildAndSaveIndex();
+          console.log('\n✅ Index rebuilt! Run validation again to verify.\n');
+        }
+        
+        if (hasSchemaIssues) {
+          console.log('\n⚠️  Schema issues cannot be auto-fixed.');
+          console.log('   Please fix invalid schema documents manually (see errors above).\n');
+        }
+        
+        if (!hasIndexIssues && !hasSchemaIssues) {
+          console.log('\n✅ No issues to fix.\n');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Validation failed:', error);
+      process.exit(1);
+    }
+  });
+
+program
   .command('status')
   .description('Show job queue status')
   .action(async () => {
@@ -191,17 +321,6 @@ program
     console.log(JSON.stringify(stats, null, 2));
   });
 
-/**
- * Rebuild index command
- */
-program
-  .command('rebuild-index')
-  .description('Rebuild content index from published files')
-  .action(async () => {
-    logger.info('Rebuilding content index...');
-    // Implementation: scan content/ directory and rebuild index
-    logger.info('Content index rebuilt');
-  });
 
 /**
  * Test DataForSEO connection
@@ -862,6 +981,259 @@ program
       
     } catch (error) {
       console.error('❌ Blog ideation test failed:', error);
+      process.exit(1);
+    }
+  });
+
+/**
+ * Generate and publish a blog post from an idea
+ * End-to-end pipeline: Idea → Brief → Generate → Publish
+ */
+program
+  .command('generate-blog')
+  .description('Generate and publish a blog post from an idea (end-to-end pipeline)')
+  .option('-i, --idea-index <number>', 'Index of idea from test-ideation (0-based)', '0')
+  .option('-c, --category <category>', 'Blog category', 'fishing-tips')
+  .option('-l, --location <location>', 'Location (e.g., florida)', '')
+  .option('--min-volume <number>', 'Minimum search volume', '10')
+  .option('--max-difficulty <number>', 'Maximum keyword difficulty', '70')
+  .option('--min-score <number>', 'Minimum opportunity score (0-100)', '60')
+  .option('--only-informational', 'Only publish informational intent', false)
+  .option('--categories <categories>', 'Comma-separated list of allowed categories', '')
+  .option('--slug <slug>', 'Use specific slug (skips ideation)', '')
+  .option('--title <title>', 'Use specific title (requires --slug)', '')
+  .option('--keyword <keyword>', 'Use specific keyword (requires --slug)', '')
+  .action(async (options) => {
+    try {
+      const { generateBlogIdeas } = await import('./pipeline/ideation');
+      const { blogIdeaToBrief } = await import('./pipeline/blog-brief-builder');
+      const { generateBlogPost } = await import('./pipeline/generators/blog');
+      const { validateDoc } = await import('./pipeline/validator');
+      const { publishDoc } = await import('./pipeline/publisher');
+      const { topicKeyExists } = await import('./pipeline/dedupe');
+      const { passesCadenceControls, DEFAULT_CADENCE_CONTROLS } = await import('./pipeline/cadence-controls');
+      
+      logger.info('=== End-to-End Blog Generation Pipeline ===\n');
+      
+      // Build cadence controls from options
+      const allowedCategories = options.categories
+        ? options.categories.split(',').map(c => c.trim())
+        : undefined;
+      
+      const cadenceControls = {
+        ...DEFAULT_CADENCE_CONTROLS,
+        minOpportunityScore: parseInt(options.minScore, 10),
+        allowedIntents: options.onlyInformational ? ['informational'] : DEFAULT_CADENCE_CONTROLS.allowedIntents,
+        allowedCategories,
+        minSearchVolume: parseInt(options.minVolume, 10),
+        maxKeywordDifficulty: parseInt(options.maxDifficulty, 10),
+      };
+      
+      let idea: any;
+      
+      // Option 1: Use specific slug/title/keyword (skip ideation)
+      if (options.slug) {
+        logger.info('Using provided slug/title/keyword (skipping ideation)...');
+        idea = {
+          slug: options.slug,
+          title: options.title || options.slug.replace(/-/g, ' '),
+          keyword: options.keyword || options.slug.replace(/-/g, ' '),
+          searchVolume: 0,
+          keywordDifficulty: 0,
+          cpc: 0,
+          searchIntent: 'informational' as const,
+          category: options.category,
+          relatedQuestions: [],
+          serpFeatures: [],
+          opportunityScore: 50,
+        };
+        
+        // Still check cadence controls (except for manual overrides)
+        const cadenceCheck = passesCadenceControls(idea, cadenceControls);
+        if (!cadenceCheck.passed && !options.slug) {
+          logger.warn(`Manual post may not pass cadence controls: ${cadenceCheck.reason}`);
+        }
+      } else {
+        // Option 2: Generate ideas and pick one
+        logger.info('Step 1: Generating blog ideas...');
+        const allIdeas = await generateBlogIdeas({
+          category: options.category,
+          location: options.location || undefined,
+          maxIdeas: 20, // Generate more to filter down
+          minSearchVolume: parseInt(options.minVolume, 10),
+          maxDifficulty: parseInt(options.maxDifficulty, 10),
+        });
+        
+        if (allIdeas.length === 0) {
+          throw new Error('No blog ideas generated. Try adjusting filters.');
+        }
+        
+        // Apply cadence controls
+        logger.info('Applying cadence controls...');
+        const filteredIdeas = allIdeas.filter(idea => {
+          const check = passesCadenceControls(idea, cadenceControls);
+          if (!check.passed) {
+            logger.debug(`Idea rejected: ${idea.title} - ${check.reason}`);
+          }
+          return check.passed;
+        });
+        
+        if (filteredIdeas.length === 0) {
+          throw new Error(
+            `No ideas passed cadence controls. Generated ${allIdeas.length} ideas, but all were filtered out. ` +
+            `Try adjusting --min-score, --only-informational, or --categories.`
+          );
+        }
+        
+        // Sort by opportunity score and pick the best
+        filteredIdeas.sort((a, b) => b.opportunityScore - a.opportunityScore);
+        
+        const ideaIndex = parseInt(options.ideaIndex, 10);
+        if (ideaIndex >= filteredIdeas.length) {
+          throw new Error(
+            `Idea index ${ideaIndex} out of range. Only ${filteredIdeas.length} ideas passed cadence controls.`
+          );
+        }
+        
+        idea = filteredIdeas[ideaIndex];
+        logger.info(`Selected idea: ${idea.title} (index ${ideaIndex}, score: ${idea.opportunityScore})`);
+        logger.info(`  Intent: ${idea.searchIntent}, Category: ${idea.category}, Volume: ${idea.searchVolume}/month`);
+      }
+      
+      // Check if already exists
+      const topicKey = `blog::${idea.slug}`;
+      if (await topicKeyExists(topicKey)) {
+        logger.warn(`Blog post already exists: ${idea.slug}`);
+        console.log(`\n⚠️  Blog post "${idea.slug}" already exists. Use a different idea or delete the existing post.`);
+        process.exit(1);
+      }
+      
+      // Step 2: Convert idea to brief
+      logger.info('\nStep 2: Building content brief...');
+      const brief = await blogIdeaToBrief(idea);
+      logger.info(`Brief created: ${brief.title}`);
+      
+      // Step 3: Generate blog post
+      logger.info('\nStep 3: Generating blog post content...');
+      const doc = await generateBlogPost(brief);
+      logger.info(`Blog post generated: ${doc.title}`);
+      
+      // Step 4: Validate
+      logger.info('\nStep 4: Validating document...');
+      const validation = validateDoc(doc);
+      if (!validation.passed) {
+        throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
+      }
+      logger.info('✅ Validation passed');
+      
+      // Step 4.5: Quality Gate (runs automatically in publisher, but we can check here too)
+      logger.info('\nStep 4.5: Running quality gate...');
+      const { runQualityGate } = await import('./pipeline/quality-gate');
+      const qualityGate = runQualityGate(doc);
+      if (qualityGate.blocked) {
+        throw new Error(`Quality gate BLOCKED: ${qualityGate.errors.join('; ')}`);
+      }
+      if (qualityGate.warnings.length > 0) {
+        logger.warn('Quality gate warnings:', qualityGate.warnings);
+      }
+      logger.info('✅ Quality gate passed');
+      
+      // Step 5: Publish (quality gate also runs inside publisher as safeguard)
+      logger.info('\nStep 5: Publishing to content system...');
+      const { routePath, slug: publishedSlug } = await publishDoc(doc);
+      logger.info(`✅ Published to: ${routePath}`);
+      
+      console.log('\n✅ Blog Post Successfully Generated and Published!\n');
+      console.log(`Title: ${doc.title}`);
+      console.log(`Slug: ${publishedSlug}`);
+      console.log(`Route: ${routePath}`);
+      console.log(`File: content/blog/${publishedSlug}.json`);
+      console.log(`\n📝 View at: http://localhost:3000${routePath}`);
+      console.log(`📋 Blog index: http://localhost:3000/blog`);
+      
+    } catch (error) {
+      console.error('❌ Blog generation failed:', error);
+      process.exit(1);
+    }
+  });
+
+/**
+ * Batch publish blog posts with cadence controls
+ */
+program
+  .command('batch-publish')
+  .description('Publish multiple blog posts with cadence controls (quality gates)')
+  .option('-c, --category <category>', 'Blog category', 'fishing-tips')
+  .option('-l, --location <location>', 'Location (e.g., florida)', '')
+  .option('-n, --max-ideas <number>', 'Maximum ideas to generate', '50')
+  .option('--max-posts <number>', 'Maximum posts to publish per run', '5')
+  .option('--min-score <number>', 'Minimum opportunity score (0-100)', '60')
+  .option('--min-volume <number>', 'Minimum search volume', '50')
+  .option('--max-difficulty <number>', 'Maximum keyword difficulty', '65')
+  .option('--only-informational', 'Only publish informational intent', false)
+  .option('--categories <categories>', 'Comma-separated list of allowed categories', '')
+  .option('--max-per-day <number>', 'Maximum posts per day', '20')
+  .action(async (options) => {
+    try {
+      const { batchPublishBlogs } = await import('./pipeline/batch-publish');
+      
+      const allowedCategories = options.categories
+        ? options.categories.split(',').map(c => c.trim())
+        : undefined;
+      
+      const result = await batchPublishBlogs({
+        category: options.category,
+        location: options.location || undefined,
+        maxIdeas: parseInt(options.maxIdeas, 10),
+        cadenceControls: {
+          maxPostsPerRun: parseInt(options.maxPosts, 10),
+          maxPostsPerDay: parseInt(options.maxPerDay, 10),
+          minOpportunityScore: parseInt(options.minScore, 10),
+          minSearchVolume: parseInt(options.minVolume, 10),
+          maxKeywordDifficulty: parseInt(options.maxDifficulty, 10),
+          allowedIntents: options.onlyInformational ? ['informational'] : ['informational', 'commercial'],
+          allowedCategories,
+        },
+      });
+      
+      console.log('\n=== Batch Publish Results ===\n');
+      console.log(`Total Generated: ${result.totalGenerated}`);
+      console.log(`Passed Filters: ${result.passedFilters}`);
+      console.log(`Published: ${result.published}`);
+      console.log(`Failed: ${result.failed}`);
+      console.log(`Rejected: ${result.rejected.length}\n`);
+      
+      if (result.publishedPosts.length > 0) {
+        console.log('✅ Published Posts:');
+        result.publishedPosts.forEach((post, index) => {
+          console.log(`  ${index + 1}. ${post.title}`);
+          console.log(`     Route: ${post.route}`);
+        });
+        console.log('');
+      }
+      
+      if (result.rejected.length > 0) {
+        console.log('❌ Rejected Ideas:');
+        result.rejected.slice(0, 10).forEach((rejected, index) => {
+          console.log(`  ${index + 1}. ${rejected.title}`);
+          console.log(`     Reason: ${rejected.reason}`);
+        });
+        if (result.rejected.length > 10) {
+          console.log(`  ... and ${result.rejected.length - 10} more`);
+        }
+        console.log('');
+      }
+      
+      if (result.errors.length > 0) {
+        console.log('⚠️  Errors:');
+        result.errors.forEach((error, index) => {
+          console.log(`  ${index + 1}. ${error.title}: ${error.error}`);
+        });
+        console.log('');
+      }
+      
+    } catch (error) {
+      console.error('❌ Batch publish failed:', error);
       process.exit(1);
     }
   });

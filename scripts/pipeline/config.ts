@@ -74,7 +74,7 @@ export const QUALITY_THRESHOLDS = {
  * LLM configuration
  */
 export const LLM_CONFIG = {
-  model: 'gpt-4-turbo-preview',
+  model: 'gpt-4o',
   maxTokens: 4000,
   temperature: 0.7,
   maxRetries: 3,
@@ -88,6 +88,12 @@ export const RATE_LIMIT_CONFIG = {
   defaultRateLimitPerMin: 10,
   maxConcurrentFetches: 5,
 };
+
+/**
+ * Cadence controls (imported from cadence-controls.ts)
+ * These control how many posts are published and quality thresholds
+ */
+export { DEFAULT_CADENCE_CONTROLS } from './cadence-controls';
 
 
 

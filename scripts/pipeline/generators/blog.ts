@@ -2,7 +2,7 @@
  * Blog Post Generator
  */
 
-import { BlogPostDoc, ContentBrief } from '../types';
+import { BlogPostDoc, ContentBrief, CTA } from '../types';
 import { generateWithLLM } from '../llm';
 import { DEFAULT_AUTHOR_NAME, DEFAULT_AUTHOR_URL } from '../config';
 import { logger } from '../logger';
@@ -21,14 +21,21 @@ export async function generateBlogPost(brief: ContentBrief): Promise<BlogPostDoc
   // Generate content using LLM
   const generated = await generateWithLLM({
     prompt,
-    systemPrompt: `You are a fishing content writer. Generate original, SEO-optimized blog posts.
-Never copy text verbatim from sources. Write in a conversational, helpful tone.
-Include all required sections, FAQs, and internal links naturally in the content.`,
+    systemPrompt: `You are an expert fishing content writer. Generate original, SEO-optimized blog posts that pass strict quality validation.
+
+CRITICAL REQUIREMENTS (NON-NEGOTIABLE):
+- Minimum 1000 words of original content
+- EXACTLY 5-8 FAQs with helpful, detailed answers
+- Include "Tackle app" by name with value propositions (log catches, track patterns, discover spots)
+- Use ALL provided internal links naturally in the content
+- Never copy text verbatim from sources - always paraphrase with original insights
+
+Write in a conversational, helpful tone. Provide specific, actionable advice with brands, sizes, and techniques.`,
   });
   
   // Parse generated content (assuming it returns structured data)
   const body = typeof generated === 'string' ? generated : generated.body || '';
-  const faqs = generated.faqs || [];
+  const faqs = generated.faqs || extractFaqsFromMarkdown(body);
   const headings = extractHeadings(body);
   
   // Generate Vibe Test for comparison/lure/technique posts
@@ -69,6 +76,20 @@ Include all required sections, FAQs, and internal links naturally in the content
     logger.warn('Alternative recommendations generation failed:', error);
   }
   
+  // Generate structured CTAs (required for blog posts)
+  const ctas: CTA[] = [
+    {
+      position: 'top',
+      type: 'app_download',
+      location: extractLocationFromBrief(brief),
+    },
+    {
+      position: 'end',
+      type: 'app_download',
+      location: extractLocationFromBrief(brief),
+    },
+  ];
+
   // Build document
   const doc: BlogPostDoc = {
     id: crypto.randomUUID(),
@@ -76,7 +97,7 @@ Include all required sections, FAQs, and internal links naturally in the content
     slug: brief.slug,
     title: brief.title,
     description: generateDescription(brief, body),
-    body,
+    body, // Body should NOT contain CTA text - CTAs are structured
     headings,
     primaryKeyword: brief.primaryKeyword,
     secondaryKeywords: brief.secondaryKeywords,
@@ -97,6 +118,7 @@ Include all required sections, FAQs, and internal links naturally in the content
       draft: false,
       noindex: false,
     },
+    ctas, // Structured CTAs - validated by quality gate
     vibeTest,
     alternativeRecommendations,
   };
@@ -206,34 +228,43 @@ function buildPrompt(brief: ContentBrief): string {
     ...(brief.internalLinksToInclude.locationSlugs || []).map((l) => `- Location: /locations/${l}`),
     ...(brief.internalLinksToInclude.postSlugs || []).map((p) => `- Blog: /blog/${p}`),
   ].join('\n');
-  
+
   const keyFacts = brief.keyFacts
     .slice(0, 10)
     .map((f) => `- ${f.claim}`)
     .join('\n');
-  
+
+  const minWords = Math.max(brief.minWordCount, 1000);
+
   return `Write an SEO-optimized blog post with the following requirements:
 
 TITLE: ${brief.title}
 PRIMARY KEYWORD: ${brief.primaryKeyword}
 SECONDARY KEYWORDS: ${brief.secondaryKeywords.join(', ')}
 
-REQUIREMENTS:
-1. Write original content (minimum ${brief.minWordCount} words)
-2. Use conversational, helpful tone
-3. Include all required sections from outline
-4. Never copy text verbatim from sources
-5. Include 5-8 FAQs at the end
-6. Include a "What to do next" CTA pointing to /download
-7. Include a "See local regulations" outbound link block if relevant
+CRITICAL REQUIREMENTS (MUST INCLUDE):
+1. Write original content (MINIMUM ${minWords} words - this is non-negotiable)
+2. Include EXACTLY 5-8 FAQs at the end (questions anglers actually ask)
+3. **REQUIRED**: Include "Tackle app" CTA with value proposition
+   - Must mention "Tackle app" by name
+   - Must include value props like: "log your catches", "track patterns", "discover hot spots", "catch more fish"
+   - Example: "Ready to catch more fish? Download the Tackle app to log your catches, track patterns, and discover hot spots near you."
+4. Use ALL ${internalLinks.split('\n').length} internal links provided below naturally in the content
+5. Never copy text verbatim from sources - always paraphrase and add original insights
+
+CONTENT REQUIREMENTS:
+- Use conversational, helpful tone
+- Include all required sections from outline below
+- Provide specific, actionable advice (brands, sizes, techniques, locations)
+- If mentioning regulations, include "See local regulations" link to official sources
 
 OUTLINE (must include all sections):
 ${brief.outline.map((o) => `- ${o.title}: ${o.description}`).join('\n')}
 
-KEY FACTS TO INCLUDE (cite these, don't copy):
+KEY FACTS TO INCLUDE (cite these naturally, don't copy verbatim):
 ${keyFacts}
 
-INTERNAL LINKS TO INCLUDE (link naturally in content):
+INTERNAL LINKS TO INCLUDE (USE ALL OF THESE - link naturally in relevant sections):
 ${internalLinks}
 
 SOURCES CONSULTED (cite at end, don't copy):
@@ -244,12 +275,19 @@ ${brief.disclaimers.join('\n')}
 
 OUTPUT FORMAT:
 - Markdown format
-- Use H2 for main sections, H3 for subsections
-- Include internal links naturally in content
-- End with FAQs section (5-8 questions)
-- End with "What to do next" CTA linking to /download
-- End with "See local regulations" link block if relevant
-- End with "Sources consulted" list
+- Use H2 for main sections (##), H3 for subsections (###)
+- Include internal links naturally in content (use ALL provided links)
+- End with FAQs section with 5-8 questions/answers
+- Include Tackle app CTA (mention "Tackle app" with value props)
+- If relevant, include "See local regulations" link to official source
+- End with "Sources" section listing references
+
+VALIDATION CHECKLIST (your content MUST pass):
+✓ ${minWords}+ words
+✓ 5-8 FAQs with helpful answers
+✓ ${internalLinks.split('\n').length} internal links used
+✓ "Tackle app" mentioned with value proposition
+✓ Original content (not copied from sources)
 
 Write the complete blog post now:`;
 }
@@ -260,7 +298,7 @@ Write the complete blog post now:`;
 function extractHeadings(body: string): BlogPostDoc['headings'] {
   const headings: BlogPostDoc['headings'] = [];
   const lines = body.split('\n');
-  
+
   for (const line of lines) {
     if (line.startsWith('### ')) {
       headings.push({
@@ -282,8 +320,70 @@ function extractHeadings(body: string): BlogPostDoc['headings'] {
       });
     }
   }
-  
+
   return headings;
+}
+
+/**
+ * Extract FAQs from markdown body
+ * Looks for Q: or ** patterns followed by A: or answers
+ */
+function extractFaqsFromMarkdown(body: string): BlogPostDoc['faqs'] {
+  const faqs: BlogPostDoc['faqs'] = [];
+  const lines = body.split('\n');
+
+  let currentQuestion: string | null = null;
+  let currentAnswer: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // Match patterns like:
+    // **Q: Question?** or **Question?** or Q: Question?
+    const questionMatch = line.match(/^(?:\*\*)?(?:Q:|Question:)?\s*(.+\?)\*?\*?$/i);
+
+    if (questionMatch) {
+      // Save previous FAQ if exists
+      if (currentQuestion && currentAnswer.length > 0) {
+        faqs.push({
+          question: currentQuestion,
+          answer: currentAnswer.join(' ').trim(),
+        });
+      }
+
+      // Start new question
+      currentQuestion = questionMatch[1].trim().replace(/^\*\*|\*\*$/g, '');
+      currentAnswer = [];
+      continue;
+    }
+
+    // Match answer patterns like: A: Answer or just regular text after question
+    const answerMatch = line.match(/^(?:A:|Answer:)?\s*(.+)$/i);
+
+    if (currentQuestion && answerMatch && line.length > 0 && !line.startsWith('#')) {
+      currentAnswer.push(answerMatch[1].trim());
+    }
+
+    // Empty line or new section ends current answer
+    if ((line === '' || line.startsWith('##')) && currentQuestion && currentAnswer.length > 0) {
+      faqs.push({
+        question: currentQuestion,
+        answer: currentAnswer.join(' ').trim(),
+      });
+      currentQuestion = null;
+      currentAnswer = [];
+    }
+  }
+
+  // Save last FAQ if exists
+  if (currentQuestion && currentAnswer.length > 0) {
+    faqs.push({
+      question: currentQuestion,
+      answer: currentAnswer.join(' ').trim(),
+    });
+  }
+
+  return faqs;
 }
 
 /**

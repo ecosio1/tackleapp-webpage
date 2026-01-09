@@ -38,10 +38,31 @@ export async function loadTopicIndex(): Promise<TopicIndexRecord[]> {
 
 /**
  * Save topic index to file
+ * ATOMIC WRITE: temp file → verify → rename (prevents corruption if process killed mid-write)
  */
 export async function saveTopicIndex(index: TopicIndexRecord[]): Promise<void> {
   await ensureDirectory();
-  await fs.writeFile(TOPIC_INDEX_PATH, JSON.stringify(index, null, 2), 'utf-8');
+  
+  // Atomic write: temp file → verify → rename
+  const tempPath = `${TOPIC_INDEX_PATH}.tmp`;
+  const jsonString = JSON.stringify(index, null, 2);
+  
+  // Validate JSON before writing
+  JSON.parse(jsonString); // Verify it's valid JSON
+  
+  // Write to temp file first
+  await fs.writeFile(tempPath, jsonString, 'utf-8');
+  
+  // Verify temp file was written correctly
+  const written = await fs.readFile(tempPath, 'utf-8');
+  if (written !== jsonString) {
+    await fs.unlink(tempPath).catch(() => {}); // Clean up temp file
+    throw new Error('Topic index write verification failed - written data does not match');
+  }
+  
+  // Atomic rename (prevents corruption if process crashes)
+  await fs.rename(tempPath, TOPIC_INDEX_PATH);
+  
   logger.info(`Saved topic index with ${index.length} records`);
 }
 

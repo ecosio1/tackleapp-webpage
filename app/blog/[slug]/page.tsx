@@ -5,20 +5,19 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { generateCanonical } from '@/lib/seo/canonical';
-import { PrimaryCTA } from '@/components/conversion/PrimaryCTA';
 import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
 import { AuthorSchema } from '@/components/seo/AuthorSchema';
 import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import { SourcesSection } from '@/components/content/SourcesSection';
 import Link from 'next/link';
-import { loadBlogPost, loadBlogIndex, getRelatedBlogPosts, BlogPost } from '@/lib/content/blog';
+import { getBlogPostBySlug, getRelatedBlogPosts } from '@/lib/content/blog';
+import { getAllPostSlugs } from '@/lib/content/index';
+import { getAutoLinksForBlog } from '@/lib/content/auto-links';
+import { AppCTA } from '@/components/blog/AppCTA';
+import { RegulationsBlock } from '@/components/blog/RegulationsBlock';
+import { splitMarkdownAfterFirstSection } from '@/lib/blog-utils';
 import ReactMarkdown from 'react-markdown';
-
-// Load blog post from JSON file (Single Source of Truth)
-function getBlogPost(slug: string): BlogPost | null {
-  return loadBlogPost(slug);
-}
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -28,24 +27,28 @@ interface BlogPostPageProps {
  * Generate static params for all blog posts
  * This enables static generation at build time
  */
-export function generateStaticParams() {
-  const index = loadBlogIndex();
-
+export async function generateStaticParams() {
+  const slugs = await getAllPostSlugs();
+  
   // Return all published blog post slugs
-  return index.posts
-    .filter((post) => post.status === 'published')
-    .map((post) => ({
-      slug: post.slug,
-    }));
+  return slugs.map((slug) => ({
+    slug,
+  }));
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getBlogPostBySlug(slug);
 
   if (!post) {
+    // Error already logged in getBlogPostBySlug
+    // Return minimal metadata for 404 page
     return {
       title: 'Blog Post Not Found',
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -60,24 +63,27 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       title: post.title,
       description: post.description,
       type: 'article',
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
+      publishedTime: post.dates.publishedAt,
+      modifiedTime: post.dates.updatedAt,
       authors: [post.author.name],
-      images: post.heroImage ? [post.heroImage] : undefined,
+      images: post.featuredImage || post.heroImage ? [post.featuredImage || post.heroImage!] : undefined,
     },
   };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getBlogPostBySlug(slug);
 
   if (!post) {
     notFound();
   }
 
   // Get related posts
-  const relatedPosts = getRelatedBlogPosts(slug, 3);
+  const relatedPosts = await getRelatedBlogPosts(slug, 3);
+  
+  // Get automatic internal link suggestions
+  const autoLinks = await getAutoLinksForBlog(slug);
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
@@ -106,42 +112,78 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <header className="mb-8">
           <div className="mb-4">
             <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800">
-              {post.category}
+              {post.categorySlug.replace('-', ' ')}
             </span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
           <div className="flex items-center gap-4 text-sm text-gray-600">
-            <time dateTime={post.publishedAt}>
-              {new Date(post.publishedAt).toLocaleDateString('en-US', {
+            <time dateTime={post.dates.publishedAt}>
+              {new Date(post.dates.publishedAt).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
               })}
             </time>
             <span>•</span>
-            <span>{post.readingTimeMinutes || 5} min read</span>
+            <span>{Math.ceil(post.body.split(/\s+/).length / 200)} min read</span>
             <span>•</span>
             <span>By {post.author.name}</span>
           </div>
           <div className="mt-4">
-            <LastUpdated date={post.updatedAt} />
+            <LastUpdated date={post.dates.updatedAt} />
           </div>
         </header>
 
         {/* Hero Image */}
-        {post.heroImage && (
+        {(post.featuredImage || post.heroImage) && (
           <div className="mb-8">
             <img
-              src={post.heroImage}
+              src={post.featuredImage || post.heroImage!}
               alt={post.title}
               className="w-full rounded-lg"
             />
           </div>
         )}
 
-        {/* Main Content - Render Markdown */}
+        {/* Main Content - Render Markdown with structured CTAs */}
         <div className="prose prose-lg max-w-none mb-8">
-          <ReactMarkdown>{post.body}</ReactMarkdown>
+          {(() => {
+            // Get structured CTAs from document (or fallback to default positions)
+            const ctas = post.ctas || [];
+            const topCTAs = ctas.filter(cta => cta.position === 'top');
+            const endCTAs = ctas.filter(cta => cta.position === 'end');
+            const inlineCTAs = ctas.filter(cta => cta.position === 'inline');
+
+            // Split markdown if we have top CTAs
+            const [firstPart, restPart] = topCTAs.length > 0 
+              ? splitMarkdownAfterFirstSection(post.body)
+              : [post.body, ''];
+
+            return (
+              <>
+                <ReactMarkdown>{firstPart}</ReactMarkdown>
+                
+                {/* Top CTAs (after first section) */}
+                {topCTAs.length > 0 && (
+                  <div className="my-12">
+                    {topCTAs.map((cta, index) => (
+                      <AppCTA
+                        key={`top-${index}`}
+                        position="top"
+                        pageType="blog"
+                        slug={slug}
+                        location={cta.location || post.related?.locationSlugs?.[0]}
+                        cta={cta}
+                      />
+                    ))}
+                  </div>
+                )}
+                
+                {/* Rest of content */}
+                {restPart && <ReactMarkdown>{restPart}</ReactMarkdown>}
+              </>
+            );
+          })()}
         </div>
 
         {/* Sources Section */}
@@ -166,19 +208,75 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </section>
         )}
 
-        {/* CTA */}
-        <div className="mt-12">
-          <PrimaryCTA
-            title="Get Personalized Fishing Advice"
-            copy="Download Tackle for iPhone and get real-time conditions, AI fish ID, and expert advice tailored to your location."
-            buttonText="default"
-            position="end"
-            pageType="blog"
-            slug={slug}
-          />
-        </div>
+        {/* End CTAs (near the end) */}
+        {(() => {
+          const ctas = post.ctas || [];
+          const endCTAs = ctas.filter(cta => cta.position === 'end');
+          
+          // Fallback to default if no structured CTAs
+          if (endCTAs.length === 0 && (!post.ctas || post.ctas.length === 0)) {
+            return (
+              <div className="mt-12">
+                <AppCTA
+                  position="end"
+                  pageType="blog"
+                  slug={slug}
+                  location={post.related?.locationSlugs?.[0]}
+                />
+              </div>
+            );
+          }
+          
+          return endCTAs.length > 0 ? (
+            <div className="mt-12">
+              {endCTAs.map((cta, index) => (
+                <AppCTA
+                  key={`end-${index}`}
+                  position="end"
+                  pageType="blog"
+                  slug={slug}
+                  location={cta.location || post.related?.locationSlugs?.[0]}
+                  cta={cta}
+                />
+              ))}
+            </div>
+          ) : null;
+        })()}
 
-        {/* Related Content */}
+        {/* Regulations Block - Separate from content */}
+        <RegulationsBlock
+          pageType="blog"
+          slug={slug}
+          className="mt-8"
+        />
+
+        {/* Internal Links - Species, Locations, Techniques */}
+        {autoLinks.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-gray-200">
+            <h2 className="text-2xl font-bold mb-6">Related Content</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {autoLinks.map((link) => (
+                <Link
+                  key={link.slug}
+                  href={link.url}
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start gap-2 mb-2">
+                    <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">
+                      {link.type === 'species' ? 'Species' : link.type === 'location' ? 'Location' : link.type === 'how-to' ? 'Technique' : 'Article'}
+                    </span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-1">{link.title}</h3>
+                  {link.reason && (
+                    <p className="text-sm text-gray-600">{link.reason}</p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Related Articles */}
         {relatedPosts.length > 0 && (
           <section className="mt-12 pt-8 border-t border-gray-200">
             <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
@@ -190,7 +288,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all"
                 >
                   <h3 className="font-semibold text-gray-900 mb-2">{relatedPost.title}</h3>
-                  <p className="text-sm text-gray-600">{relatedPost.excerpt || relatedPost.description}</p>
+                  <p className="text-sm text-gray-600">{relatedPost.description}</p>
                 </Link>
               ))}
             </div>

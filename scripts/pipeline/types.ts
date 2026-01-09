@@ -186,12 +186,26 @@ export interface VibeTest {
   comparisonContext?: string;
 }
 
+/**
+ * CTA (Call-to-Action) block
+ * Structured CTA data - avoids brittle text matching
+ */
+export interface CTA {
+  position: 'top' | 'end' | 'inline'; // Where in the content
+  type: 'app_download' | 'app_signup' | 'newsletter' | 'related_content' | 'custom';
+  title?: string; // Optional custom title
+  copy?: string; // Optional custom copy
+  buttonText?: string; // Optional custom button text
+  location?: string; // Optional location context for personalization
+  metadata?: Record<string, any>; // Additional metadata
+}
+
 export interface BaseDoc {
   id: string; // UUID
   slug: string;
   title: string;
   description: string;
-  body: string; // Markdown or HTML
+  body: string; // Markdown or HTML (CTAs should NOT be embedded in body)
   heroImage?: string;
   headings: Heading[];
   primaryKeyword: string;
@@ -216,6 +230,7 @@ export interface BaseDoc {
     draft: boolean;
     noindex: boolean;
   };
+  ctas?: CTA[]; // Structured CTAs - validated by quality gate
   vibeTest?: VibeTest; // Unique authority signal - proprietary scoring & insights
   alternativeRecommendations?: Array<{
     title: string;
