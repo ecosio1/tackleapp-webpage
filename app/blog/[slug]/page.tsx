@@ -12,7 +12,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import { SourcesSection } from '@/components/content/SourcesSection';
 import Link from 'next/link';
-import { loadBlogPost, getRelatedBlogPosts, BlogPost } from '@/lib/content/blog';
+import { loadBlogPost, loadBlogIndex, getRelatedBlogPosts, BlogPost } from '@/lib/content/blog';
 import ReactMarkdown from 'react-markdown';
 
 // Load blog post from JSON file (Single Source of Truth)
@@ -22,6 +22,21 @@ function getBlogPost(slug: string): BlogPost | null {
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
+}
+
+/**
+ * Generate static params for all blog posts
+ * This enables static generation at build time
+ */
+export function generateStaticParams() {
+  const index = loadBlogIndex();
+
+  // Return all published blog post slugs
+  return index.posts
+    .filter((post) => post.status === 'published')
+    .map((post) => ({
+      slug: post.slug,
+    }));
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
