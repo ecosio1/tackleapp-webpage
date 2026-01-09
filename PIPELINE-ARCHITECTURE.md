@@ -11,6 +11,24 @@ The content pipeline consists of **4 independent systems** with clear boundaries
 
 Each system has **one responsibility** and **cannot** do another system's job.
 
+### Critical Handoff Point: Content Brief
+
+Between ideation and generation, there is a **Content Brief** layer that transforms raw blog opportunities into structured content specifications. This brief defines:
+
+- Target keyword and secondary keywords
+- Location or species focus
+- User intent (informational, navigational, transactional)
+- Content angle (beginner, seasonal, gear-focused, etc.)
+- Outline, facts, sources, and internal links
+- Required sections and guardrails
+
+**Why this matters:**
+- Generator stays focused (no guessing at angle or scope)
+- Content stays consistent (same brief structure for all posts)
+- Easy to debug or re-run (brief is saved with each generation)
+
+See **CONTENT-BRIEF.md** for full documentation.
+
 ---
 
 ## System Architecture
@@ -52,25 +70,56 @@ Each system has **one responsibility** and **cannot** do another system's job.
                  (Handoff: Blog Opportunities)
                              ↓
 ┌────────────────────────────────────────────────────────────────┐
+│                    CONTENT BRIEF BUILDER                       │
+│                  (Handoff Layer - Critical)                    │
+│                                                                │
+│  Responsibility: Transform Opportunities → Structured Specs    │
+│                                                                │
+│  Input:                                                        │
+│    • BlogIdea from ideation                                    │
+│    • keyword, volume, difficulty                               │
+│                                                                │
+│  Process:                                                      │
+│    1. Extract location & species focus                         │
+│    2. Determine user intent & content angle                    │
+│    3. Build structured outline                                 │
+│    4. Select key facts & sources                               │
+│    5. Choose internal links                                    │
+│    6. Apply guardrails & requirements                          │
+│                                                                │
+│  Output:                                                       │
+│    • ContentBrief (complete specification)                     │
+│    • Includes: focus, angle, intent, outline, facts           │
+│                                                                │
+│  File: scripts/pipeline/briefBuilder.ts                        │
+│  Docs: CONTENT-BRIEF.md                                        │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+                             ↓
+                  (Handoff: Content Brief)
+                             ↓
+┌────────────────────────────────────────────────────────────────┐
 │                    GENERATION SYSTEM                           │
 │                     (Downstream)                               │
 │                                                                │
 │  Responsibility: Generate Blog Content                         │
 │                                                                │
 │  Input:                                                        │
-│    • BlogIdea from ideation system                             │
-│    • keyword, volume, difficulty, related keywords             │
+│    • ContentBrief from brief builder                           │
+│    • Complete specification with all context                   │
 │                                                                │
 │  Process:                                                      │
-│    1. Build content brief                                      │
-│       - Topic, keywords, outline                               │
-│       - Facts from sources                                     │
-│       - Internal linking suggestions                           │
-│    2. Research facts (Perplexity, sources)                     │
-│    3. Generate blog post content (OpenAI)                      │
-│       - Title, description, body                               │
-│       - FAQs, sources, headings                                │
-│    4. Format as JSON (BlogPost)                                │
+│    1. Receive ContentBrief with:                               │
+│       - Target keywords & focus                                │
+│       - User intent & content angle                            │
+│       - Structured outline                                     │
+│       - Key facts & sources                                    │
+│       - Internal links & guardrails                            │
+│    2. Generate blog post content (OpenAI)                      │
+│       - Follow outline structure                               │
+│       - Include key facts naturally                            │
+│       - Add FAQs, sources, headings                            │
+│    3. Format as JSON (BlogPost)                                │
 │                                                                │
 │  Output:                                                       │
 │    • BlogPost (JSON) - Draft content                           │
@@ -291,7 +340,7 @@ await publishDoc(validatedPost);
 
 ## Handoff Points
 
-### Handoff 1: Ideation → Selection
+### Handoff 1: Ideation → Brief Builder
 ```typescript
 // Ideation outputs opportunities
 interface BlogIdea {
@@ -303,11 +352,53 @@ interface BlogIdea {
   relatedQuestions: string[];
 }
 
-// Selection picks top opportunities
-const selected = opportunities.slice(0, 10);
+// Brief builder transforms opportunity into structured brief
+const opportunity = ideationOutput.opportunities[0];
+const brief = await buildBrief({
+  pageType: 'blog',
+  topicKey: `blog::${slugify(opportunity.keyword)}`,
+  slug: slugify(opportunity.keyword),
+  title: generateTitle(opportunity.keyword),
+  primaryKeyword: opportunity.keyword,
+  secondaryKeywords: opportunity.relatedKeywords,
+  facts: [], // Research facts
+  sources: [], // Sources
+});
 ```
 
-### Handoff 2: Selection → Generation
+### Handoff 2: Brief Builder → Generation
+```typescript
+// Brief builder outputs complete content specification
+interface ContentBrief {
+  pageType: 'blog';
+  slug: string;
+  title: string;
+  primaryKeyword: string;
+  secondaryKeywords: string[];
+
+  // Focus & Strategy (NEW in Step 6)
+  locationFocus?: string;      // e.g., "Florida"
+  speciesFocus?: string;        // e.g., "Snook"
+  userIntent: 'informational';  // Search intent
+  angle: 'gear-focused';        // Content angle
+
+  // Structure
+  outline: OutlineItem[];
+  keyFacts: Fact[];
+  sources: Source[];
+  internalLinksToInclude: {...};
+
+  // Guardrails
+  disclaimers: string[];
+  minWordCount: number;
+  requiredSections: string[];
+}
+
+// Generator receives complete specification
+const draft = await generateBlogPost(brief);
+```
+
+### Handoff 3: Selection → Generation (Legacy - Deprecated)
 ```typescript
 // Queue job with metadata
 await addJob({
@@ -327,7 +418,7 @@ const job = await getNextJob();
 const draft = await generateBlogPost(job);
 ```
 
-### Handoff 3: Generation → Validation
+### Handoff 4: Generation → Validation
 ```typescript
 // Generator outputs draft
 const draft: BlogPost = await generateBlogPost(brief);
@@ -344,7 +435,7 @@ if (validation.passed) {
 }
 ```
 
-### Handoff 4: Validation → Publishing
+### Handoff 5: Validation → Publishing
 ```typescript
 // Validated content ready
 const validatedPost: BlogPost = draft;
@@ -384,12 +475,15 @@ content/
 
 | System | Can Do | Cannot Do |
 |--------|--------|-----------|
-| **Ideation** | Discover queries, Validate metrics, Rank opportunities | Generate content, Decide formatting, Publish |
-| **Generation** | Build briefs, Research facts, Generate content, Format JSON | Discover keywords, Validate quality, Publish |
-| **Validation** | Check rules, Block violations, Score quality | Generate content, Discover keywords, Publish |
-| **Publishing** | Write files, Update index, Trigger revalidation | Generate content, Validate quality, Discover keywords |
+| **Ideation** | Discover queries, Validate metrics, Rank opportunities | Generate content, Build briefs, Decide formatting, Publish |
+| **Brief Builder** | Extract focus/angle, Build outline, Select facts/links, Apply guardrails | Discover keywords, Generate content, Validate, Publish |
+| **Generation** | Receive brief, Generate content, Format JSON | Discover keywords, Build briefs, Validate quality, Publish |
+| **Validation** | Check rules, Block violations, Score quality | Discover keywords, Build briefs, Generate content, Publish |
+| **Publishing** | Write files, Update index, Trigger revalidation | Discover keywords, Build briefs, Generate content, Validate quality |
 
 **NEVER mix responsibilities between systems.**
+
+**NEW in Step 6:** Brief Builder sits between Ideation and Generation as the critical handoff layer. It transforms raw blog opportunities (BlogIdea) into structured content specifications (ContentBrief).
 
 ---
 
@@ -531,15 +625,19 @@ npm run pipeline publish --topicKey "blog::slug" --force
 | Phase | System | Input | Output | File |
 |-------|--------|-------|--------|------|
 | 1. Discovery | Ideation | Niche + filters | Ranked opportunities | `ideation.ts` |
-| 2. Selection | Manual/Auto | Opportunities | Queued jobs | `scheduler.ts` |
-| 3. Creation | Generation | Blog opportunity | Draft content | `blog.ts` |
-| 4. Quality Check | Validation | Draft content | Pass/Fail | `validator.ts` |
-| 5. Publishing | Publishing | Valid content | Live post | `publisher.ts` |
+| 2. Brief Building | Brief Builder | Blog opportunities | Content briefs | `briefBuilder.ts` |
+| 3. Selection | Manual/Auto | Content briefs | Queued jobs | `scheduler.ts` |
+| 4. Creation | Generation | Content brief | Draft content | `blog.ts` |
+| 5. Quality Check | Validation | Draft content | Pass/Fail | `validator.ts` |
+| 6. Publishing | Publishing | Valid content | Live post | `publisher.ts` |
 
 **Boundaries:** LOCKED - Do not mix system responsibilities
 
+**NEW in Step 6:** Brief Builder (Phase 2) transforms opportunities into structured content specifications with focus, angle, intent, and guardrails.
+
 **Documentation:**
 - `IDEATION-SYSTEM.md` - Ideation boundaries
+- `CONTENT-BRIEF.md` - Content brief layer (NEW)
 - `CONTENT-VALIDATION-RULES.md` - Validation rules
 - `content/README.md` - Content system
 - `PIPELINE-ARCHITECTURE.md` - This file

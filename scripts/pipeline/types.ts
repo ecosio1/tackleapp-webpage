@@ -62,23 +62,42 @@ export interface Entity {
 
 /**
  * Content brief for LLM generation
+ *
+ * This is the handoff point between ideation and generation.
+ * A brief defines exactly what content should be created and how.
  */
 export interface ContentBrief {
   pageType: PageType;
   slug: string;
   topicKey: TopicKey;
   title: string;
+
+  // SEO & Keywords (from ideation system)
   primaryKeyword: string;
   secondaryKeywords: string[];
+
+  // Content Focus (defines scope)
+  locationFocus?: string; // e.g., "Florida", "Texas Gulf Coast"
+  speciesFocus?: string; // e.g., "Snook", "Redfish"
+
+  // Content Strategy (defines approach)
+  userIntent: 'informational' | 'navigational' | 'transactional'; // Search intent
+  angle: 'beginner' | 'advanced' | 'seasonal' | 'gear-focused' | 'location-focused' | 'technique-focused'; // Content angle
+
+  // Structure & Facts
   outline: OutlineItem[];
   keyFacts: Fact[];
   sources: Source[];
+
+  // Internal Linking
   internalLinksToInclude: {
     speciesSlugs?: string[];
     howToSlugs?: string[];
     locationSlugs?: string[];
     postSlugs?: string[];
   };
+
+  // Requirements & Guardrails
   disclaimers: string[];
   minWordCount: number;
   requiredSections: string[];
