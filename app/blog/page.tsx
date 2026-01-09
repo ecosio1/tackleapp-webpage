@@ -7,6 +7,7 @@ import { generateCanonical } from '@/lib/seo/canonical';
 import Link from 'next/link';
 import { PrimaryCTA } from '@/components/conversion/PrimaryCTA';
 import { ModernBlogCard } from '@/components/blog/ModernBlogCard';
+import { loadAllBlogPosts, getAllBlogCategories } from '@/lib/content/blog';
 
 export const metadata: Metadata = {
   title: 'Fishing Blog | Tips, Guides & Expert Advice',
@@ -16,38 +17,10 @@ export const metadata: Metadata = {
   },
 };
 
-const blogPosts = [
-  {
-    slug: 'best-lures-for-snook-in-florida',
-    title: 'Best Lures for Snook in Florida',
-    description: 'Discover the most effective lures and techniques for catching snook in Florida waters.',
-    category: 'fishing-tips',
-    date: '2024-01-15',
-  },
-  {
-    slug: 'redfish-flats-fishing-guide',
-    title: 'Redfish Flats Fishing: Complete Guide',
-    description: 'Master the art of sight-fishing for redfish on the flats with this comprehensive guide.',
-    category: 'fishing-tips',
-    date: '2024-01-10',
-  },
-  {
-    slug: 'topwater-fishing-strategies',
-    title: 'Topwater Fishing Strategies That Work',
-    description: 'Learn proven topwater techniques for catching more fish, from early morning to late evening.',
-    category: 'techniques',
-    date: '2024-01-05',
-  },
-];
-
-const categories = [
-  { slug: 'fishing-tips', name: 'Fishing Tips' },
-  { slug: 'techniques', name: 'Techniques' },
-  { slug: 'gear-reviews', name: 'Gear Reviews' },
-  { slug: 'conditions', name: 'Fishing Conditions' },
-];
-
 export default function BlogIndexPage() {
+  // Load blog posts from JSON files (Single Source of Truth)
+  const blogPosts = loadAllBlogPosts();
+  const categories = getAllBlogCategories();
   return (
     <div className="home-main">
       <header className="page-header" style={{ textAlign: 'center' }}>
@@ -71,7 +44,7 @@ export default function BlogIndexPage() {
                 display: 'inline-block'
               }}
             >
-              {cat.name}
+              {cat.name} ({cat.count})
             </Link>
           ))}
         </div>
@@ -79,25 +52,33 @@ export default function BlogIndexPage() {
 
       <section className="mb-12">
         <h2 className="text-3xl font-bold mb-6">Latest Posts</h2>
-        
+
         {/* Featured Post */}
         {blogPosts.length > 0 && (
           <div className="mb-8">
             <ModernBlogCard
-              {...blogPosts[0]}
+              slug={blogPosts[0].slug}
+              title={blogPosts[0].title}
+              description={blogPosts[0].description}
+              category={blogPosts[0].category}
+              date={blogPosts[0].publishedAt}
               featured={true}
-              image="/images/blog/featured.jpg"
+              image={blogPosts[0].heroImage || '/images/blog/featured.jpg'}
             />
           </div>
         )}
-        
+
         {/* Regular Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogPosts.slice(1).map((post) => (
             <ModernBlogCard
               key={post.slug}
-              {...post}
-              image="/images/blog/default.jpg"
+              slug={post.slug}
+              title={post.title}
+              description={post.description}
+              category={post.category}
+              date={post.publishedAt}
+              image={post.heroImage || '/images/blog/default.jpg'}
             />
           ))}
         </div>

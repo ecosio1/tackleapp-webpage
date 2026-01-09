@@ -8,17 +8,16 @@ import { generateCanonical } from '@/lib/seo/canonical';
 import { PrimaryCTA } from '@/components/conversion/PrimaryCTA';
 import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
 import { AuthorSchema } from '@/components/seo/AuthorSchema';
+import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
-import { ImageBox, ImageGrid, QuoteBox } from '@/components/blog/ImageBox';
-import { StatGrid } from '@/components/blog/StatBox';
-import { HighlightBox, ComparisonTable } from '@/components/blog/HighlightBox';
+import { SourcesSection } from '@/components/content/SourcesSection';
 import Link from 'next/link';
+import { loadBlogPost, getRelatedBlogPosts, BlogPost } from '@/lib/content/blog';
+import ReactMarkdown from 'react-markdown';
 
-// This would come from your content pipeline
-async function getBlogPost(slug: string) {
-  // In production, this would fetch from your content system
-  // For now, return example data
-  return null;
+// Load blog post from JSON file (Single Source of Truth)
+function getBlogPost(slug: string): BlogPost | null {
+  return loadBlogPost(slug);
 }
 
 interface BlogPostPageProps {
@@ -27,8 +26,8 @@ interface BlogPostPageProps {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlogPost(slug);
-  
+  const post = getBlogPost(slug);
+
   if (!post) {
     return {
       title: 'Blog Post Not Found',
@@ -38,19 +37,32 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   return {
     title: `${post.title} | Tackle Fishing Blog`,
     description: post.description,
+    keywords: [post.primaryKeyword, ...post.secondaryKeywords].join(', '),
     alternates: {
       canonical: generateCanonical(`/blog/${slug}`),
+    },
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      type: 'article',
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
+      authors: [post.author.name],
+      images: post.heroImage ? [post.heroImage] : undefined,
     },
   };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getBlogPost(slug);
+  const post = getBlogPost(slug);
 
   if (!post) {
     notFound();
   }
+
+  // Get related posts
+  const relatedPosts = getRelatedBlogPosts(slug, 3);
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
@@ -62,9 +74,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <>
       <BreadcrumbSchema items={breadcrumbs} />
       <AuthorSchema
-        name="Tackle Fishing Team"
-        url="/authors/tackle-fishing-team"
+        name={post.author.name}
+        url={post.author.url || '/authors/tackle-fishing-team'}
       />
+      {post.faqs.length > 0 && <FaqSchema items={post.faqs} />}
 
       <article className="max-w-4xl mx-auto px-4 py-8">
         <nav className="mb-6 text-sm text-gray-600">
@@ -83,84 +96,60 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
           <div className="flex items-center gap-4 text-sm text-gray-600">
-            <time dateTime={post.date}>
-              {new Date(post.date).toLocaleDateString('en-US', {
+            <time dateTime={post.publishedAt}>
+              {new Date(post.publishedAt).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
               })}
             </time>
             <span>•</span>
-            <span>{post.readTime || 5} min read</span>
+            <span>{post.readingTimeMinutes || 5} min read</span>
             <span>•</span>
-            <span>By {post.author || 'Tackle Fishing Team'}</span>
+            <span>By {post.author.name}</span>
           </div>
           <div className="mt-4">
-            <LastUpdated date={post.updatedAt || post.date} />
+            <LastUpdated date={post.updatedAt} />
           </div>
         </header>
 
         {/* Hero Image */}
         {post.heroImage && (
-          <ImageBox
-            src={post.heroImage}
-            alt={post.title}
-            position="full"
-            caption={post.heroCaption}
-          />
-        )}
-
-        {/* Intro */}
-        <div className="prose prose-lg max-w-none mb-8">
-          <p className="text-xl text-gray-700 leading-relaxed">{post.description}</p>
-        </div>
-
-        {/* Stats Grid Example */}
-        {post.stats && (
-          <StatGrid stats={post.stats} columns={3} />
-        )}
-
-        {/* Main Content */}
-        <div className="prose prose-lg max-w-none">
-          {/* Example: Image with text */}
-          <ImageBox
-            src="/images/example-fishing.jpg"
-            alt="Fishing example"
-            position="right"
-            caption="Example fishing technique"
-          >
-            <p className="text-sm">This technique works best in shallow water during incoming tides.</p>
-          </ImageBox>
-
-          {/* Example: Highlight Box */}
-          <HighlightBox type="tip" title="Pro Tip">
-            Early morning and late evening are prime times for topwater fishing. 
-            The low light conditions make fish less wary and more likely to strike.
-          </HighlightBox>
-
-          {/* Example: Quote Box */}
-          <QuoteBox
-            quote="The best time to fish is when you can. But if you want to maximize your success, 
-            pay attention to the tides and weather patterns."
-            author="Captain John Smith, 30+ Years Experience"
-            image="/images/captain.jpg"
-          />
-
-          {/* Example: Comparison Table */}
-          {post.comparison && (
-            <ComparisonTable
-              items={post.comparison.items}
-              columns={post.comparison.columns}
+          <div className="mb-8">
+            <img
+              src={post.heroImage}
+              alt={post.title}
+              className="w-full rounded-lg"
             />
-          )}
+          </div>
+        )}
 
-          {/* Example: Image Grid */}
-          {post.imageGrid && (
-            <ImageGrid images={post.imageGrid} columns={3} />
-          )}
-
-          {/* More content sections would go here */}
+        {/* Main Content - Render Markdown */}
+        <div className="prose prose-lg max-w-none mb-8">
+          <ReactMarkdown>{post.body}</ReactMarkdown>
         </div>
+
+        {/* Sources Section */}
+        {post.sources.length > 0 && (
+          <div className="mb-8">
+            <SourcesSection sources={post.sources} />
+          </div>
+        )}
+
+        {/* FAQs Section */}
+        {post.faqs.length > 0 && (
+          <section className="mb-8 p-6 bg-gray-50 rounded-lg">
+            <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              {post.faqs.map((faq, index) => (
+                <div key={index}>
+                  <h3 className="text-lg font-semibold mb-2">{faq.question}</h3>
+                  <p className="text-gray-700">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* CTA */}
         <div className="mt-12">
@@ -175,21 +164,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         {/* Related Content */}
-        {post.related && post.related.length > 0 && (
+        {relatedPosts.length > 0 && (
           <section className="mt-12 pt-8 border-t border-gray-200">
-            <h2 className="text-2xl font-bold mb-6">Related Content</h2>
-            <ul className="space-y-2">
-              {post.related.map((item: any, index: number) => (
-                <li key={index}>
-                  <Link 
-                    href={item.slug} 
-                    className="text-blue-600 hover:text-blue-800 hover:underline"
-                  >
-                    {item.title}
-                  </Link>
-                </li>
+            <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {relatedPosts.map((relatedPost) => (
+                <Link
+                  key={relatedPost.slug}
+                  href={`/blog/${relatedPost.slug}`}
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all"
+                >
+                  <h3 className="font-semibold text-gray-900 mb-2">{relatedPost.title}</h3>
+                  <p className="text-sm text-gray-600">{relatedPost.excerpt || relatedPost.description}</p>
+                </Link>
               ))}
-            </ul>
+            </div>
           </section>
         )}
       </article>
