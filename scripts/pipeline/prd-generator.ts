@@ -496,7 +496,7 @@ export function loadSummaries(): { siteSummary: string; appSummary: string } {
   let appSummary = 'Tackle provides AI-powered fishing assistance including species identification, real-time conditions, and personalized advice.';
 
   try {
-    const appDocPath = join(process.cwd(), 'TACKLE-APP-DOCUMENTATION.md');
+    const appDocPath = join(process.cwd(), 'docs', 'TACKLE-APP-DOCUMENTATION.md');
     const appDoc = readFileSync(appDocPath, 'utf-8');
     
     // Extract app summary
@@ -515,7 +515,7 @@ export function loadSummaries(): { siteSummary: string; appSummary: string } {
   }
 
   try {
-    const projectPath = join(process.cwd(), 'PROJECT-OVERVIEW.md');
+    const projectPath = join(process.cwd(), 'docs', 'PROJECT-OVERVIEW.md');
     const projectDoc = readFileSync(projectPath, 'utf-8');
     
     // Extract site summary

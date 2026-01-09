@@ -1,11 +1,12 @@
 /**
- * Home Page
+ * Home Page - Landing Page
  */
 
 import { Metadata } from 'next';
 import { generateCanonical } from '@/lib/seo/canonical';
 import Link from 'next/link';
-import { PrimaryCTA } from '@/components/conversion/PrimaryCTA';
+import Image from 'next/image';
+import styles from './landing.module.css';
 
 export const metadata: Metadata = {
   title: 'Tackle - AI Fishing Assistant | Never Fish Blind Again',
@@ -17,86 +18,103 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="home-page">
-      <header className="site-header">
-        <nav className="main-nav">
-          <Link href="/" className="logo">Tackle</Link>
-          <div className="nav-links">
-            <Link href="/how-to">How-To Guides</Link>
-            <Link href="/species">Species</Link>
-            <Link href="/locations">Locations</Link>
-            <Link href="/blog">Blog</Link>
-            <Link href="/download" className="cta-link">Download</Link>
+    <div className={styles.body}>
+      <nav className={styles.nav}>
+        <div className={styles.navContainer}>
+          <div className={styles.logo}>
+            <Image src="/logo.png" alt="Tackle Logo" className={styles.logoImg} width={40} height={40} />
+            <span className={styles.logoText}>tackle.</span>
           </div>
-        </nav>
-      </header>
+          <div className={styles.navRight}>
+            <Link href="https://apps.apple.com/app/tackle" className={styles.btn3d} target="_blank">
+              Download on App Store
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-      <main className="home-main">
-        <section className="hero">
-          <h1>Tackle — AI Fishing Assistant</h1>
-          <p className="hero-subtitle">
-            Never fish blind again. Get real-time conditions, AI fish ID, and expert advice.
-          </p>
-          <PrimaryCTA
-            title="Get Started"
-            copy="Download Tackle for iPhone and start catching more fish today."
-            buttonText="default"
-            position="above_fold"
-            pageType="blog"
-            slug="home"
-            className="my-8"
-          />
-        </section>
-
-        <section className="features">
-          <h2>Why Anglers Love Tackle</h2>
-          <div className="features-grid">
-            <div className="feature-item">
-              <h3>99% Accurate Fish ID</h3>
-              <p>Snap a photo, know your catch instantly</p>
-            </div>
-            <div className="feature-item">
-              <h3>Daily Fishing Score</h3>
-              <p>Get 0-100% conditions based on weather, tides & moon</p>
-            </div>
-            <div className="feature-item">
-              <h3>AI Captain Chat</h3>
-              <p>Ask "What bait should I use?" Get expert advice 24/7</p>
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <div className={styles.interactiveDemo}>
+            <div className={styles.phone3d}>
+              <div className={styles.phoneContainer}>
+                <div className={styles.phoneFace}>
+                  <div className={styles.phoneScreen}>
+                    <div className={styles.videoCarousel}>
+                      <div className={styles.carouselContainer}>
+                        <video autoPlay muted loop playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }}>
+                          <source src="/weather-video.mp4" type="video/mp4" />
+                        </video>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
 
-        <section className="content-preview">
-          <h2>Explore Our Guides</h2>
-          <div className="preview-grid">
-            <div className="preview-card">
-              <h3><Link href="/how-to/best-fishing-times">Best Fishing Times</Link></h3>
-              <p>Learn when to fish for maximum success</p>
+          <div className={styles.heroContentArea}>
+            <h1>
+              Turn Your Phone Into The Ultimate <span className={styles.glitch}>Fishing</span> Tool
+            </h1>
+            <p>AI-powered fish identification, real-time conditions, and expert advice. Never fish blind again.</p>
+
+            <div className={styles.heroFeaturesGrid}>
+              <div className={styles.heroFeature}>
+                <h3>
+                  <svg className={styles.heroIcon} viewBox="0 0 24 24">
+                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+                    <path d="M22 10a3 3 0 0 0-3-3v.5a2.5 2.5 0 0 1-2.4 2.48" />
+                    <path d="m7 13 4.93 2.93a2 2 0 0 0 2.07 0L19 13" />
+                  </svg>
+                  99% Accurate Fish ID
+                </h3>
+                <p>Snap a photo, know your catch instantly with advanced AI</p>
+              </div>
+              <div className={styles.heroFeature}>
+                <h3>
+                  <svg className={styles.heroIcon} viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12,6 12,12 16,14" />
+                  </svg>
+                  Daily Fishing Score
+                </h3>
+                <p>Get 0-100% fishing conditions based on weather, tides & moon phases</p>
+              </div>
+              <div className={styles.heroFeature}>
+                <h3>
+                  <svg className={styles.heroIcon} viewBox="0 0 24 24">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                  7-Day Forecasts
+                </h3>
+                <p>Plan your fishing trips with confidence using detailed predictions</p>
+              </div>
+              <div className={styles.heroFeature}>
+                <h3>
+                  <svg className={styles.heroIcon} viewBox="0 0 24 24">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    <path d="M9 10h6" />
+                    <path d="M9 14h3" />
+                  </svg>
+                  AI Captain Chat
+                </h3>
+                <p>Ask &quot;What bait should I use?&quot; - get expert advice 24/7</p>
+              </div>
             </div>
-            <div className="preview-card">
-              <h3><Link href="/species/snook">Snook Fishing Guide</Link></h3>
-              <p>Complete guide to catching snook</p>
-            </div>
-            <div className="preview-card">
-              <h3><Link href="/locations/fl/naples">Fishing in Naples</Link></h3>
-              <p>Discover the best spots in Naples, Florida</p>
+
+            <div className={styles.ctaButtons}>
+              <Link href="https://apps.apple.com/app/tackle" className={styles.btn3d} target="_blank">
+                Download on App Store
+              </Link>
+              <Link href="#" className={`${styles.btn3d} ${styles.secondary}`}>
+                Coming to Android
+              </Link>
             </div>
           </div>
-        </section>
-      </main>
-
-      <footer className="site-footer">
-        <nav className="footer-nav">
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
-        </nav>
-        <p>&copy; 2024 Tackle. All rights reserved.</p>
-      </footer>
+        </div>
+      </section>
     </div>
   );
 }
-
-
-

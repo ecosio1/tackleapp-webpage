@@ -9,11 +9,11 @@ interface Faq {
 }
 
 interface FaqSchemaProps {
-  faqs: Faq[];
+  faqs?: Faq[];
 }
 
 export function FaqSchema({ faqs }: FaqSchemaProps) {
-  if (faqs.length === 0) return null;
+  if (!faqs || faqs.length === 0) return null;
 
   const schema = {
     '@context': 'https://schema.org',

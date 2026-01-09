@@ -194,127 +194,223 @@ export async function loadContentDoc(filePath: string): Promise<GeneratedDoc | n
 
 /**
  * Get all species slugs
+ * Returns empty array if index fails or no species exist (prevents crashes)
  */
 export async function getAllSpeciesSlugs(): Promise<string[]> {
-  const index = await loadContentIndex();
-  return index.species.map((s) => s.slug);
+  try {
+    const index = await loadContentIndex();
+    if (!Array.isArray(index.species)) {
+      return [];
+    }
+    return index.species
+      .filter((s) => s && s.slug)
+      .map((s) => s.slug);
+  } catch (error) {
+    console.error('[getAllSpeciesSlugs] Failed to load slugs:', error);
+    return []; // Return empty array instead of crashing
+  }
 }
 
 /**
  * Get all how-to slugs
+ * Returns empty array if index fails or no how-to guides exist (prevents crashes)
  */
 export async function getAllHowToSlugs(): Promise<string[]> {
-  const index = await loadContentIndex();
-  return index.howTo.map((h) => h.slug);
+  try {
+    const index = await loadContentIndex();
+    if (!Array.isArray(index.howTo)) {
+      return [];
+    }
+    return index.howTo
+      .filter((h) => h && h.slug)
+      .map((h) => h.slug);
+  } catch (error) {
+    console.error('[getAllHowToSlugs] Failed to load slugs:', error);
+    return []; // Return empty array instead of crashing
+  }
 }
 
 /**
  * Get all location slugs (format: state/city)
+ * Returns empty array if index fails or no locations exist (prevents crashes)
  */
 export async function getAllLocationSlugs(): Promise<string[]> {
-  const index = await loadContentIndex();
-  return index.locations.map((l) => `${l.state}/${l.city}`);
+  try {
+    const index = await loadContentIndex();
+    if (!Array.isArray(index.locations)) {
+      return [];
+    }
+    return index.locations
+      .filter((l) => l && l.state && l.city)
+      .map((l) => `${l.state}/${l.city}`);
+  } catch (error) {
+    console.error('[getAllLocationSlugs] Failed to load slugs:', error);
+    return []; // Return empty array instead of crashing
+  }
 }
 
 /**
  * Get all blog post slugs
+ * Returns empty array if index fails to load (prevents build crashes)
  */
 export async function getAllPostSlugs(): Promise<string[]> {
-  const index = await loadContentIndex();
-  return index.blogPosts.map((p) => p.slug);
+  try {
+    const index = await loadContentIndex();
+    // Only return slugs for published posts (non-draft, non-noindex)
+    return index.blogPosts
+      .filter((p) => !p.flags?.draft && !p.flags?.noindex)
+      .map((p) => p.slug);
+  } catch (error) {
+    console.error('[getAllPostSlugs] Failed to load slugs:', error);
+    return []; // Return empty array instead of crashing
+  }
 }
 
 /**
  * Get all category slugs
+ * Returns empty array if index fails or no categories exist (prevents crashes)
  */
 export async function getAllCategorySlugs(): Promise<string[]> {
-  const index = await loadContentIndex();
-  const categories = new Set(index.blogPosts.map((p) => p.category));
-  return Array.from(categories);
+  try {
+    const index = await loadContentIndex();
+    if (!Array.isArray(index.blogPosts)) {
+      return [];
+    }
+    const categories = new Set(
+      index.blogPosts
+        .filter((p) => p && p.category && !p.flags?.draft && !p.flags?.noindex)
+        .map((p) => p.category)
+    );
+    return Array.from(categories);
+  } catch (error) {
+    console.error('[getAllCategorySlugs] Failed to load categories:', error);
+    return []; // Return empty array instead of crashing
+  }
 }
 
 /**
  * Get all species documents (for sitemap)
  * Logs errors for any files that fail to load
+ * Returns empty array if no species exist (prevents crashes)
  */
 export async function getAllSpeciesDocs(): Promise<GeneratedDoc[]> {
-  const slugs = await getAllSpeciesSlugs();
-  const docs: GeneratedDoc[] = [];
-  
-  for (const slug of slugs) {
-    const filePath = path.join(CONTENT_DIR, 'species', `${slug}.json`);
-    const doc = await loadContentDoc(filePath);
+  try {
+    const slugs = await getAllSpeciesSlugs();
+    const docs: GeneratedDoc[] = [];
     
-    if (!doc) {
-      // loadContentDoc already logged the error
-      continue;
+    for (const slug of slugs) {
+      try {
+        const filePath = path.join(CONTENT_DIR, 'species', `${slug}.json`);
+        const doc = await loadContentDoc(filePath);
+        
+        if (!doc) {
+          // loadContentDoc already logged the error
+          continue;
+        }
+        
+        if (doc.flags.draft || doc.flags.noindex) {
+          // Valid state, not an error
+          continue;
+        }
+        
+        docs.push(doc);
+      } catch (error) {
+        // Skip this species if file fails to load
+        console.warn(`[getAllSpeciesDocs] Failed to load species ${slug}:`, error);
+        continue;
+      }
     }
     
-    if (doc.flags.draft || doc.flags.noindex) {
-      // Valid state, not an error
-      continue;
-    }
-    
-    docs.push(doc);
+    return docs;
+  } catch (error) {
+    console.error('[getAllSpeciesDocs] Failed to load species slugs:', error);
+    return []; // Return empty array instead of crashing
   }
-  
-  return docs;
 }
 
 /**
  * Get all how-to documents (for sitemap)
  * Logs errors for any files that fail to load
+ * Returns empty array if no how-to guides exist (prevents crashes)
  */
 export async function getAllHowToDocs(): Promise<GeneratedDoc[]> {
-  const slugs = await getAllHowToSlugs();
-  const docs: GeneratedDoc[] = [];
-  
-  for (const slug of slugs) {
-    const filePath = path.join(CONTENT_DIR, 'how-to', `${slug}.json`);
-    const doc = await loadContentDoc(filePath);
+  try {
+    const slugs = await getAllHowToSlugs();
+    const docs: GeneratedDoc[] = [];
     
-    if (!doc) {
-      // loadContentDoc already logged the error
-      continue;
+    for (const slug of slugs) {
+      try {
+        const filePath = path.join(CONTENT_DIR, 'how-to', `${slug}.json`);
+        const doc = await loadContentDoc(filePath);
+        
+        if (!doc) {
+          // loadContentDoc already logged the error
+          continue;
+        }
+        
+        if (doc.flags.draft || doc.flags.noindex) {
+          // Valid state, not an error
+          continue;
+        }
+        
+        docs.push(doc);
+      } catch (error) {
+        // Skip this how-to if file fails to load
+        console.warn(`[getAllHowToDocs] Failed to load how-to ${slug}:`, error);
+        continue;
+      }
     }
     
-    if (doc.flags.draft || doc.flags.noindex) {
-      // Valid state, not an error
-      continue;
-    }
-    
-    docs.push(doc);
+    return docs;
+  } catch (error) {
+    console.error('[getAllHowToDocs] Failed to load how-to slugs:', error);
+    return []; // Return empty array instead of crashing
   }
-  
-  return docs;
 }
 
 /**
  * Get all location documents (for sitemap)
+ * Returns empty array if no locations exist (prevents crashes)
  */
 export async function getAllLocationDocs(): Promise<GeneratedDoc[]> {
-  const slugs = await getAllLocationSlugs();
-  const docs: GeneratedDoc[] = [];
-  
-  for (const slug of slugs) {
-    const [state, city] = slug.split('/');
-    const filePath = path.join(CONTENT_DIR, 'locations', state, `${city}.json`);
-    const doc = await loadContentDoc(filePath);
+  try {
+    const slugs = await getAllLocationSlugs();
+    const docs: GeneratedDoc[] = [];
     
-    if (!doc) {
-      // loadContentDoc already logged the error
-      continue;
+    for (const slug of slugs) {
+      try {
+        const [state, city] = slug.split('/');
+        if (!state || !city) {
+          console.warn(`[getAllLocationDocs] Invalid location slug format: ${slug}`);
+          continue;
+        }
+        
+        const filePath = path.join(CONTENT_DIR, 'locations', state, `${city}.json`);
+        const doc = await loadContentDoc(filePath);
+        
+        if (!doc) {
+          // loadContentDoc already logged the error
+          continue;
+        }
+        
+        if (doc.flags.draft || doc.flags.noindex) {
+          // Valid state, not an error
+          continue;
+        }
+        
+        docs.push(doc);
+      } catch (error) {
+        // Skip this location if file fails to load
+        console.warn(`[getAllLocationDocs] Failed to load location ${slug}:`, error);
+        continue;
+      }
     }
     
-    if (doc.flags.draft || doc.flags.noindex) {
-      // Valid state, not an error
-      continue;
-    }
-    
-    docs.push(doc);
+    return docs;
+  } catch (error) {
+    console.error('[getAllLocationDocs] Failed to load location slugs:', error);
+    return []; // Return empty array instead of crashing
   }
-  
-  return docs;
 }
 
 /**

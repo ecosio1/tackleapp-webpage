@@ -1,10 +1,9 @@
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
+  "pageType": "blog",
   "slug": "best-lures-for-snook-florida",
-  "status": "published",
   "title": "Best Lures for Snook in Florida: Complete Guide",
   "description": "Discover the top-performing lures for catching snook in Florida waters. Expert-tested recommendations with proven results for inshore fishing.",
-  "excerpt": "The ultimate guide to selecting the best lures for Florida snook fishing, from soft plastics to topwater.",
   "body": "# Best Lures for Snook in Florida: Complete Guide\n\nSnook are one of Florida's most prized gamefish, known for their aggressive strikes and acrobatic fights. Whether you're fishing the mangroves, bridges, or beaches, having the right lures in your tackle box makes all the difference.\n\n## Top 5 Snook Lures\n\n### 1. Soft Plastic Jerkbaits\n\nSoft plastic jerkbaits are consistently the most effective lure for Florida snook. Their realistic swimming action and versatility make them a must-have.\n\n**Top Picks:**\n- DOA CAL Jerkbait (4-5 inch)\n- Z-Man Scented Jerkshad\n- Hogy Protail Paddle Tail\n\n**Best Conditions:** Dawn, dusk, moving water\n**Technique:** Twitch-pause-twitch retrieve near structure\n\n### 2. Live Bait Imitations\n\nSnook feed heavily on pilchards, pinfish, and mullet. Lures that mimic these baitfish work exceptionally well.\n\n**Top Picks:**\n- MirrOlure MR-17MR\n- Rapala X-Rap\n- Bomber Badonk-A-Donk\n\n**Best Conditions:** Clear water, active feeding periods\n**Technique:** Steady retrieve with occasional pauses\n\n### 3. Topwater Plugs\n\nNothing beats the explosive surface strike of a snook hitting a topwater lure.\n\n**Top Picks:**\n- Rapala Skitter Walk\n- Heddon Super Spook\n- Yo-Zuri Hydro Pencil\n\n**Best Conditions:** Early morning, calm water\n**Technique:** Walk-the-dog retrieve\n\n### 4. Swimbaits\n\nLarge swimbaits work great for trophy snook, especially in deeper channels and passes.\n\n**Top Picks:**\n- Storm WildEye Swim Shad\n- Berkley PowerBait Swim Shad\n- Tsunami Swim Shad\n\n**Best Conditions:** Deep water, strong currents\n**Technique:** Slow steady retrieve along bottom\n\n### 5. Bucktail Jigs\n\nClassic and effective, bucktail jigs are versatile and work in almost any condition.\n\n**Top Picks:**\n- SPRO Bucktail Jig\n- Boone Bucktail Jig\n- Sea Striker Bucktail Jig\n\n**Best Conditions:** Bridges, jetties, structure\n**Technique:** Bounce along bottom, vertical jigging\n\n## Color Selection Guide\n\n**Clear Water:**\n- Natural colors (white, silver, clear)\n- Subtle patterns\n\n**Stained Water:**\n- Chartreuse, pink, gold\n- High contrast patterns\n\n**Night Fishing:**\n- Black, purple, dark colors\n- Glow-in-the-dark options\n\n## Seasonal Considerations\n\n**Spring (March-May):**\nSnook are active and feeding heavily before spawning. Soft plastics and topwater work best.\n\n**Summer (June-August):**\nPeak spawning season. Focus on passes and beaches. Larger swimbaits produce trophy fish.\n\n**Fall (September-November):**\nTransition period with excellent fishing. All lure types effective.\n\n**Winter (December-February):**\nSnook move to deeper, warmer water. Slow presentations with jigs and soft plastics.\n\n## Pro Tips\n\n1. **Match the Hatch:** Observe what baitfish are present and choose lures accordingly\n2. **Structure is Key:** Snook are ambush predators; cast near mangroves, docks, and bridges\n3. **Tidal Movement:** Best fishing occurs during moving tides\n4. **Sharp Hooks:** Snook have tough mouths; keep hooks razor sharp\n5. **Leader Material:** Use 20-30lb fluorocarbon to avoid cutoffs on structure\n\n## Tackle Setup\n\n**Rod:** 7-7'6\" medium-heavy spinning rod\n**Reel:** 3000-4000 series spinning reel\n**Line:** 10-20lb braided main line\n**Leader:** 20-30lb fluorocarbon (24-36 inches)\n\n## Where to Fish in Florida\n\nSnook fishing is excellent throughout Florida's coasts:\n\n- **Southwest Coast:** Fort Myers, Naples, Tampa Bay\n- **Southeast Coast:** Stuart, West Palm Beach, Miami\n- **Keys:** Islamorada, Marathon, Key West\n- **Panhandle:** Limited but growing populations\n\n## Regulations\n\n**Always check current regulations before fishing.**\n\nSnook are a highly regulated species in Florida with specific size limits, bag limits, and seasonal closures that vary by region and fishing method. These regulations are designed to protect the snook population and ensure sustainable fishing for future generations.\n\n**[See local regulations →](https://myfwc.com/fishing/saltwater/recreational/snook/)**\n\n*Regulations are subject to change. Always verify current rules with the Florida Fish and Wildlife Conservation Commission (FWC) before your fishing trip. Tackle is not responsible for providing regulatory information - always consult official government sources.*\n\n## Conclusion\n\nSuccessful snook fishing comes down to understanding their behavior, using the right lures, and fishing the right locations. Start with soft plastic jerkbaits, add a few topwater plugs to your arsenal, and adjust your approach based on conditions.\n\nRemember: Snook are a protected species. Practice catch-and-release when possible and always follow FWC regulations.\n\n---\n\n*Ready to catch more snook? Download the Tackle app to log your catches, track patterns, and discover hot spots near you.*",
   "primaryKeyword": "best lures for snook florida",
   "secondaryKeywords": [
@@ -15,14 +14,20 @@
     "snook fishing tips"
   ],
   "heroImage": "/images/blog/snook-fishing-florida-hero.jpg",
-  "category": "gear-reviews",
+  "categorySlug": "gear-reviews",
   "tags": ["snook", "lures", "florida", "inshore", "gear"],
   "author": {
     "name": "Tackle Fishing Team",
     "url": "/authors/tackle-fishing-team"
   },
-  "publishedAt": "2026-01-09T12:00:00Z",
-  "updatedAt": "2026-01-09T12:00:00Z",
+  "dates": {
+    "publishedAt": "2026-01-09T12:00:00Z",
+    "updatedAt": "2026-01-09T12:00:00Z"
+  },
+  "flags": {
+    "draft": false,
+    "noindex": false
+  },
   "headings": [
     {
       "level": 1,
@@ -130,11 +135,23 @@
     }
   ],
   "related": {
-    "speciesSlugs": ["snook"],
-    "howToSlugs": ["how-to-catch-snook-florida", "how-to-fish-mangroves"],
-    "locationSlugs": ["florida/miami", "florida/tampa", "florida/fort-myers"],
-    "postSlugs": ["best-time-to-fish-florida", "inshore-fishing-tips"]
+    "speciesSlugs": [],
+    "howToSlugs": [],
+    "locationSlugs": [],
+    "postSlugs": ["best-fishing-rods-florida", "how-to-tie-a-fishing-hook"]
   },
+  "ctas": [
+    {
+      "position": "top",
+      "type": "app_download",
+      "location": null
+    },
+    {
+      "position": "end",
+      "type": "app_download",
+      "location": null
+    }
+  ],
   "wordCount": 1250,
   "readingTimeMinutes": 6
 }

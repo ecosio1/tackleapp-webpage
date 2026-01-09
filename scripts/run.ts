@@ -809,7 +809,7 @@ program
       
       const prd = await generatePRD(prdData);
       
-      const outputPath = join(process.cwd(), 'MASTER_PIPELINE_PRD.md');
+      const outputPath = join(process.cwd(), 'docs', 'MASTER_PIPELINE_PRD.md');
       writeFileSync(outputPath, prd, 'utf-8');
       
       console.log(`\n✅ Master Pipeline PRD generated successfully!`);
@@ -824,7 +824,7 @@ program
       }
       
       console.log(`\n💡 Next Steps:`);
-      console.log(`  1. Review MASTER_PIPELINE_PRD.md`);
+      console.log(`  1. Review docs/MASTER_PIPELINE_PRD.md`);
       console.log(`  2. Use PRD to guide content pipeline implementation`);
       console.log(`  3. Start with highest-opportunity patterns`);
       console.log(`  4. Generate pages following the PRD strategy`);

@@ -16,7 +16,7 @@
  * OUTPUT: Ranked list of BlogIdea[] objects
  * HANDOFF: Opportunities pass to generation system
  *
- * See: IDEATION-SYSTEM.md for full documentation
+ * See: docs/IDEATION-SYSTEM.md for full documentation
  */
 
 import { logger } from './logger';

@@ -87,26 +87,40 @@ export async function loadAllBlogPosts(): Promise<BlogPostDisplay[]> {
 /**
  * Get all blog categories with post counts
  * Reads from index only (no file reads)
+ * Returns empty array if no categories exist (prevents crashes)
  */
 export async function getAllBlogCategories(): Promise<BlogCategory[]> {
-  const posts = await loadAllBlogPosts(); // Already reads from index only
-  
-  // Count posts by category
-  const categoryMap = new Map<string, number>();
-  
-  posts.forEach((post) => {
-    const count = categoryMap.get(post.category) || 0;
-    categoryMap.set(post.category, count + 1);
-  });
-  
-  // Convert to array and format
-  return Array.from(categoryMap.entries())
-    .map(([slug, count]) => ({
-      slug,
-      name: formatCategoryName(slug),
-      count,
-    }))
-    .sort((a, b) => b.count - a.count); // Sort by count (most posts first)
+  try {
+    const posts = await loadAllBlogPosts(); // Already reads from index only
+    
+    // If no posts, return empty array
+    if (posts.length === 0) {
+      return [];
+    }
+    
+    // Count posts by category
+    const categoryMap = new Map<string, number>();
+    
+    posts.forEach((post) => {
+      if (post.category) {
+        const count = categoryMap.get(post.category) || 0;
+        categoryMap.set(post.category, count + 1);
+      }
+    });
+    
+    // Convert to array and format
+    return Array.from(categoryMap.entries())
+      .filter(([slug, count]) => count > 0) // Only include categories with posts
+      .map(([slug, count]) => ({
+        slug,
+        name: formatCategoryName(slug),
+        count,
+      }))
+      .sort((a, b) => b.count - a.count); // Sort by count (most posts first)
+  } catch (error) {
+    console.error('[getAllBlogCategories] Failed to load categories:', error);
+    return []; // Return empty array instead of crashing
+  }
 }
 
 /**
@@ -184,16 +198,13 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostDoc | nul
     return null;
   }
   
-  // Use validated document
-  doc = validatedDoc;
-  
   // Filter out drafts and noindex (these are valid states, not errors)
-  if (doc.flags.draft || doc.flags.noindex) {
+  if (validatedDoc.flags.draft || validatedDoc.flags.noindex) {
     // Don't log this as an error - it's expected behavior
     return null;
   }
   
-  return doc as BlogPostDoc;
+  return validatedDoc as BlogPostDoc;
 }
 
 /**
@@ -206,10 +217,16 @@ export async function getPostsByCategory(categorySlug: string): Promise<BlogPost
 
 /**
  * Get related blog posts (excludes current post)
+ * Returns empty array if no related posts exist (prevents crashes)
  */
 export async function getRelatedBlogPosts(currentSlug: string, limit: number = 3): Promise<BlogPostDisplay[]> {
-  const posts = await loadAllBlogPosts();
-  return posts
-    .filter((post) => post.slug !== currentSlug)
-    .slice(0, limit);
+  try {
+    const posts = await loadAllBlogPosts();
+    return posts
+      .filter((post) => post && post.slug && post.slug !== currentSlug)
+      .slice(0, limit);
+  } catch (error) {
+    console.error('[getRelatedBlogPosts] Failed to load related posts:', error);
+    return []; // Return empty array instead of crashing
+  }
 }

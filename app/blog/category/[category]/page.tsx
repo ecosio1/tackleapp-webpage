@@ -41,11 +41,19 @@ interface CategoryPageProps {
  * This enables static generation at build time
  */
 export async function generateStaticParams() {
-  const categories = await getAllBlogCategories();
-
-  return categories.map((category) => ({
-    category: category.slug,
-  }));
+  try {
+    const categories = await getAllBlogCategories();
+    // Only generate params for categories that have posts
+    return categories
+      .filter((cat) => cat.count > 0)
+      .map((category) => ({
+        category: category.slug,
+      }));
+  } catch (error) {
+    // If categories fail to load, return empty array (no static params)
+    console.error('Failed to load blog categories for static params:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {

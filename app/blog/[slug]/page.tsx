@@ -5,9 +5,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { generateCanonical } from '@/lib/seo/canonical';
-import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
+import { BreadcrumbSchema, generateBreadcrumbsFromPath } from '@/components/seo/BreadcrumbSchema';
 import { AuthorSchema } from '@/components/seo/AuthorSchema';
 import { FaqSchema } from '@/components/seo/FaqSchema';
+import { ArticleSchema } from '@/components/seo/ArticleSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import { SourcesSection } from '@/components/content/SourcesSection';
 import Link from 'next/link';
@@ -28,12 +29,19 @@ interface BlogPostPageProps {
  * This enables static generation at build time
  */
 export async function generateStaticParams() {
-  const slugs = await getAllPostSlugs();
-  
-  // Return all published blog post slugs
-  return slugs.map((slug) => ({
-    slug,
-  }));
+  try {
+    const slugs = await getAllPostSlugs();
+    
+    // Return all published blog post slugs
+    return slugs.map((slug) => ({
+      slug,
+    }));
+  } catch (error) {
+    // If slugs fail to load, return empty array (no static params)
+    // This prevents build failures when content index is empty or invalid
+    console.error('Failed to load blog post slugs for static params:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
@@ -79,26 +87,56 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  // Get related posts
-  const relatedPosts = await getRelatedBlogPosts(slug, 3);
+  // Get related posts (may be empty array if no related posts exist)
+  let relatedPosts: Awaited<ReturnType<typeof getRelatedBlogPosts>> = [];
+  try {
+    relatedPosts = await getRelatedBlogPosts(slug, 3);
+  } catch (error) {
+    console.warn(`[BlogPostPage] Failed to load related posts for ${slug}:`, error);
+  }
   
-  // Get automatic internal link suggestions
-  const autoLinks = await getAutoLinksForBlog(slug);
+  // Get automatic internal link suggestions (may be empty array)
+  let autoLinks: Awaited<ReturnType<typeof getAutoLinksForBlog>> = [];
+  try {
+    autoLinks = await getAutoLinksForBlog(slug);
+  } catch (error) {
+    console.warn(`[BlogPostPage] Failed to load auto links for ${slug}:`, error);
+  }
 
-  const breadcrumbs = [
-    { name: 'Home', url: '/' },
-    { name: 'Blog', url: '/blog' },
-    { name: post.title, url: `/blog/${slug}` },
-  ];
+  // Generate breadcrumbs dynamically from URL path
+  // Uses post title for the last breadcrumb (dynamic from JSON)
+  const breadcrumbs = generateBreadcrumbsFromPath(
+    `/blog/${slug}`,
+    { blog: 'Blog' },
+    post.title // Last segment uses post title from JSON
+  );
+
+  const canonicalUrl = generateCanonical(`/blog/${slug}`);
 
   return (
     <>
+      {/* Article Schema - Required for blog posts - Dynamically pulls from JSON */}
+      <ArticleSchema
+        headline={post.title}
+        description={post.description}
+        author={post.author}
+        datePublished={post.dates.publishedAt}
+        dateModified={post.dates.updatedAt}
+        image={post.featuredImage || post.heroImage}
+        url={canonicalUrl}
+      />
+      
+      {/* Breadcrumb Schema - Dynamic from URL path */}
       <BreadcrumbSchema items={breadcrumbs} />
+      
+      {/* Author Schema - For E-E-A-T */}
       <AuthorSchema
         name={post.author.name}
         url={post.author.url || '/authors/tackle-fishing-team'}
       />
-      {post.faqs.length > 0 && <FaqSchema items={post.faqs} />}
+      
+      {/* FAQ Schema - If FAQs exist */}
+      {post.faqs && Array.isArray(post.faqs) && post.faqs.length > 0 && <FaqSchema items={post.faqs} />}
 
       <article className="max-w-4xl mx-auto px-4 py-8">
         <nav className="mb-6 text-sm text-gray-600">
@@ -149,10 +187,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="prose prose-lg max-w-none mb-8">
           {(() => {
             // Get structured CTAs from document (or fallback to default positions)
-            const ctas = post.ctas || [];
-            const topCTAs = ctas.filter(cta => cta.position === 'top');
-            const endCTAs = ctas.filter(cta => cta.position === 'end');
-            const inlineCTAs = ctas.filter(cta => cta.position === 'inline');
+            const ctas = (post.ctas && Array.isArray(post.ctas)) ? post.ctas : [];
+            const topCTAs = ctas.filter((cta: any) => cta.position === 'top');
+            const endCTAs = ctas.filter((cta: any) => cta.position === 'end');
+            const inlineCTAs = ctas.filter((cta: any) => cta.position === 'inline');
 
             // Split markdown if we have top CTAs
             const [firstPart, restPart] = topCTAs.length > 0 
@@ -187,18 +225,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         {/* Sources Section */}
-        {post.sources.length > 0 && (
+        {post.sources && Array.isArray(post.sources) && post.sources.length > 0 && (
           <div className="mb-8">
             <SourcesSection sources={post.sources} />
           </div>
         )}
 
         {/* FAQs Section */}
-        {post.faqs.length > 0 && (
+        {post.faqs && Array.isArray(post.faqs) && post.faqs.length > 0 && (
           <section className="mb-8 p-6 bg-gray-50 rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
             <div className="space-y-4">
-              {post.faqs.map((faq, index) => (
+              {post.faqs.map((faq: any, index: number) => (
                 <div key={index}>
                   <h3 className="text-lg font-semibold mb-2">{faq.question}</h3>
                   <p className="text-gray-700">{faq.answer}</p>
@@ -208,13 +246,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </section>
         )}
 
-        {/* End CTAs (near the end) */}
+        {/* End CTAs (near the end) - Always show at least one */}
         {(() => {
-          const ctas = post.ctas || [];
-          const endCTAs = ctas.filter(cta => cta.position === 'end');
+          const ctas = (post.ctas && Array.isArray(post.ctas)) ? post.ctas : [];
+          const endCTAs = ctas.filter((cta: any) => cta.position === 'end');
           
-          // Fallback to default if no structured CTAs
-          if (endCTAs.length === 0 && (!post.ctas || post.ctas.length === 0)) {
+          // Always show at least one end CTA (required for conversion)
+          if (endCTAs.length === 0) {
             return (
               <div className="mt-12">
                 <AppCTA
@@ -227,9 +265,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             );
           }
           
-          return endCTAs.length > 0 ? (
+          return (
             <div className="mt-12">
-              {endCTAs.map((cta, index) => (
+              {endCTAs.map((cta: any, index: number) => (
                 <AppCTA
                   key={`end-${index}`}
                   position="end"
@@ -240,7 +278,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 />
               ))}
             </div>
-          ) : null;
+          );
         })()}
 
         {/* Regulations Block - Separate from content */}
@@ -251,7 +289,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         />
 
         {/* Internal Links - Species, Locations, Techniques */}
-        {autoLinks.length > 0 && (
+        {autoLinks && Array.isArray(autoLinks) && autoLinks.length > 0 && (
           <section className="mt-12 pt-8 border-t border-gray-200">
             <h2 className="text-2xl font-bold mb-6">Related Content</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

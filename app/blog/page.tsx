@@ -57,6 +57,26 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
   });
   
   const categories = await getAllBlogCategories();
+  
+  // Handle empty state gracefully
+  if (blogPosts.length === 0) {
+    return (
+      <div className="home-main">
+        <header className="page-header" style={{ textAlign: 'center' }}>
+          <h1>Fishing Blog</h1>
+          <p className="page-intro">
+            Expert tips, techniques, gear reviews, and fishing advice from the Tackle Fishing Team.
+          </p>
+        </header>
+        <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+          <p style={{ fontSize: '1.2rem', color: '#666', marginBottom: '2rem' }}>
+            No blog posts available yet. Check back soon for new content!
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="home-main">
       <header className="page-header" style={{ textAlign: 'center' }}>
@@ -66,25 +86,27 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
         </p>
       </header>
 
-      <section style={{ marginBottom: '3rem' }}>
-        <h2>Categories</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/blog/category/${cat.slug}`}
-              style={{
-                padding: '0.5rem 1rem',
-                background: '#f5f5f5',
-                borderRadius: '8px',
-                display: 'inline-block'
-              }}
-            >
-              {cat.name} ({cat.count})
-            </Link>
-          ))}
-        </div>
-      </section>
+      {categories.length > 0 && (
+        <section style={{ marginBottom: '3rem' }}>
+          <h2>Categories</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+            {categories.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/blog/category/${cat.slug}`}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: '#f5f5f5',
+                  borderRadius: '8px',
+                  display: 'inline-block'
+                }}
+              >
+                {cat.name} ({cat.count})
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mb-12">
         <div className="flex items-center justify-between mb-6">
@@ -116,8 +138,9 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
         )}
 
         {/* Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(page === 1 ? blogPosts.slice(1) : blogPosts).map((post) => (
+        {blogPosts.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {(page === 1 ? blogPosts.slice(1) : blogPosts).map((post) => (
             <ModernBlogCard
               key={post.slug}
               slug={post.slug}
@@ -130,7 +153,27 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
               image={post.heroImage || '/images/blog/default.jpg'}
             />
           ))}
-        </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+            <p style={{ fontSize: '1.1rem', color: '#666' }}>
+              No posts found on this page.
+            </p>
+            {page > 1 && (
+              <Link
+                href="/blog"
+                style={{
+                  display: 'inline-block',
+                  marginTop: '1rem',
+                  color: '#2563eb',
+                  textDecoration: 'underline'
+                }}
+              >
+                Go to first page
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (

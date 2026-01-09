@@ -105,47 +105,61 @@ export async function getAutoLinksForBlog(slug: string): Promise<LinkSuggestion[
   }
 
   // Add related blog posts
-  if (related.postSlugs && related.postSlugs.length > 0) {
+  if (related.postSlugs && Array.isArray(related.postSlugs) && related.postSlugs.length > 0) {
     for (const postSlug of related.postSlugs.slice(0, 3)) {
-      // Load only the specific related post (not all posts)
-      const relatedPost = await getBlogPostBySlug(postSlug);
-      if (relatedPost && relatedPost.slug !== slug) {
-        suggestions.push({
-          slug: postSlug,
-          title: relatedPost.title,
-          url: `/blog/${postSlug}`,
-          type: 'blog',
-          reason: `Related: ${relatedPost.categorySlug}`,
-        });
+      try {
+        // Load only the specific related post (not all posts)
+        const relatedPost = await getBlogPostBySlug(postSlug);
+        if (relatedPost && relatedPost.slug !== slug) {
+          suggestions.push({
+            slug: postSlug,
+            title: relatedPost.title,
+            url: `/blog/${postSlug}`,
+            type: 'blog',
+            reason: `Related: ${relatedPost.categorySlug}`,
+          });
+        }
+      } catch (error) {
+        // Skip if related post fails to load (don't crash the page)
+        console.warn(`[getAutoLinksForBlog] Failed to load related post ${postSlug}:`, error);
       }
     }
   }
 
   // If we don't have enough suggestions, use site index to find more
-  if (suggestions.length < 5 && post) {
-    const index = await loadContentIndex();
-    const remaining = 5 - suggestions.length;
+  if (suggestions.length < 5 && post && post.categorySlug) {
+    try {
+      const index = await loadContentIndex();
+      const remaining = 5 - suggestions.length;
 
-    // Find more related posts from same category using index only
-    const categoryPosts = index.blogPosts
-      .filter(entry => 
-        !entry.flags?.draft &&
-        !entry.flags?.noindex &&
-        entry.slug !== slug &&
-        entry.category === post.categorySlug
-      )
-      .slice(0, remaining);
+      // Find more related posts from same category using index only
+      if (Array.isArray(index.blogPosts)) {
+        const categoryPosts = index.blogPosts
+          .filter(entry => 
+            entry &&
+            entry.slug &&
+            entry.title &&
+            !entry.flags?.draft &&
+            !entry.flags?.noindex &&
+            entry.slug !== slug &&
+            entry.category === post.categorySlug
+          )
+          .slice(0, remaining);
 
-    for (const entry of categoryPosts) {
-      if (!suggestions.some(s => s.slug === entry.slug)) {
-        suggestions.push({
-          slug: entry.slug,
-          title: entry.title,
-          url: `/blog/${entry.slug}`,
-          type: 'blog',
-          reason: `More ${entry.category} tips`,
-        });
+        for (const entry of categoryPosts) {
+          if (!suggestions.some(s => s.slug === entry.slug)) {
+            suggestions.push({
+              slug: entry.slug,
+              title: entry.title,
+              url: `/blog/${entry.slug}`,
+              type: 'blog',
+              reason: `More ${entry.category || 'fishing'} tips`,
+            });
+          }
+        }
       }
+    } catch (error) {
+      console.warn('[getAutoLinksForBlog] Failed to load additional suggestions from index:', error);
     }
   }
 
