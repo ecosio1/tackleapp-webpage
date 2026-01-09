@@ -54,6 +54,25 @@ export function validateDoc(doc: GeneratedDoc): ValidationResult {
       errors.push(`Content contains forbidden phrase: "${phrase}"`);
     }
   }
+
+  // 5a. CRITICAL: No specific regulations check (Step 4 requirement)
+  const hasBagLimit = /bag limit|daily limit|keep \d+|harvest limit|\d+\s+fish per|limit.*\d+\s+fish/i.test(doc.body);
+  const hasSizeLimit = /slot limit|size limit|minimum.*\d+\s*inch|maximum.*\d+\s*inch|\d+\s*-\s*\d+\s*inch|must be.*\d+\s*inch/i.test(doc.body);
+  const hasClosedSeason = /closed season|open season|no fishing.*january|no fishing.*june|closed.*december|season runs/i.test(doc.body);
+  const hasLegalClaim = /illegal to|must have.*license|violations.*fine|against the law/i.test(doc.body);
+
+  if (hasBagLimit) {
+    errors.push('CRITICAL: Content contains bag limit information. Remove all specific bag limits.');
+  }
+  if (hasSizeLimit) {
+    errors.push('CRITICAL: Content contains size limit information. Remove all specific measurements.');
+  }
+  if (hasClosedSeason) {
+    errors.push('CRITICAL: Content contains closed season information. Remove all specific dates.');
+  }
+  if (hasLegalClaim) {
+    errors.push('CRITICAL: Content makes legal claims. Remove all legal advice.');
+  }
   
   // 6. Sources check for seasonal content
   const hasSeasonalContent = bodyLower.includes('season') ||
@@ -66,16 +85,31 @@ export function validateDoc(doc: GeneratedDoc): ValidationResult {
     errors.push(`Seasonal content requires at least ${QUALITY_THRESHOLDS.minSourcesForSeasonal} sources, found ${doc.sources.length}`);
   }
   
-  // 7. Regulations link check (for location pages)
-  if (doc.pageType === 'location') {
-    if (!bodyLower.includes('see local regulations') && !bodyLower.includes('regulations')) {
-      warnings.push('Location page may be missing "See local regulations" link');
+  // 7. Regulations link check (all pages with species/location focus)
+  const mentionsSpecies = /snook|redfish|tarpon|bass|trout|grouper|mahi/i.test(doc.body);
+  const mentionsRegulations = /regulations|rules|limits|legal/i.test(doc.body);
+  const hasRegulationsLink = /see local regulations|check.*regulations|consult.*regulations/i.test(doc.body);
+
+  if ((doc.pageType === 'location' || doc.pageType === 'species' || mentionsSpecies) && mentionsRegulations) {
+    if (!hasRegulationsLink) {
+      errors.push('Post mentions regulations but missing "See local regulations" link to official source');
     }
   }
   
-  // 8. Download CTA check
-  if (!bodyLower.includes('/download') && !bodyLower.includes('download')) {
-    warnings.push('Content may be missing download CTA');
+  // 8. App CTA check (Step 4 requirement - REQUIRED for blog posts)
+  const hasAppCTA = /tackle app|download tackle/i.test(doc.body);
+  const hasValueProp = /log your catches|track patterns|discover hot spots|ai fish id|catch more/i.test(doc.body);
+
+  if (doc.pageType === 'blog') {
+    if (!hasAppCTA) {
+      errors.push('REQUIRED: Blog post must include Tackle app CTA');
+    } else if (!hasValueProp) {
+      warnings.push('App CTA should include value proposition (track catches, discover spots, etc.)');
+    }
+  } else {
+    if (!hasAppCTA && !bodyLower.includes('download')) {
+      warnings.push('Content may be missing app download CTA');
+    }
   }
   
   // 9. Required sections check (basic)
