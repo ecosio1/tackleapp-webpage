@@ -1,10 +1,40 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-01-09T21:16:22.095Z",
+  "lastUpdated": "2026-01-09T21:18:28.688Z",
   "species": [],
   "howTo": [],
   "locations": [],
   "blogPosts": [
+    {
+      "slug": "best-fishing-rods-florida",
+      "title": "Best Fishing Rods for Florida: Complete Guide for Inshore and Offshore",
+      "description": "Discover the top-performing fishing rods for Florida waters. Expert recommendations for inshore, offshore, and freshwater fishing with detailed specifications and setup guides.",
+      "category": "gear-reviews",
+      "publishedAt": "2026-01-09T21:16:00Z",
+      "updatedAt": "2026-01-09T21:16:00Z",
+      "wordCount": 1827,
+      "author": "Tackle Fishing Team",
+      "flags": {
+        "draft": false,
+        "noindex": false
+      },
+      "heroImage": "/images/blog/florida-fishing-rods-hero.jpg",
+      "keywords": [
+        "best fishing rods for florida",
+        "florida fishing rods",
+        "inshore fishing rods florida",
+        "best rods for snook",
+        "offshore fishing rods florida",
+        "saltwater fishing rods"
+      ],
+      "tags": [
+        "fishing rods",
+        "gear",
+        "florida",
+        "inshore",
+        "offshore"
+      ]
+    },
     {
       "slug": "best-lures-for-snook-florida",
       "title": "Best Lures for Snook in Florida: Complete Guide",

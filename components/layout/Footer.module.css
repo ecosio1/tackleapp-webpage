@@ -1,0 +1,141 @@
+/* Footer Component Styles - Tackle Brand Colors */
+
+.footer {
+  background: linear-gradient(135deg, #2563EB 0%, #34D399 100%);
+  color: #ffffff;
+  padding: 64px 48px 32px;
+  border-top: 3px solid #FBBF24;
+}
+
+.footerContainer {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.footerTop {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.footerBrand {
+  max-width: 300px;
+}
+
+.brandName {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.brandTagline {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.footerLinks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+
+.linkColumn h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 20px 0;
+}
+
+.linkColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.linkColumn a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 15px;
+  transition: all 150ms ease;
+}
+
+.linkColumn a:hover {
+  color: #FBBF24;
+  transform: translateX(4px);
+}
+
+.footerBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 32px;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin: 0;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 24px;
+}
+
+.socialLinks a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 150ms ease;
+}
+
+.socialLinks a:hover {
+  color: #FBBF24;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .footer {
+    padding: 48px 32px 24px;
+  }
+
+  .footerTop {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .footerLinks {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 40px 24px 20px;
+  }
+
+  .footerLinks {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .socialLinks {
+    justify-content: center;
+  }
+}

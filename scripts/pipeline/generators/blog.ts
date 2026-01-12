@@ -29,8 +29,11 @@ CRITICAL REQUIREMENTS (NON-NEGOTIABLE):
 - Include "Tackle app" by name with value propositions (log catches, track patterns, discover spots)
 - Use ALL provided internal links naturally in the content
 - Never copy text verbatim from sources - always paraphrase with original insights
+- NEVER mention bag limits, size limits, closed seasons, or legal regulations
+- When describing lures/gear, use general terms (e.g., "medium-sized lures" not "6-inch lures")
+- Focus on techniques, tips, and recommendations - NOT legal requirements
 
-Write in a conversational, helpful tone. Provide specific, actionable advice with brands, sizes, and techniques.`,
+Write in a conversational, helpful tone. Provide specific, actionable advice with brands and techniques.`,
   });
   
   // Parse generated content (assuming it returns structured data)

@@ -32,40 +32,53 @@ export function runQualityGate(doc: GeneratedDoc): QualityGateResult {
   logger.info('Quality Gate: Checking for CTA blocks...');
 
   if (doc.pageType === 'blog') {
-    // CTA patterns to look for
-    const ctaPatterns = [
-      /download tackle|tackle app|get tackle|install tackle/i,
-      /\[download tackle\]|\[get tackle\]|\[install tackle\]/i,
-      /\/download/i,
-      /what to do next.*download/i,
-      /ready to.*download/i,
-      /get.*tackle.*iphone/i,
-    ];
+    // FIRST: Check for structured CTAs (preferred method)
+    const blogDoc = doc as Extract<GeneratedDoc, { pageType: 'blog' }>;
+    const hasStructuredCTAs = blogDoc.ctas && Array.isArray(blogDoc.ctas) && blogDoc.ctas.length > 0;
+    const hasTopStructuredCTA = hasStructuredCTAs && blogDoc.ctas!.some(cta => cta.position === 'top');
+    const hasEndStructuredCTA = hasStructuredCTAs && blogDoc.ctas!.some(cta => cta.position === 'end');
+    
+    // If structured CTAs exist, use them (they're rendered by AppCTA component)
+    let hasTopHalfCTA = hasTopStructuredCTA;
+    let hasBottomHalfCTA = hasEndStructuredCTA;
+    
+    // FALLBACK: Check body text for CTA patterns (for backwards compatibility)
+    if (!hasTopHalfCTA || !hasBottomHalfCTA) {
+      const ctaPatterns = [
+        /download tackle|tackle app|get tackle|install tackle/i,
+        /\[download tackle\]|\[get tackle\]|\[install tackle\]/i,
+        /\/download/i,
+        /what to do next.*download/i,
+        /ready to.*download/i,
+        /get.*tackle.*iphone/i,
+      ];
 
-    // Split content into halves for placement checking
-    const wordCount = bodyText.split(/\s+/).length;
-    const midPoint = Math.floor(wordCount / 2);
-    const words = bodyText.split(/\s+/);
-    const topHalf = words.slice(0, midPoint).join(' ');
-    const bottomHalf = words.slice(midPoint).join(' ');
-
-    // Check for CTA in top half
-    let hasTopHalfCTA = false;
-    for (const pattern of ctaPatterns) {
-      if (pattern.test(topHalf)) {
-        hasTopHalfCTA = true;
-        break;
+      // Split content into halves for placement checking
+      const wordCount = bodyText.split(/\s+/).length;
+      const midPoint = Math.floor(wordCount / 2);
+      const words = bodyText.split(/\s+/);
+      const topHalf = words.slice(0, midPoint).join(' ');
+      
+      // Check for CTA in top half (if not already found in structured CTAs)
+      if (!hasTopHalfCTA) {
+        for (const pattern of ctaPatterns) {
+          if (pattern.test(topHalf)) {
+            hasTopHalfCTA = true;
+            break;
+          }
+        }
       }
-    }
 
-    // Check for CTA in bottom half (last 40% of content)
-    const bottomStart = Math.floor(wordCount * 0.6);
-    const bottomSection = words.slice(bottomStart).join(' ');
-    let hasBottomHalfCTA = false;
-    for (const pattern of ctaPatterns) {
-      if (pattern.test(bottomSection)) {
-        hasBottomHalfCTA = true;
-        break;
+      // Check for CTA in bottom half (last 40% of content)
+      if (!hasBottomHalfCTA) {
+        const bottomStart = Math.floor(wordCount * 0.6);
+        const bottomSection = words.slice(bottomStart).join(' ');
+        for (const pattern of ctaPatterns) {
+          if (pattern.test(bottomSection)) {
+            hasBottomHalfCTA = true;
+            break;
+          }
+        }
       }
     }
 
@@ -102,15 +115,15 @@ export function runQualityGate(doc: GeneratedDoc): QualityGateResult {
 
   if (doc.pageType === 'blog') {
     // Check for neutral "See local regulations" text (required)
+    // NOTE: RegulationsBlock component renders this automatically, so this is just a warning
     const hasRegulationsBlock = 
       /see local regulations|check.*local regulations|consult.*local regulations|see.*regulations/i.test(bodyText) ||
       /regulations.*change|always verify.*regulations|check.*regulations.*official/i.test(bodyText);
 
-    // BLOCKING: Must have neutral regulations reminder
+    // WARNING: RegulationsBlock component should handle this, but check body text as fallback
     if (!hasRegulationsBlock) {
-      errors.push(
-        'BLOCKED: Missing required "See local regulations" block. ' +
-        'Blog posts must include a neutral reminder to check local regulations (no specific limits, seasons, or legal claims).'
+      warnings.push(
+        'Body text does not mention regulations - ensure RegulationsBlock component is rendered on the page.'
       );
     }
   }

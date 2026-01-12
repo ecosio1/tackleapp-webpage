@@ -20,17 +20,18 @@ export function Header() {
           </div>
         </Link>
         <div className="nav-links">
+          <Link href="/features">Features</Link>
+          <Link href="/how-it-works">How It Works</Link>
           <Link href="/blog">Blog</Link>
-          <Link href="/how-to">How-To Guides</Link>
-          <Link href="/species">Species</Link>
-          <Link href="/locations">Locations</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
           <Link
             href="https://apps.apple.com/app/tackle"
             className="cta-link"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Download on App Store
+            Download App
           </Link>
         </div>
       </div>
@@ -53,10 +54,6 @@ export function Header() {
         @media (max-width: 768px) {
           .logo-container {
             gap: 8px;
-          }
-
-          .nav-links {
-            font-size: 0.9rem;
           }
         }
       `}</style>

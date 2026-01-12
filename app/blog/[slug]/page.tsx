@@ -19,6 +19,10 @@ import { AppCTA } from '@/components/blog/AppCTA';
 import { RegulationsBlock } from '@/components/blog/RegulationsBlock';
 import { splitMarkdownAfterFirstSection } from '@/lib/blog-utils';
 import ReactMarkdown from 'react-markdown';
+import { TableOfContents } from '@/components/blog/TableOfContents';
+import { ReadingProgress } from '@/components/blog/ReadingProgress';
+import { SocialShare } from '@/components/blog/SocialShare';
+import { ScrollToTop } from '@/components/blog/ScrollToTop';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -113,8 +117,33 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const canonicalUrl = generateCanonical(`/blog/${slug}`);
 
+  // Helper function to generate heading IDs from text
+  const generateHeadingId = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-');
+  };
+
+  // Custom markdown components with heading IDs
+  const markdownComponents = {
+    h2: ({ children, ...props }: any) => {
+      const text = children?.toString() || '';
+      const id = generateHeadingId(text);
+      return <h2 id={id} {...props}>{children}</h2>;
+    },
+    h3: ({ children, ...props }: any) => {
+      const text = children?.toString() || '';
+      const id = generateHeadingId(text);
+      return <h3 id={id} {...props}>{children}</h3>;
+    },
+  };
+
   return (
     <>
+      {/* Reading Progress Bar */}
+      <ReadingProgress />
+
       {/* Article Schema - Required for blog posts - Dynamically pulls from JSON */}
       <ArticleSchema
         headline={post.title}
@@ -138,7 +167,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* FAQ Schema - If FAQs exist */}
       {post.faqs && Array.isArray(post.faqs) && post.faqs.length > 0 && <FaqSchema items={post.faqs} />}
 
-      <article className="max-w-4xl mx-auto px-4 py-8">
+      <article className="max-w-3xl mx-auto px-6 py-12">
         <nav className="mb-6 text-sm text-gray-600">
           <Link href="/" className="hover:text-blue-600">Home</Link>
           {' / '}
@@ -147,14 +176,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <span>{post.title}</span>
         </nav>
 
-        <header className="mb-8">
+        <header className="mb-12" style={{ maxWidth: '720px', margin: '0 auto 3rem' }}>
           <div className="mb-4">
             <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800">
               {post.categorySlug.replace('-', ' ')}
             </span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
-          <div className="flex items-center gap-4 text-sm text-gray-600">
+          <h1 style={{ fontSize: '3rem', fontWeight: '700', lineHeight: '1.15', letterSpacing: '-0.03em', color: '#0f172a', marginBottom: '1.5rem' }}>
+            {post.title}
+          </h1>
+          <div className="flex items-center gap-4 text-sm" style={{ color: 'rgba(15, 23, 42, 0.7)', marginBottom: '1rem' }}>
             <time dateTime={post.dates.publishedAt}>
               {new Date(post.dates.publishedAt).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -174,17 +205,27 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Hero Image */}
         {(post.featuredImage || post.heroImage) && (
-          <div className="mb-8">
+          <div className="mb-12" style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
             <img
               src={post.featuredImage || post.heroImage!}
               alt={post.title}
-              className="w-full rounded-lg"
+              style={{ width: '100%', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)' }}
             />
           </div>
         )}
 
+        {/* Social Share Buttons */}
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <SocialShare title={post.title} url={canonicalUrl} />
+        </div>
+
+        {/* Table of Contents */}
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <TableOfContents content={post.body} minHeadings={3} />
+        </div>
+
         {/* Main Content - Render Markdown with structured CTAs */}
-        <div className="prose prose-lg max-w-none mb-8">
+        <div className="blog-content mb-12">
           {(() => {
             // Get structured CTAs from document (or fallback to default positions)
             const ctas = (post.ctas && Array.isArray(post.ctas)) ? post.ctas : [];
@@ -199,8 +240,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             return (
               <>
-                <ReactMarkdown>{firstPart}</ReactMarkdown>
-                
+                <ReactMarkdown components={markdownComponents}>{firstPart}</ReactMarkdown>
+
                 {/* Top CTAs (after first section) */}
                 {topCTAs.length > 0 && (
                   <div className="my-12">
@@ -216,9 +257,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     ))}
                   </div>
                 )}
-                
+
                 {/* Rest of content */}
-                {restPart && <ReactMarkdown>{restPart}</ReactMarkdown>}
+                {restPart && <ReactMarkdown components={markdownComponents}>{restPart}</ReactMarkdown>}
               </>
             );
           })()}
@@ -333,6 +374,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </section>
         )}
       </article>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </>
   );
 }

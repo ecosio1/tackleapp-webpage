@@ -1,0 +1,35 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-12T17:01:58.868Z",
+  "summary": {
+    "totalAttempts": 1,
+    "totalSuccesses": 1,
+    "totalFailures": 0,
+    "totalQuarantined": 0,
+    "averagePublishTimeMs": 101
+  },
+  "failures": {
+    "validation": 0,
+    "qualityGate": 0,
+    "api": 0,
+    "write": 0,
+    "indexUpdate": 0,
+    "other": 0
+  },
+  "revalidation": {
+    "totalAttempts": 0,
+    "totalSuccesses": 0,
+    "totalFailures": 0,
+    "failuresByPath": {},
+    "recentFailures": []
+  },
+  "recentPublishes": [
+    {
+      "timestamp": "2026-01-12T17:01:58.868Z",
+      "slug": "best-bass-lures",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 101
+    }
+  ]
+}
