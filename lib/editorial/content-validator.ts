@@ -5,7 +5,7 @@
  * These rules ensure content is safe, evergreen, valuable, and aligned with app goals.
  */
 
-import { BlogPost } from '@/lib/content/blog';
+import { BlogPostDoc } from '@/scripts/pipeline/types';
 
 export interface ValidationResult {
   passed: boolean;
@@ -18,14 +18,14 @@ export interface ValidationRule {
   name: string;
   description: string;
   level: 'critical' | 'error' | 'warning';
-  validate: (post: BlogPost) => boolean;
+  validate: (post: BlogPostDoc) => boolean;
   message: string;
 }
 
 /**
  * Validate blog post against all content rules
  */
-export function validateBlogPost(post: BlogPost): ValidationResult {
+export function validateBlogPost(post: BlogPostDoc): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
   let score = 100;
