@@ -252,7 +252,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       />
       
       {/* FAQ Schema - If FAQs exist */}
-      {post.faqs && Array.isArray(post.faqs) && post.faqs.length > 0 && <FaqSchema items={post.faqs} />}
+      {post.faqs && Array.isArray(post.faqs) && post.faqs.length > 0 && <FaqSchema faqs={post.faqs} />}
 
       <article className="max-w-3xl mx-auto px-6 py-12">
         <nav className="mb-6 text-sm text-gray-600">
