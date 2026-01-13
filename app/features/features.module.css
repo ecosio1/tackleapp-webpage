@@ -1,0 +1,136 @@
+/* Features Page Styles */
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 160px 48px 120px;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+  margin: 80px 0 120px;
+}
+
+.featureCard {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 0.5px solid rgba(0, 0, 0, 0.06);
+  transition: all 200ms ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+.featureImage {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+.featureCard:hover .image {
+  transform: scale(1.05);
+}
+
+.featureContent {
+  padding: 40px;
+}
+
+.featureContent h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+
+.featureContent p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(15, 23, 42, 0.7);
+  margin-bottom: 20px;
+}
+
+.featureContent ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.featureContent li {
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(15, 23, 42, 0.7);
+  margin: 12px 0;
+  padding-left: 24px;
+  position: relative;
+}
+
+.featureContent li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .container {
+    padding: 120px 32px 80px;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 100px 24px 64px;
+  }
+
+  .featuresGrid {
+    gap: 24px;
+    margin: 64px 0 80px;
+  }
+
+  .featureImage {
+    height: 240px;
+  }
+
+  .featureContent {
+    padding: 32px;
+  }
+
+  .featureContent h2 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .featureImage {
+    height: 200px;
+  }
+
+  .featureContent {
+    padding: 24px;
+  }
+
+  .featureContent h2 {
+    font-size: 20px;
+  }
+}

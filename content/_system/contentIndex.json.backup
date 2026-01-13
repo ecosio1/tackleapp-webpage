@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-09T21:18:28.688Z",
+  "species": [],
+  "howTo": [],
+  "locations": [],
+  "blogPosts": [
+    {
+      "slug": "best-fishing-rods-florida",
+      "title": "Best Fishing Rods for Florida: Complete Guide for Inshore and Offshore",
+      "description": "Discover the top-performing fishing rods for Florida waters. Expert recommendations for inshore, offshore, and freshwater fishing with detailed specifications and setup guides.",
+      "category": "gear-reviews",
+      "publishedAt": "2026-01-09T21:16:00Z",
+      "updatedAt": "2026-01-09T21:16:00Z",
+      "wordCount": 1827,
+      "author": "Tackle Fishing Team",
+      "flags": {
+        "draft": false,
+        "noindex": false
+      },
+      "heroImage": "/images/blog/florida-fishing-rods-hero.jpg",
+      "keywords": [
+        "best fishing rods for florida",
+        "florida fishing rods",
+        "inshore fishing rods florida",
+        "best rods for snook",
+        "offshore fishing rods florida",
+        "saltwater fishing rods"
+      ],
+      "tags": [
+        "fishing rods",
+        "gear",
+        "florida",
+        "inshore",
+        "offshore"
+      ]
+    },
+    {
+      "slug": "best-lures-for-snook-florida",
+      "title": "Best Lures for Snook in Florida: Complete Guide",
+      "description": "Discover the top-performing lures for catching snook in Florida waters. Expert-tested recommendations with proven results for inshore fishing.",
+      "category": "gear-reviews",
+      "publishedAt": "2026-01-09T12:00:00Z",
+      "updatedAt": "2026-01-09T12:00:00Z",
+      "wordCount": 662,
+      "author": "Tackle Fishing Team",
+      "flags": {
+        "draft": false,
+        "noindex": false
+      },
+      "heroImage": "/images/blog/snook-fishing-florida-hero.jpg",
+      "keywords": [
+        "best lures for snook florida",
+        "snook fishing lures",
+        "florida snook lures",
+        "snook bait",
+        "how to catch snook",
+        "snook fishing tips"
+      ],
+      "tags": [
+        "snook",
+        "lures",
+        "florida",
+        "inshore",
+        "gear"
+      ]
+    },
+    {
+      "slug": "how-to-tie-a-fishing-hook",
+      "title": "How to Tie a Fishing Hook: Complete Guide for Beginners",
+      "description": "Learn how to tie a fishing hook with our complete guide. Step-by-step instructions for the best fishing knots, pro tips, and troubleshooting advice.",
+      "category": "fishing-tips",
+      "publishedAt": "2024-01-15T00:00:00.000Z",
+      "updatedAt": "2024-01-15T00:00:00.000Z",
+      "wordCount": 1210,
+      "author": "Tackle Fishing Team",
+      "flags": {
+        "draft": false,
+        "noindex": false
+      },
+      "keywords": [
+        "how to tie a fishing hook",
+        "fishing hook knot",
+        "how to tie fishing hook to line",
+        "best fishing knot for hooks",
+        "fishing hook tying guide",
+        "strongest fishing knot",
+        "improved clinch knot",
+        "palomar knot",
+        "fishing knot tutorial"
+      ],
+      "tags": [
+        "fishing hook knot",
+        "how to tie fishing hook to line",
+        "best fishing knot for hooks",
+        "fishing hook tying guide",
+        "strongest fishing knot"
+      ]
+    }
+  ]
+}
