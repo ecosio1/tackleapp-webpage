@@ -22,7 +22,7 @@ import crypto from 'crypto';
 export async function generateBlogPost(brief: ContentBrief): Promise<BlogPostDoc> {
   logger.info(`Generating blog post with 12-section retention structure: ${brief.slug}`);
 
-  // Use retention-focused prompt instead of old generic prompt
+  // Use retention-focused prompt instead of old buildPrompt()
   const prompt = generateRetentionPrompt({
     title: brief.title,
     primaryKeyword: brief.primaryKeyword,
@@ -73,8 +73,8 @@ ALWAYS:
 
 Write in a conversational, helpful tone with specific actionable advice.`,
   });
-  
-  // Parse generated content (assuming it returns structured data)
+
+  // Parse generated content
   let body = typeof generated === 'string' ? generated : generated.body || '';
 
   // Add real image URLs to replace placeholders
