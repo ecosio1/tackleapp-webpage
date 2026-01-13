@@ -255,7 +255,7 @@ export function validateBlogPost(post: BlogPostDoc): ValidationResult {
  * Validate blog post and throw error if validation fails
  * Use this in pipeline to block publication of invalid posts
  */
-export function validateBlogPostOrThrow(post: BlogPost): void {
+export function validateBlogPostOrThrow(post: BlogPostDoc): void {
   const result = validateBlogPost(post);
 
   if (!result.passed) {
