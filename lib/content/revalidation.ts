@@ -199,6 +199,7 @@ export async function revalidatePaths(paths: string[], retryAttempt = 0): Promis
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorForRecord = error instanceof Error ? error : errorMessage;
     
     // Log warning with paths (OBSERVABLE)
     log.warn(
@@ -206,7 +207,7 @@ export async function revalidatePaths(paths: string[], retryAttempt = 0): Promis
     );
     
     // Record failure metric (non-blocking)
-    await recordRevalidationFailure(paths, error, retryAttempt);
+    await recordRevalidationFailure(paths, errorForRecord, retryAttempt);
     
     // Optional retry (OBSERVABLE - non-blocking)
     if (REVALIDATION_RETRY_ENABLED && retryAttempt < REVALIDATION_MAX_RETRIES) {
