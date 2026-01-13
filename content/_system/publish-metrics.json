@@ -1,12 +1,12 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-01-12T17:01:58.868Z",
+  "lastUpdated": "2026-01-13T21:35:50.894Z",
   "summary": {
-    "totalAttempts": 1,
-    "totalSuccesses": 1,
+    "totalAttempts": 14,
+    "totalSuccesses": 14,
     "totalFailures": 0,
     "totalQuarantined": 0,
-    "averagePublishTimeMs": 101
+    "averagePublishTimeMs": 54.785714285714285
   },
   "failures": {
     "validation": 0,
@@ -24,6 +24,97 @@
     "recentFailures": []
   },
   "recentPublishes": [
+    {
+      "timestamp": "2026-01-13T21:35:50.894Z",
+      "slug": "how-to-clean-and-store-fishing-gear",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 49
+    },
+    {
+      "timestamp": "2026-01-13T21:34:43.680Z",
+      "slug": "fishing-safety-tips",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 66
+    },
+    {
+      "timestamp": "2026-01-13T21:34:04.395Z",
+      "slug": "how-to-set-up-a-fishing-rig",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 46
+    },
+    {
+      "timestamp": "2026-01-13T21:32:47.526Z",
+      "slug": "best-fishing-baits-for-freshwater",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 49
+    },
+    {
+      "timestamp": "2026-01-13T21:31:47.678Z",
+      "slug": "how-to-cast-accurately",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 53
+    },
+    {
+      "timestamp": "2026-01-13T21:30:38.011Z",
+      "slug": "fishing-rod-selection-guide",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 49
+    },
+    {
+      "timestamp": "2026-01-13T21:29:18.520Z",
+      "slug": "how-to-read-water-for-fishing",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 47
+    },
+    {
+      "timestamp": "2026-01-13T21:27:52.159Z",
+      "slug": "best-time-to-fish",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 57
+    },
+    {
+      "timestamp": "2026-01-13T21:27:19.613Z",
+      "slug": "how-to-choose-fishing-line",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 54
+    },
+    {
+      "timestamp": "2026-01-13T21:26:26.081Z",
+      "slug": "best-fishing-knots",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 57
+    },
+    {
+      "timestamp": "2026-01-13T19:48:58.837Z",
+      "slug": "how-to-fish-for-trout",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 36
+    },
+    {
+      "timestamp": "2026-01-13T19:38:46.790Z",
+      "slug": "how-to-fish-for-trout",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 45
+    },
+    {
+      "timestamp": "2026-01-13T18:12:08.143Z",
+      "slug": "fishing-tips-for-beginners",
+      "pageType": "blog",
+      "status": "success",
+      "durationMs": 58
+    },
     {
       "timestamp": "2026-01-12T17:01:58.868Z",
       "slug": "best-bass-lures",

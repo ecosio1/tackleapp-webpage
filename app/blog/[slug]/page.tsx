@@ -66,21 +66,41 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
+  const canonicalUrl = generateCanonical(`/blog/${slug}`);
+  const ogImage = post.featuredImage || post.heroImage;
+  
   return {
-    title: `${post.title} | Tackle Fishing Blog`,
+    title: post.title, // Removed brand suffix for better keyword prominence
     description: post.description,
     keywords: [post.primaryKeyword, ...post.secondaryKeywords].join(', '),
     alternates: {
-      canonical: generateCanonical(`/blog/${slug}`),
+      canonical: canonicalUrl,
     },
     openGraph: {
       title: post.title,
       description: post.description,
       type: 'article',
+      url: canonicalUrl,
+      siteName: 'Tackle',
+      locale: 'en_US',
       publishedTime: post.dates.publishedAt,
       modifiedTime: post.dates.updatedAt,
       authors: [post.author.name],
-      images: post.featuredImage || post.heroImage ? [post.featuredImage || post.heroImage!] : undefined,
+      images: ogImage ? [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        }
+      ] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: ogImage ? [ogImage] : undefined,
+      creator: '@tackleapp', // Update with your actual Twitter handle
     },
   };
 }
@@ -276,7 +296,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="relative w-full overflow-hidden" style={{ height: 'clamp(300px, 50vw, 600px)' }}>
               <Image
                 src={post.featuredImage || post.heroImage!}
-                alt={post.title}
+                alt={`${post.title} - ${post.description.substring(0, 100)}`}
                 fill
                 priority
                 className="object-cover"
@@ -450,7 +470,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <div className="relative w-full h-48 overflow-hidden">
                       <Image
                         src={relatedPost.heroImage}
-                        alt={relatedPost.title}
+                        alt={`${relatedPost.title} - ${relatedPost.description.substring(0, 80)}`}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />

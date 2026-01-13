@@ -94,12 +94,42 @@ export async function generateBlogIdeas(options: {
   // STEP 4: Filter by search intent (informational only)
   const informationalKeywords = await filterByIntent(keywordData, 'informational');
   logger.info(`Filtered to ${informationalKeywords.length} informational keywords`);
-  
+
+  // STEP 4.5: Filter out duplicates (keywords that already have blog posts)
+  logger.info('🔍 Step 3: Checking for duplicate content...');
+  const existingBlogData = await loadExistingBlogKeywords();
+  const beforeDedupe = informationalKeywords.length;
+
+  const dedupedKeywords = informationalKeywords.filter(k => {
+    const slug = generateSlug(k.keyword);
+
+    // Check if slug already exists
+    if (existingBlogData.slugs.has(slug)) {
+      logger.debug(`Filtered duplicate: "${k.keyword}" (slug already exists: ${slug})`);
+      return false;
+    }
+
+    // Check if keyword is very similar to existing keyword (normalize for comparison)
+    const normalizedKeyword = k.keyword.toLowerCase().trim();
+    if (existingBlogData.keywords.has(normalizedKeyword)) {
+      logger.debug(`Filtered duplicate: "${k.keyword}" (keyword already exists)`);
+      return false;
+    }
+
+    return true;
+  });
+
+  const duplicatesRemoved = beforeDedupe - dedupedKeywords.length;
+  logger.info(`Removed ${duplicatesRemoved} duplicate keywords (${dedupedKeywords.length} remaining)`);
+
+  // Use deduplicated keywords for rest of pipeline
+  let filtered = dedupedKeywords;
+
   // 4. Filter by volume and difficulty
   // Log sample keywords to understand the data structure
-  if (informationalKeywords.length > 0) {
-    const sample = informationalKeywords.slice(0, 10);
-    logger.info(`Sample keywords (first 10) after intent filter:`);
+  if (filtered.length > 0) {
+    const sample = filtered.slice(0, 10);
+    logger.info(`Sample keywords (first 10) after deduplication:`);
     sample.forEach(k => {
       logger.info(`  - "${k.keyword}": volume=${k.searchVolume}, difficulty=${k.keywordDifficulty}`);
     });
@@ -113,7 +143,7 @@ export async function generateBlogIdeas(options: {
   
   // Filter: only apply if keyword has actual data AND fails the filter
   // If keyword has volume=0 or difficulty=0, assume it's unknown and keep it
-  let filtered = informationalKeywords.filter(k => {
+  filtered = filtered.filter(k => {
     // If we have actual volume data (volume > 0) and it's below minimum, filter out
     if (options.minSearchVolume && k.searchVolume > 0 && k.searchVolume < options.minSearchVolume) {
       return false;
@@ -355,24 +385,10 @@ export async function fetchKeywordSuggestions(
   try {
     const authHeader = `Basic ${Buffer.from(`${DATAFORSEO_LOGIN}:${DATAFORSEO_PASSWORD}`).toString('base64')}`;
     
-    // According to DataForSEO docs (https://dataforseo.com/help-center/what-is-keyword-difficulty-and-how-is-it-calculated):
-    // keyword_difficulty is available in DataForSEO Labs API endpoints, NOT Google Ads API
-    // We need to try DataForSEO Labs API first for difficulty, then fallback to Google Ads for volume
+    // Use Google Ads API for keyword suggestions
+    // Note: This endpoint provides search volume but NOT keyword_difficulty
+    // We'll fetch difficulty separately using Bulk Keyword Difficulty API
     const endpoints = [
-      // PRIMARY: DataForSEO Labs - Keywords For Keywords (HAS keyword_difficulty)
-      // According to docs, this endpoint returns keyword_difficulty (0-100)
-      {
-        path: '/v3/dataforseo_labs/google/keywords_for_keywords/live',
-        body: {
-          keywords: seedKeywords.slice(0, 10),
-          location_code: locationCode,
-          language_code: languageCode,
-          limit: 100,
-          sort_by: 'search_volume',
-        },
-        expectsDifficulty: true, // This endpoint should have difficulty
-      },
-      // FALLBACK: Google Ads API (has volume but NOT difficulty)
       {
         path: '/v3/keywords_data/google_ads/keywords_for_keywords/live',
         body: {
@@ -389,8 +405,8 @@ export async function fetchKeywordSuggestions(
     let data: any;
     let lastError: Error | null = null;
     let selectedEndpoint: typeof endpoints[0] | null = null;
-    
-    // Try DataForSEO Labs API first (has keyword_difficulty)
+
+    // Try Google Ads API endpoint
     for (const endpoint of endpoints) {
       try {
         logger.info(`Trying endpoint: ${endpoint.path}${endpoint.expectsDifficulty ? ' (expects keyword_difficulty)' : ''}`);
@@ -649,22 +665,42 @@ async function fetchBulkKeywordDifficulty(
     
     if (data && data.tasks && data.tasks[0] && data.tasks[0].result) {
       const taskResult = data.tasks[0].result;
-      
+
+      // DEBUG: Log taskResult structure
+      logger.info(`[DEBUG] taskResult type: ${typeof taskResult}, isArray: ${Array.isArray(taskResult)}`);
+      if (typeof taskResult === 'object' && taskResult !== null) {
+        logger.info(`[DEBUG] taskResult keys: ${Object.keys(taskResult).join(', ')}`);
+        if (taskResult.items) {
+          logger.info(`[DEBUG] taskResult.items exists, isArray: ${Array.isArray(taskResult.items)}, length: ${Array.isArray(taskResult.items) ? taskResult.items.length : 'N/A'}`);
+        }
+      }
+
       // According to DataForSEO API docs, Bulk Keyword Difficulty API returns:
       // { se_type, location_code, language_code, total_count, items_count, items: [...] }
       // The actual keyword data with keyword_difficulty is in the items array
-      // But the response structure shows items directly in result, not nested
       let results: any[] = [];
-      
-      if (Array.isArray(taskResult)) {
-        // If result is an array, use it directly
-        results = taskResult;
+
+      // IMPORTANT: The response structure can be:
+      // 1. An array with one object: [{ se_type, location_code, ..., items: [...] }]
+      // 2. A direct object: { se_type, location_code, ..., items: [...] }
+      // 3. An array of items directly: [{ keyword, keyword_difficulty }, ...]
+
+      if (Array.isArray(taskResult) && taskResult.length > 0 && taskResult[0].items && Array.isArray(taskResult[0].items)) {
+        // Response is array with wrapped object: [{ items: [...] }]
+        results = taskResult[0].items;
+        logger.info(`[DEBUG] Using taskResult[0].items: ${results.length} items`);
       } else if (taskResult.items && Array.isArray(taskResult.items)) {
-        // If result has items array, use that
+        // Response is direct object: { items: [...] }
         results = taskResult.items;
-      } else if (taskResult && typeof taskResult === 'object') {
-        // If result is an object with keyword_difficulty, it's a single item
+        logger.info(`[DEBUG] Using taskResult.items: ${results.length} items`);
+      } else if (Array.isArray(taskResult)) {
+        // Response is array of items directly
+        results = taskResult;
+        logger.info(`[DEBUG] Using taskResult as array: ${results.length} items`);
+      } else if (taskResult && typeof taskResult === 'object' && taskResult.keyword) {
+        // Single item object
         results = [taskResult];
+        logger.info(`[DEBUG] Using taskResult as single object`);
       }
       
       logger.info(`Bulk Keyword Difficulty API: Found ${results.length} results to process`);
@@ -889,11 +925,17 @@ export async function filterByIntent(
   intent: 'informational' | 'commercial'
 ): Promise<KeywordData[]> {
   logger.info(`Filtering keywords by intent: ${intent}`);
-  
+
+  // Note: DataForSEO Search Intent API requires Labs API access which this account doesn't have
+  // Using keyword-based filtering which works well for fishing content
+  // To enable Search Intent API, upgrade DataForSEO plan and uncomment the code below
+
+  return filterByKeywordPattern(keywords, intent);
+
+  /* DISABLED - Requires DataForSEO Labs API access
   try {
-    // Use DataForSEO Search Intent API
-    const keywordList = keywords.slice(0, 100).map(k => k.keyword); // Limit to 100 for API
-    
+    const keywordList = keywords.slice(0, 100).map(k => k.keyword);
+
     const response = await fetch(`${DATAFORSEO_API_URL}/v3/dataforseo_labs/google/search_intent/live/advanced`, {
       method: 'POST',
       headers: {
@@ -902,46 +944,45 @@ export async function filterByIntent(
       },
       body: JSON.stringify([{
         keywords: keywordList,
-        location_code: 2840, // USA
+        location_code: 2840,
         language_code: 'en',
       }]),
     });
-    
+
     if (!response.ok) {
-      // If intent API fails, fall back to keyword-based filtering
       logger.warn('Search Intent API failed, using keyword-based filtering');
       return filterByKeywordPattern(keywords, intent);
     }
-    
+
     const data = await response.json();
-    
+
     if (!data || !data.tasks || !data.tasks[0] || !data.tasks[0].result) {
       return filterByKeywordPattern(keywords, intent);
     }
-    
+
     const results = data.tasks[0].result || [];
     const intentMap = new Map<string, string>();
-    
+
     results.forEach((item: any) => {
       if (item.keyword && item.search_intents) {
         const primaryIntent = item.search_intents[0]?.label || 'informational';
         intentMap.set(item.keyword, primaryIntent.toLowerCase());
       }
     });
-    
-    // Filter keywords by intent
+
     const filtered = keywords.filter(k => {
       const keywordIntent = intentMap.get(k.keyword) || 'informational';
       return keywordIntent === intent;
     });
-    
+
     logger.info(`Filtered to ${filtered.length} ${intent} keywords`);
     return filtered;
-    
+
   } catch (error) {
     logger.warn('Error filtering by intent, using keyword-based filtering:', error);
     return filterByKeywordPattern(keywords, intent);
   }
+  */
 }
 
 /**
@@ -1120,6 +1161,68 @@ function generateTitleFromKeyword(keyword: string): string {
   }
   
   return title;
+}
+
+/**
+ * Load existing blog posts to prevent duplicates
+ * Returns slugs and keywords from published blog posts
+ */
+async function loadExistingBlogKeywords(): Promise<{
+  slugs: Set<string>;
+  keywords: Set<string>;
+}> {
+  const slugs = new Set<string>();
+  const keywords = new Set<string>();
+
+  try {
+    const fs = await import('fs/promises');
+    const path = await import('path');
+
+    const blogDir = path.resolve(process.cwd(), 'content', 'blog');
+
+    // Read all blog post files
+    const files = await fs.readdir(blogDir);
+    const jsonFiles = files.filter(f => f.endsWith('.json'));
+
+    for (const file of jsonFiles) {
+      try {
+        const filePath = path.join(blogDir, file);
+        const content = await fs.readFile(filePath, 'utf-8');
+        const blogPost = JSON.parse(content);
+
+        // Add slug
+        if (blogPost.slug) {
+          slugs.add(blogPost.slug);
+        }
+
+        // Add primary keyword (normalized)
+        if (blogPost.primaryKeyword) {
+          keywords.add(blogPost.primaryKeyword.toLowerCase().trim());
+        }
+
+        // Add title as keyword variant (normalized)
+        if (blogPost.title) {
+          const titleAsKeyword = blogPost.title
+            .toLowerCase()
+            .replace(/:\s*complete guide$/i, '') // Remove "Complete Guide" suffix
+            .replace(/:\s*expert guide$/i, '')
+            .replace(/:\s*guide$/i, '')
+            .trim();
+          keywords.add(titleAsKeyword);
+        }
+
+      } catch (error) {
+        logger.warn(`Failed to parse blog file ${file}:`, error);
+      }
+    }
+
+    logger.debug(`Loaded ${slugs.size} existing blog slugs and ${keywords.size} keywords for deduplication`);
+
+  } catch (error) {
+    logger.warn('Failed to load existing blog posts for deduplication:', error);
+  }
+
+  return { slugs, keywords };
 }
 
 /**

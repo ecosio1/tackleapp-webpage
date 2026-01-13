@@ -1,0 +1,147 @@
+/* Phone Mockup Component */
+.phoneMockup {
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+
+.phoneFrame {
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  background: linear-gradient(135deg, #2563EB 0%, #34D399 100%);
+  border-radius: 35px;
+  padding: 12px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 0 30px rgba(37, 99, 235, 0.2);
+  transition: all 300ms ease;
+  position: relative;
+}
+
+.phoneFrame:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.2),
+    0 0 40px rgba(37, 99, 235, 0.3);
+}
+
+.phoneScreen {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.carouselContainer {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.carouselSlide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carouselSlide.active {
+  opacity: 1;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carouselDots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  padding: 0;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.2);
+}
+
+.dot.activeDot {
+  background: #2563EB;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .phoneMockup {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .phoneMockup {
+    max-width: 280px;
+  }
+
+  .phoneFrame {
+    padding: 10px;
+    border-radius: 30px;
+  }
+
+  .phoneScreen {
+    border-radius: 24px;
+  }
+
+  .carouselDots {
+    bottom: 16px;
+    padding: 6px 12px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .dot.activeDot {
+    width: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .phoneMockup {
+    max-width: 260px;
+  }
+}

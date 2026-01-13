@@ -1004,6 +1004,92 @@ program
   .option('--title <title>', 'Use specific title (requires --slug)', '')
   .option('--keyword <keyword>', 'Use specific keyword (requires --slug)', '')
   .action(async (options) => {
+    /**
+     * Generate topic-relevant related questions dynamically
+     * Instead of hardcoding bass lure questions for every blog
+     */
+    function generateRelatedQuestions(keyword: string, title: string): string[] {
+      const lowerKeyword = keyword.toLowerCase();
+      const lowerTitle = (title || '').toLowerCase();
+      const allText = `${lowerKeyword} ${lowerTitle}`;
+
+      // Extract the main subject (species, technique, gear type)
+      let subject = 'fish';
+      let verb = 'catch';
+      let adjective = 'best';
+
+      // Detect species
+      const species = ['bass', 'trout', 'snook', 'redfish', 'tarpon', 'walleye', 'crappie', 'catfish', 'carp', 'pike'];
+      for (const sp of species) {
+        if (allText.includes(sp)) {
+          subject = sp;
+          break;
+        }
+      }
+
+      // Detect if it's about gear (lures, rods, reels, etc.)
+      if (allText.includes('lure') || allText.includes('bait')) {
+        return [
+          `What are the best ${subject} lures?`,
+          `What lures catch the most ${subject}?`,
+          `What color lures work best for ${subject}?`,
+          `What size lures should I use for ${subject}?`,
+          `What are the best ${subject} lures for beginners?`,
+        ];
+      }
+
+      if (allText.includes('rod') || allText.includes('pole')) {
+        return [
+          `What is the best rod for ${subject}?`,
+          `What rod size is best for ${subject} fishing?`,
+          `What rod power should I use for ${subject}?`,
+          `How do I choose a ${subject} fishing rod?`,
+          `What are the best budget rods for ${subject}?`,
+        ];
+      }
+
+      if (allText.includes('reel')) {
+        return [
+          `What is the best reel for ${subject}?`,
+          `What reel size for ${subject} fishing?`,
+          `Spinning or baitcasting for ${subject}?`,
+          `What gear ratio for ${subject} fishing?`,
+          `What are the best reels for ${subject} fishing?`,
+        ];
+      }
+
+      // Detect if it's about technique/how-to
+      if (allText.includes('how to') || allText.includes('technique')) {
+        return [
+          `How do you catch ${subject}?`,
+          `What is the best way to fish for ${subject}?`,
+          `When is the best time to catch ${subject}?`,
+          `Where do ${subject} hide?`,
+          `What bait works best for ${subject}?`,
+        ];
+      }
+
+      // Detect if it's about knots/rigging
+      if (allText.includes('knot') || allText.includes('tie') || allText.includes('rig')) {
+        return [
+          'What is the strongest fishing knot?',
+          'How do you tie a fishing knot?',
+          'What knot is best for hooks?',
+          'How do you tie line to a lure?',
+          'What is the easiest fishing knot?',
+        ];
+      }
+
+      // Default: general fishing questions
+      return [
+        `What is the best way to catch ${subject}?`,
+        `When is the best time to fish for ${subject}?`,
+        `What bait or lures work for ${subject}?`,
+        `Where can I find ${subject}?`,
+        `What gear do I need for ${subject} fishing?`,
+      ];
+    }
+
     try {
       const { generateBlogIdeas } = await import('./pipeline/ideation');
       const { blogIdeaToBrief } = await import('./pipeline/blog-brief-builder');
@@ -1042,22 +1128,20 @@ program
       
       if (slugFromArgs && slugFromArgs.trim() !== '') {
         logger.info('Using provided slug/title/keyword (skipping ideation)...');
+        // Generate topic-specific related questions dynamically
+        const topicKeyword = keywordFromArgs || slugFromArgs.replace(/-/g, ' ');
+        const relatedQuestions = generateRelatedQuestions(topicKeyword, titleFromArgs);
+
         idea = {
           slug: slugFromArgs,
           title: titleFromArgs || slugFromArgs.replace(/-/g, ' '),
-          keyword: keywordFromArgs || slugFromArgs.replace(/-/g, ' '),
+          keyword: topicKeyword,
           searchVolume: 22200, // Use high volume for manual posts
           keywordDifficulty: 0,
           cpc: 0,
           searchIntent: 'informational' as const,
           category: options.category,
-          relatedQuestions: [
-            'What are the best bass lures?',
-            'What lures catch the most bass?',
-            'What color lures work best for bass?',
-            'What size lures should I use for bass?',
-            'What are the best bass lures for beginners?',
-          ],
+          relatedQuestions,
           serpFeatures: [],
           opportunityScore: 75, // High score for manual posts
         };

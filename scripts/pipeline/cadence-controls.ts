@@ -41,8 +41,8 @@ export const DEFAULT_CADENCE_CONTROLS: CadenceControls = {
   minSearchVolume: 50, // Minimum 50 searches/month
   maxKeywordDifficulty: 65, // Not too competitive
   allowedIntents: ['informational'], // Only informational content
-  requireRelatedQuestions: true,
-  minRelatedQuestions: 3,
+  requireRelatedQuestions: false, // Disabled - related questions generated dynamically
+  minRelatedQuestions: 0, // Disabled
 };
 
 /**

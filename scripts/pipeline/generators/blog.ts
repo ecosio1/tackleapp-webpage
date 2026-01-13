@@ -59,17 +59,23 @@ WRITING STYLE:
 - Active voice, 2nd person ("you should cast...")
 - Include realistic constraints and conditions
 
-NEVER:
-- Copy text verbatim from sources
-- Use generic AI phrases ("dive into", "unlock", "explore")
-- Include regulatory information (seasons, limits, sizes)
-- Create walls of text without structure
+CRITICAL PROHIBITIONS (WILL CAUSE REJECTION):
+❌ NEVER mention bag limits, catch limits, or possession limits (e.g., "5 fish per day", "daily limit")
+❌ NEVER mention size limits or slot limits (e.g., "12-15 inches", "minimum 18 inches")
+❌ NEVER mention fishing seasons or closed seasons (e.g., "open April-October")
+❌ NEVER mention specific license requirements or costs
+❌ NEVER copy text verbatim from sources
+❌ NEVER use generic AI phrases ("dive into", "unlock", "explore")
+❌ NEVER create walls of text without structure
 
-ALWAYS:
-- Minimum 1500 words of original, specific content
-- EXACTLY 5-8 FAQs with 2-4 sentence answers
-- "Tackle app" CTA with value props (log catches, track patterns, discover spots)
-- Use ALL provided internal links naturally
+If regulations are relevant, ONLY say: "Check local regulations for current rules" with a link to official sources.
+
+ALWAYS INCLUDE:
+✓ Minimum 1500 words of original, specific content
+✓ EXACTLY 5-8 FAQs with 2-4 sentence answers
+✓ "Tackle app" CTA with value props (log catches, track patterns, discover spots)
+✓ Use ALL provided internal links naturally
+✓ Focus on techniques, gear, and strategies (NOT regulations)
 
 Write in a conversational, helpful tone with specific actionable advice.`,
   });
@@ -109,12 +115,17 @@ Write in a conversational, helpful tone with specific actionable advice.`,
   }
   
   // Generate alternative recommendations
+  // NOTE: Feature disabled - loadSiteIndex function not implemented
+  // To enable: implement loadSiteIndex in internalLinks.ts
+  const alternativeRecommendations: any[] = [];
+
+  /* DISABLED - Missing loadSiteIndex implementation
   let alternativeRecommendations;
   try {
     const { generateAlternativeRecommendations } = await import('../alternative-recommendations');
     const { loadSiteIndex } = await import('../internalLinks');
     const siteIndex = await loadSiteIndex();
-    
+
     // Convert site index to format needed
     const availableContent = [
       ...siteIndex.species.map(s => ({ ...s, type: 'species', title: s.slug })),
@@ -122,12 +133,13 @@ Write in a conversational, helpful tone with specific actionable advice.`,
       ...siteIndex.locations.map(l => ({ ...l, type: 'location', title: l.city || l.slug })),
       ...siteIndex.blogPosts.map(b => ({ ...b, type: 'blog', title: b.slug })),
     ];
-    
+
     alternativeRecommendations = await generateAlternativeRecommendations(brief, availableContent);
     logger.info(`Generated ${alternativeRecommendations.length} alternative recommendations`);
   } catch (error) {
     logger.warn('Alternative recommendations generation failed:', error);
   }
+  */
   
   // Generate structured CTAs (required for blog posts)
   const ctas: CTA[] = [
@@ -154,7 +166,7 @@ Write in a conversational, helpful tone with specific actionable advice.`,
     headings,
     primaryKeyword: brief.primaryKeyword,
     secondaryKeywords: brief.secondaryKeywords,
-    categorySlug: extractCategoryFromSlug(brief.slug),
+    categorySlug: extractCategoryFromSlug(brief.slug, brief.title, brief.primaryKeyword),
     tags: brief.secondaryKeywords.slice(0, 5),
     faqs: faqs.length >= 5 ? faqs.slice(0, 8) : generateDefaultFaqs(brief),
     sources: brief.sources,
@@ -443,24 +455,127 @@ function extractFaqsFromMarkdown(body: string): BlogPostDoc['faqs'] {
  * Generate description from brief and body
  */
 function generateDescription(brief: ContentBrief, body: string): string {
-  // Extract first paragraph or generate from title
-  const firstParagraph = body.split('\n\n')[0]?.replace(/^#+\s*/, '').trim();
-  if (firstParagraph && firstParagraph.length >= 100 && firstParagraph.length <= 160) {
-    return firstParagraph;
+  // Try to extract a compelling description from the body
+  // Look for the "Quick Answer" section or first meaningful paragraph
+  const lines = body.split('\n');
+  
+  // Find "Quick Answer" section (usually has bullet points with actionable info)
+  const quickAnswerIndex = lines.findIndex(line => 
+    line.toLowerCase().includes('quick answer') || 
+    line.toLowerCase().includes('top 3') ||
+    line.toLowerCase().includes('here\'s what')
+  );
+  
+  if (quickAnswerIndex !== -1) {
+    // Extract next few lines after "Quick Answer" heading
+    const quickAnswerContent = lines.slice(quickAnswerIndex + 1, quickAnswerIndex + 4)
+      .join(' ')
+      .replace(/\*\*/g, '')
+      .replace(/^[-*•]\s*/, '')
+      .trim();
+    
+    if (quickAnswerContent.length >= 100 && quickAnswerContent.length <= 160) {
+      return quickAnswerContent;
+    }
   }
   
-  // Fallback: generate from title and keywords
-  return `${brief.title}. ${brief.secondaryKeywords.slice(0, 3).join(', ')}. Learn more about ${brief.primaryKeyword}.`.substring(0, 160);
+  // Try first paragraph after removing markdown
+  const cleanBody = body.replace(/```markdown\n?/g, '').replace(/```\n?/g, '');
+  const paragraphs = cleanBody.split('\n\n').filter(p => p.trim().length > 0);
+  
+  for (const para of paragraphs) {
+    const cleaned = para
+      .replace(/^#+\s*/, '')
+      .replace(/\*\*/g, '')
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove markdown links
+      .trim();
+    
+    // Skip if it's just a heading or too short
+    if (cleaned.length >= 120 && cleaned.length <= 160 && !cleaned.startsWith('##')) {
+      return cleaned;
+    }
+    
+    // If paragraph is longer, truncate intelligently
+    if (cleaned.length > 160) {
+      const truncated = cleaned.substring(0, 157).trim();
+      const lastSpace = truncated.lastIndexOf(' ');
+      if (lastSpace > 100) {
+        return truncated.substring(0, lastSpace) + '...';
+      }
+      return truncated + '...';
+    }
+  }
+  
+  // Fallback: Create a compelling description from title and primary keyword
+  // Format: "Learn [primary keyword] with expert tips on [key benefit]. [Actionable promise]."
+  const location = brief.locationFocus ? ` in ${brief.locationFocus}` : '';
+  const species = brief.speciesFocus ? ` for ${brief.speciesFocus}` : '';
+  
+  const fallback = `Learn ${brief.primaryKeyword}${location}${species} with expert tips, proven techniques, and actionable advice. Discover the best strategies to improve your fishing success.`;
+  
+  return fallback.substring(0, 160);
 }
 
 /**
- * Extract category from slug
+ * Extract category from slug and content type
+ * Improved categorization that detects content types (how-to, comparison, review, etc.)
  */
-function extractCategoryFromSlug(slug: string): string {
-  // Simple heuristic - can be improved
-  if (slug.includes('tip') || slug.includes('guide')) return 'fishing-tips';
-  if (slug.includes('gear') || slug.includes('review')) return 'gear-reviews';
-  if (slug.includes('condition') || slug.includes('weather')) return 'conditions';
+function extractCategoryFromSlug(slug: string, title?: string, primaryKeyword?: string): string {
+  const text = `${slug} ${title || ''} ${primaryKeyword || ''}`.toLowerCase();
+  
+  // Content Type Detection (more specific first)
+  
+  // How-to guides
+  if (text.includes('how-to') || text.includes('how to') || text.includes('step-by-step') || 
+      text.includes('guide') && (text.includes('beginner') || text.includes('complete'))) {
+    return 'fishing-tips'; // How-tos are tips/guides
+  }
+  
+  // Comparisons
+  if (text.includes('vs') || text.includes('versus') || text.includes('compare') || 
+      text.includes('difference between') || text.includes('best') && text.includes('or')) {
+    return 'gear-reviews'; // Comparisons are typically gear-focused
+  }
+  
+  // Gear Reviews
+  if (text.includes('best') && (text.includes('lure') || text.includes('rod') || 
+      text.includes('reel') || text.includes('tackle') || text.includes('gear'))) {
+    return 'gear-reviews';
+  }
+  
+  // Reviews (specific products)
+  if (text.includes('review') || text.includes('tested') || text.includes('recommendation')) {
+    return 'gear-reviews';
+  }
+  
+  // Conditions/Weather/Tides
+  if (text.includes('condition') || text.includes('weather') || text.includes('tide') || 
+      text.includes('time') && (text.includes('best') || text.includes('when'))) {
+    return 'conditions';
+  }
+  
+  // Techniques/Tactics
+  if (text.includes('technique') || text.includes('tactic') || text.includes('method') || 
+      text.includes('strategy')) {
+    return 'fishing-tips';
+  }
+  
+  // Species-specific (could be its own category)
+  if (text.includes('snook') || text.includes('bass') || text.includes('redfish') || 
+      text.includes('trout') || text.includes('tarpon')) {
+    // If it's about catching a species, it's tips; if it's about the species itself, could be species-spotlight
+    if (text.includes('catch') || text.includes('target') || text.includes('lure')) {
+      return 'fishing-tips';
+    }
+  }
+  
+  // Location-specific
+  if (text.includes('florida') || text.includes('texas') || text.includes('location') || 
+      text.includes('where to')) {
+    return 'fishing-tips'; // Location guides are tips
+  }
+  
+  // Default fallback
   return 'fishing-tips';
 }
 

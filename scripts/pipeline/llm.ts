@@ -2,6 +2,11 @@
  * LLM Client - Generates content using OpenAI
  */
 
+// Ensure dotenv is loaded before accessing process.env
+import dotenv from 'dotenv';
+import { resolve } from 'path';
+dotenv.config({ path: resolve(process.cwd(), '.env.local') });
+
 import { logger } from './logger';
 import { LLM_CONFIG } from './config';
 
@@ -71,7 +76,14 @@ Include all required sections, FAQs, and internal links as specified.`;
         ],
         temperature: LLM_CONFIG.temperature,
         max_tokens: LLM_CONFIG.maxTokens,
-        response_format: input.jsonSchema ? { type: 'json_schema', json_schema: input.jsonSchema } : undefined,
+        response_format: input.jsonSchema ? {
+          type: 'json_schema',
+          json_schema: {
+            name: 'response_schema',
+            strict: true,
+            schema: input.jsonSchema
+          }
+        } : undefined,
       }),
     });
     

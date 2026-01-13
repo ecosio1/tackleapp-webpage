@@ -62,7 +62,7 @@ export function generateRetentionOutline(brief: {
     },
     {
       title: 'Always Check Current Regulations',
-      description: `Single neutral line: "Regulations in ${location} include size limits, bag limits, and seasonal closures. Always check current regulations with [official authority]." Link to official FWC or relevant government source. Do NOT include specific limits or seasons.`,
+      description: `Single neutral reminder ONLY: "Fishing regulations vary by location and change regularly. Always verify current rules with local authorities before fishing." Link to official FWC or relevant government source. CRITICAL: Do NOT mention ANY specific regulations, limits, sizes, or seasons - only include this generic reminder.`,
     },
   ];
 }
@@ -101,10 +101,16 @@ SECONDARY KEYWORDS: ${brief.secondaryKeywords.join(', ')}
 
 You MUST follow this exact 12-section structure (non-negotiable):
 
-${outline.map((section, i) => `
-${i + 1}. ${section.title}
+IMPORTANT: Use clean section titles WITHOUT parenthetical labels in your headings. The labels like "(Instant Value)" and "(Copyable Setup)" are for internal guidance only - do NOT include them in the published content.
+
+${outline.map((section, i) => {
+  // Remove parenthetical labels from title for published content
+  const cleanTitle = section.title.replace(/\s*\([^)]+\)\s*/g, '');
+  return `
+${i + 1}. ${cleanTitle}
    ${section.description}
-`).join('\n')}
+`;
+}).join('\n')}
 
 === IMAGE REQUIREMENTS ===
 
@@ -136,11 +142,15 @@ Before Section 7 (Mistakes) - OPTIONAL:
 - Include realistic constraints ("this works best when...")
 - Mention common mistakes throughout
 
-❌ DON'T:
+❌ DON'T (CRITICAL - WILL CAUSE REJECTION):
 - Use generic AI phrases ("dive into", "explore", "unlock")
 - Create walls of text without images
 - Give vague advice ("use topwater" without when/where/how)
-- Include regulatory information (seasons, limits, sizes)
+- Include ANY regulatory information:
+  ❌ NO bag limits ("5 fish per day", "daily limit")
+  ❌ NO size limits ("12-15 inches", "minimum 18 inches", "slot limit")
+  ❌ NO fishing seasons ("open April-October", "closed season")
+  ❌ NO specific license costs or requirements
 - Copy content verbatim from sources
 
 === CONTENT REQUIREMENTS ===
@@ -148,7 +158,7 @@ Before Section 7 (Mistakes) - OPTIONAL:
 - MINIMUM ${brief.minWordCount} words (strict requirement)
 - 5-8 FAQs with detailed answers (2-4 sentences each)
 - Use ALL ${brief.internalLinks.length} internal links naturally
-- "Tackle app" CTA with value props (log catches, track patterns, discover spots)
+- **REQUIRED CTA**: You MUST include a "Tackle app" call-to-action in the body text. Include it naturally in Section 9 (1-Minute Action Plan) or Section 10 (Next Steps). Example: "Ready to catch more fish? Download the Tackle app to log your catches, track patterns, and discover hot spots near you." The text must include the phrase "Tackle app" or "download Tackle" somewhere in the body.
 - Cite all facts from sources but paraphrase with original insights
 
 === KEY FACTS TO INCLUDE ===
@@ -171,7 +181,7 @@ Before submitting, verify:
 ✓ Decision tree with 6 conditions in Section 5
 ✓ 10-12 mistakes in Section 7
 ✓ 1-minute action plan in Section 9
-✓ No regulatory claims
+✓ NO bag limits, size limits, seasons, or license costs mentioned ANYWHERE
 
 Write the complete blog post now in markdown format:`;
 }
