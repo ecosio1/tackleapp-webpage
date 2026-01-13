@@ -68,7 +68,9 @@ export async function getAutoLinksForBlog(slug: string): Promise<LinkSuggestion[
     const locationDocs = await getAllLocationDocs();
     for (const locationSlug of related.locationSlugs.slice(0, 2)) {
       // Location slugs can be "state/city" format
-      const location = locationDocs.find(l => {
+      // Type guard: ensure we're working with LocationDoc
+      const location = locationDocs.find((l): l is LocationDoc => {
+        if (l.pageType !== 'location') return false;
         if (locationSlug.includes('/')) {
           const [state, city] = locationSlug.split('/');
           return l.stateSlug === state && l.citySlug === city;
