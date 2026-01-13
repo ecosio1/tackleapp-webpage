@@ -12,7 +12,7 @@ const CONTENT_INDEX_PATH = path.join(process.cwd(), 'content', '_system', 'conte
 /**
  * Load site content index
  */
-async function loadSiteIndex(): Promise<SiteIndex> {
+export async function loadSiteIndex(): Promise<SiteIndex> {
   try {
     const data = await fs.readFile(CONTENT_INDEX_PATH, 'utf-8');
     return JSON.parse(data);
