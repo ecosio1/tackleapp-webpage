@@ -152,24 +152,38 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
           )}
         </div>
 
-        {/* Posts Grid - 3 Column Layout */}
+        {/* All Posts Grid - Modern Featured Style */}
         {blogPosts.length > 0 ? (
-          <div className="blog-posts-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
-            {/* Skip first 3 posts on page 1 since they're shown in featured grid */}
-            {(page === 1 ? blogPosts.slice(3) : blogPosts).map((post) => (
-            <ModernBlogCard
-              key={post.slug}
-              slug={post.slug}
-              title={post.title}
-              description={post.description}
-              category={post.category}
-              date={post.publishedAt}
-              readTime={post.readTime}
-              author={post.author}
-              image={post.heroImage || 'https://images.unsplash.com/photo-1592329347327-27c7e288b5f6?w=800&h=600&fit=crop'}
-            />
-          ))}
-          </div>
+          <>
+            {(() => {
+              const remainingPosts = page === 1 ? blogPosts.slice(3) : blogPosts;
+              const chunks = [];
+
+              // Group posts into chunks of 3 for the featured grid layout
+              for (let i = 0; i < remainingPosts.length; i += 3) {
+                chunks.push(remainingPosts.slice(i, i + 3));
+              }
+
+              return chunks.map((chunk, chunkIndex) => (
+                <BlogPostsGrid
+                  key={`chunk-${chunkIndex}`}
+                  title={chunkIndex === 0 && page === 1 ? "More Articles" : ""}
+                  description=""
+                  posts={chunk.map((post, index) => ({
+                    id: chunkIndex * 3 + index,
+                    title: post.title,
+                    category: post.category.replace('-', ' '),
+                    imageUrl: post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop',
+                    href: `/blog/${post.slug}`,
+                    views: Math.floor(Math.random() * 2000) + 500,
+                    readTime: post.readTime || 5,
+                    rating: 5,
+                  }))}
+                  className="mb-12"
+                />
+              ));
+            })()}
+          </>
         ) : (
           <div className="text-center py-16 px-4">
             <div className="max-w-md mx-auto">

@@ -73,17 +73,25 @@ export function TableOfContents({ content, minHeadings = 3 }: TableOfContentsPro
   }
 
   return (
-    <nav className="toc-container toc-sidebar">
-      <div className="toc-header">
-        <h4>Table of Contents</h4>
-      </div>
-      <ul className="toc-list">
-        {headings.map(({ id, text, level }) => (
-          <li
-            key={id}
-            className={`toc-item toc-level-${level} ${activeId === id ? 'toc-active' : ''}`}
-          >
-            <a href={`#${id}`} className="toc-link" onClick={(e) => {
+    <nav className="sticky top-24 h-fit max-h-[calc(100vh-8rem)] overflow-y-auto">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+        <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
+          Table of Contents
+        </h4>
+        <ul className="space-y-2">
+          {headings.map(({ id, text, level }) => (
+            <li
+              key={id}
+              className={`${level === 3 ? 'ml-4' : ''}`}
+            >
+              <a
+                href={`#${id}`}
+                className={`block text-sm transition-colors hover:text-blue-600 ${
+                  activeId === id
+                    ? 'text-blue-600 font-semibold'
+                    : 'text-gray-600'
+                }`}
+                onClick={(e) => {
               e.preventDefault();
               const element = document.getElementById(id);
               if (element) {
@@ -95,12 +103,13 @@ export function TableOfContents({ content, minHeadings = 3 }: TableOfContentsPro
                   behavior: 'smooth'
                 });
               }
-            }}>
-              {text}
-            </a>
-          </li>
-        ))}
-      </ul>
+                }}>
+                {text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 }
