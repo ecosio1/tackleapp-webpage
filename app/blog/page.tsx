@@ -113,13 +113,13 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
         </section>
       )}
 
-      <section className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold">
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">
             {page === 1 ? 'Latest Posts' : `All Posts (Page ${page})`}
           </h2>
           {pagination.totalPosts > 0 && (
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500 font-medium">
               Showing {((page - 1) * pagination.pageSize) + 1}-{Math.min(page * pagination.pageSize, pagination.totalPosts)} of {pagination.totalPosts} posts
             </p>
           )}
@@ -149,7 +149,7 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
 
         {/* Posts Grid */}
         {blogPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {(page === 1 ? blogPosts.slice(1) : blogPosts).map((post) => (
             <ModernBlogCard
               key={post.slug}

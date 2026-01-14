@@ -27,6 +27,9 @@ export function ModernBlogCard({
   image,
   featured = false,
 }: ModernBlogCardProps) {
+  // Default fallback image
+  const imageUrl = image || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop';
+
   const categoryColors: Record<string, string> = {
     'fishing-tips': 'bg-blue-100 text-blue-800',
     'techniques': 'bg-green-100 text-green-800',
@@ -41,22 +44,22 @@ export function ModernBlogCard({
     return (
       <article className="group relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl">
         <Link href={`/blog/${slug}`} className="block">
-          {image && (
-            <div className="relative h-64 w-full overflow-hidden">
-              <Image
-                src={image}
-                alt={title}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-4 left-4">
-                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${categoryColor}`}>
-                  {category.replace('-', ' ')}
-                </span>
-              </div>
+          <div className="relative h-80 w-full overflow-hidden bg-gray-200">
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute bottom-4 left-4">
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${categoryColor}`}>
+                {category.replace('-', ' ')}
+              </span>
             </div>
-          )}
+          </div>
           <div className="p-6">
             <div className="mb-3 flex items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-1">
@@ -74,10 +77,10 @@ export function ModernBlogCard({
                 <span>{readTime} min read</span>
               </div>
             </div>
-            <h2 className="mb-3 text-2xl font-bold text-gray-900 transition-colors group-hover:text-blue-600">
+            <h2 className="mb-3 text-2xl font-bold text-gray-900 line-clamp-2 leading-tight transition-colors group-hover:text-blue-600">
               {title}
             </h2>
-            <p className="mb-4 text-gray-600 line-clamp-2">{description}</p>
+            <p className="mb-4 text-gray-600 line-clamp-3 leading-relaxed">{description}</p>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <User className="h-4 w-4" />
@@ -94,19 +97,19 @@ export function ModernBlogCard({
   }
 
   return (
-    <article className="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg">
+    <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <Link href={`/blog/${slug}`} className="block">
-        {image && (
-          <div className="relative h-48 w-full overflow-hidden">
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
-        )}
-        <div className="p-5">
+        <div className="relative h-52 w-full overflow-hidden bg-gray-200">
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            unoptimized
+          />
+        </div>
+        <div className="flex flex-col flex-grow p-5">
           <div className="mb-2 flex items-center gap-3">
             <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${categoryColor}`}>
               {category.replace('-', ' ')}
@@ -118,10 +121,10 @@ export function ModernBlogCard({
               })}
             </time>
           </div>
-          <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-blue-600">
+          <h3 className="mb-2 text-lg font-bold text-gray-900 line-clamp-2 leading-tight transition-colors group-hover:text-blue-600">
             {title}
           </h3>
-          <p className="mb-3 text-sm text-gray-600 line-clamp-2">{description}</p>
+          <p className="mb-4 text-sm text-gray-600 line-clamp-3 leading-relaxed">{description}</p>
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>{readTime} min read</span>
             <span className="font-semibold text-blue-600 group-hover:text-blue-700">
