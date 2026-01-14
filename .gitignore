@@ -35,7 +35,6 @@ next-env.d.ts
 
 # content system - exclude job queue and temp files
 /content/_system/jobQueue.json
-/content/_system/contentIndex.json
 /content/_system/topicIndex.json
 
 # claude temp files
