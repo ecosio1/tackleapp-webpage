@@ -12,7 +12,6 @@ import { ModernBlogCard } from '@/components/blog/ModernBlogCard';
 import { Pagination } from '@/components/blog/Pagination';
 import { getAllBlogCategories } from '@/lib/content/blog';
 import { getPaginatedBlogPosts } from '@/lib/content/blog-pagination';
-import { BlogPostsGrid } from '@/components/ui/blog-posts';
 
 interface BlogIndexPageProps {
   searchParams: Promise<{ page?: string }>;
@@ -86,34 +85,8 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
     );
   }
   
-  // Transform blog posts for the featured grid component (only on page 1, show first 3 posts)
-  const featuredPosts = page === 1 && blogPosts.length >= 3
-    ? blogPosts.slice(0, 3).map((post, index) => ({
-        id: index + 1,
-        title: post.title,
-        category: post.category.replace('-', ' '),
-        imageUrl: post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop',
-        href: `/blog/${post.slug}`,
-        views: Math.floor(Math.random() * 2000) + 500, // Placeholder views (could be replaced with actual analytics)
-        readTime: post.readTime || 5,
-        rating: 5, // Default rating
-      }))
-    : [];
-
   return (
     <div className="home-main">
-      {/* Featured Blog Posts Grid - Only on page 1 */}
-      {page === 1 && featuredPosts.length >= 3 && (
-        <BlogPostsGrid
-          title="Featured Articles"
-          description="Discover the most engaging fishing tips, techniques, and expert advice from our community"
-          backgroundLabel="BLOG"
-          backgroundPosition="left"
-          posts={featuredPosts}
-          className="mb-16"
-        />
-      )}
-
       <header className="page-header text-center mb-12 py-8">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
           Fishing Blog
@@ -152,38 +125,23 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
           )}
         </div>
 
-        {/* All Posts Grid - Modern Featured Style */}
+        {/* All Posts - Clean Card Grid */}
         {blogPosts.length > 0 ? (
-          <>
-            {(() => {
-              const remainingPosts = page === 1 ? blogPosts.slice(3) : blogPosts;
-              const chunks = [];
-
-              // Group posts into chunks of 3 for the featured grid layout
-              for (let i = 0; i < remainingPosts.length; i += 3) {
-                chunks.push(remainingPosts.slice(i, i + 3));
-              }
-
-              return chunks.map((chunk, chunkIndex) => (
-                <BlogPostsGrid
-                  key={`chunk-${chunkIndex}`}
-                  title={chunkIndex === 0 && page === 1 ? "More Articles" : ""}
-                  description=""
-                  posts={chunk.map((post, index) => ({
-                    id: chunkIndex * 3 + index,
-                    title: post.title,
-                    category: post.category.replace('-', ' '),
-                    imageUrl: post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop',
-                    href: `/blog/${post.slug}`,
-                    views: Math.floor(Math.random() * 2000) + 500,
-                    readTime: post.readTime || 5,
-                    rating: 5,
-                  }))}
-                  className="mb-12"
-                />
-              ));
-            })()}
-          </>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {blogPosts.map((post) => (
+              <ModernBlogCard
+                key={post.slug}
+                slug={post.slug}
+                title={post.title}
+                description={post.description}
+                category={post.category}
+                date={post.publishedAt}
+                readTime={post.readTime}
+                author={post.author}
+                image={post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop'}
+              />
+            ))}
+          </div>
         ) : (
           <div className="text-center py-16 px-4">
             <div className="max-w-md mx-auto">
