@@ -293,23 +293,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           </header>
 
-          {/* Hero Image - Full Width, Prominent */}
-          {(post.featuredImage || post.heroImage) && (
-            <div className="mb-12">
-              <div className="relative w-full overflow-hidden" style={{ height: 'clamp(300px, 50vw, 600px)', borderRadius: '12px' }}>
-                <Image
-                  src={post.featuredImage || post.heroImage!}
-                  alt={`${post.title} - ${post.description.substring(0, 100)}`}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                />
-                {/* Gradient overlay for better readability if text is added */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-              </div>
-            </div>
-          )}
+          {/* Hero Image - Temporarily removed */}
 
           {/* Social Share Buttons */}
           <div>
