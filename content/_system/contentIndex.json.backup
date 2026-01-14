@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-01-13T21:34:43.651Z",
+  "lastUpdated": "2026-01-13T21:35:50.875Z",
   "species": [],
   "howTo": [],
   "locations": [],
@@ -416,6 +416,36 @@
         "what bait or lures work for fish",
         "where can i find fish",
         "what gear do i need for fish fishing"
+      ]
+    },
+    {
+      "slug": "how-to-clean-and-store-fishing-gear",
+      "title": "How to Clean and Store Fishing Gear: Complete Maintenance Guide",
+      "description": "- Lure Choice: Soft plastics like Zoom Super Fluke work well in various conditions. - Where to Fish: Target areas like drop-offs and weed lines.",
+      "category": "fishing-tips",
+      "publishedAt": "2026-01-13T21:35:50.823Z",
+      "updatedAt": "2026-01-13T21:35:50.823Z",
+      "wordCount": 902,
+      "author": "Tackle Team",
+      "flags": {
+        "draft": false,
+        "noindex": false
+      },
+      "keywords": [
+        "how to clean and store fishing gear",
+        "how do you catch fish",
+        "what is the best way to fish for fish",
+        "when is the best time to catch fish",
+        "where do fish hide",
+        "what bait works best for fish",
+        "fishing-tips"
+      ],
+      "tags": [
+        "how do you catch fish",
+        "what is the best way to fish for fish",
+        "when is the best time to catch fish",
+        "where do fish hide",
+        "what bait works best for fish"
       ]
     }
   ]

@@ -770,6 +770,404 @@ The following sources were consulted in creating this guide:
 
 ---
 
+## G) Gear Reviews & Buyer's Guide Standards
+
+### 1. Testing Requirements
+
+**For Product Reviews:**
+- **First-hand Experience Required** - Must have actually used the gear
+- **Test Duration** - Minimum 3 fishing trips or 20+ hours use
+- **Real Conditions** - Tested in actual fishing scenarios, not just handled
+- **Multiple Species** - If applicable, test with multiple target species
+- **Documentation** - Photos/videos of gear in use
+
+**For Comparison Guides:**
+- **Personal Testing Preferred** - Test at least top 3 recommendations
+- **Research-Based Alternative** - If can't test all, cite expert reviews
+- **Disclosure Required** - State which items were personally tested
+
+### 2. Review Structure
+
+**Required Sections:**
+
+#### Introduction (100-150 words)
+- What is this gear category?
+- Why does it matter?
+- Who is this guide for?
+
+#### Testing Methodology (50-100 words)
+- How we tested
+- Conditions tested in
+- Species targeted
+- Time period
+
+#### Top Picks (Main Content)
+**For each product:**
+- Product name and model
+- Price range
+- Key features (3-5 bullets)
+- Pros (3-5 points)
+- Cons (2-3 points)
+- Best use cases
+- Who it's for (beginner/intermediate/advanced)
+
+#### Comparison Table
+- Side-by-side feature comparison
+- Price comparison
+- Rating comparison (if using ratings)
+
+#### Buying Guide
+- What to look for
+- Key features to consider
+- Price ranges explained
+- When to upgrade
+
+#### FAQs (minimum 5)
+- Common buyer questions
+- Technical questions
+- Comparison questions
+
+### 3. Disclosure Requirements
+
+**At Top of Every Review:**
+```markdown
+**Disclosure:** [Tackle Fishing Team/Author Name] has personally tested
+the products recommended in this guide. This post may contain affiliate
+links, which means we may earn a commission if you make a purchase through
+our links, at no additional cost to you. We only recommend products we
+genuinely believe in.
+```
+
+**If Sponsored:**
+```markdown
+**Disclosure:** This review includes products provided by [Brand Name] for
+testing purposes. Our opinions remain independent and honest. This post may
+contain affiliate links.
+```
+
+### 4. Pros/Cons Format
+
+**Structure:**
+```markdown
+### Product Name - $XX-$XXX
+
+**Pros:**
+- ✅ Specific feature that works well
+- ✅ Performance benefit observed
+- ✅ Value proposition
+
+**Cons:**
+- ❌ Specific limitation found
+- ❌ Area where it falls short
+- ❌ Trade-off to consider
+```
+
+**Rules:**
+- Pros must be specific, not generic ("durable" → "survived 20+ snook fights")
+- Cons must be honest, not manufactured
+- Balance positive and negative (don't hide flaws)
+
+### 5. Comparison Criteria
+
+**Scoring Dimensions (Optional):**
+- Performance (action, sensitivity, casting distance)
+- Durability (build quality, warranty)
+- Value (price vs. features)
+- Ease of Use (beginner-friendly?)
+
+**Comparison Table Example:**
+```markdown
+| Product | Price | Weight | Power | Best For | Rating |
+|---------|-------|--------|-------|----------|--------|
+| Product A | $XX | 6.5 oz | Medium | Inshore | 4.5/5 |
+| Product B | $XX | 7.2 oz | Med-Heavy | All-around | 4.0/5 |
+```
+
+### 6. Testing Transparency
+
+**Include:**
+- ✅ Specific locations tested ("Tampa Bay flats", "Miami bridges")
+- ✅ Species caught ("landed 12 snook, 8 redfish")
+- ✅ Conditions tested ("tested in 15-20 mph winds")
+- ✅ Time frame ("tested over 6 weeks")
+
+**Avoid:**
+- ❌ Vague claims ("works great")
+- ❌ No specifics ("caught lots of fish")
+- ❌ Impossible claims ("never breaks")
+
+### 7. Price Transparency
+
+**Required:**
+- Show current price or price range
+- Note if price varies (Amazon, local shops)
+- Mention sales/seasonal pricing if relevant
+- Update prices periodically (set reminder)
+
+**Format:**
+```markdown
+**Price:** $89-$129 (varies by retailer)
+**Best Value:** Usually found around $99
+**Sales:** Often discounted during Black Friday
+```
+
+### 8. Affiliate Link Policy
+
+**Rules:**
+- Always disclose affiliate relationships
+- Only recommend products you genuinely endorse
+- Don't recommend inferior products for higher commissions
+- Provide non-affiliate alternatives
+- Mark affiliate links clearly
+
+**Link Format:**
+```markdown
+[Product Name on Amazon](https://amazon.com/...) (affiliate link)
+```
+
+---
+
+## H) Content Templates
+
+### Template 1: How-To Article
+
+```markdown
+# [How to Do X]: Complete Guide
+
+[1-2 sentence hook - why this matters]
+
+**Best for:** [Beginner/Intermediate/Advanced]
+**What you need:** [2-4 key items]
+**Time required:** [Realistic time estimate]
+
+**Do this first:** [Single highest-leverage action - callout box]
+
+---
+
+## Quick Answer
+
+[3-6 bullets that directly answer the query]
+- Main point 1
+- Main point 2
+- Main point 3
+
+---
+
+## What You'll Need
+
+[List of gear/equipment needed]
+- Item 1 (specific model/size)
+- Item 2 (alternatives listed)
+- Item 3 (why it matters)
+
+---
+
+## Step-by-Step: [How to Do X]
+
+### Step 1: [Action]
+[Detailed instructions with specifics]
+- What to do
+- Why it matters
+- Common mistakes to avoid
+
+### Step 2: [Action]
+[Continue pattern]
+
+### Step 3: [Action]
+[Continue pattern]
+
+---
+
+## If This... Then That (Decision Tree)
+
+**If [condition]:**
+- Do [action]
+- Adjust [parameter]
+
+**If [condition]:**
+- Do [action]
+- Change [approach]
+
+---
+
+## Common Mistakes to Avoid
+
+1. **[Mistake]:** [Why it's wrong] → [What to do instead]
+2. **[Mistake]:** [Why it's wrong] → [What to do instead]
+3. **[Mistake]:** [Why it's wrong] → [What to do instead]
+
+---
+
+## Pro Tips
+
+- **Tip 1:** [Specific advanced advice]
+- **Tip 2:** [Insider knowledge]
+- **Tip 3:** [Experience-based insight]
+
+---
+
+## FAQs
+
+### [Question 1]?
+[Answer - 2-4 sentences, actionable]
+
+### [Question 2]?
+[Answer]
+
+[Minimum 5 FAQs total]
+
+---
+
+## Next Steps
+
+Your action plan:
+- [ ] [First thing to do]
+- [ ] [Second thing to do]
+- [ ] [Third thing to do]
+
+**Want to track your progress?** [Link to app CTA]
+
+---
+
+## Related Guides
+
+- [Link to related guide 1]
+- [Link to related guide 2]
+- [Link to related guide 3]
+```
+
+---
+
+### Template 2: Gear Review Article
+
+```markdown
+# Best [Product Category] for [Use Case]: [Year] Guide
+
+[1-2 sentence hook - why this gear matters]
+
+**Disclosure:** [See disclosure requirements above]
+
+---
+
+## Quick Picks
+
+**Best Overall:** [Product Name] - [Why]
+**Best Value:** [Product Name] - [Why]
+**Best Premium:** [Product Name] - [Why]
+**Best for Beginners:** [Product Name] - [Why]
+
+---
+
+## How We Tested
+
+[Testing methodology - 50-100 words]
+- Tested [X] products over [Y] weeks
+- Locations: [Specific places]
+- Species: [Specific targets]
+- Conditions: [Weather, water conditions]
+
+---
+
+## Top 5 [Product Category] Reviewed
+
+### 1. [Product Name] - Best Overall
+
+**Price:** $XXX-$XXX
+**Best For:** [Specific use case]
+
+[2-3 sentence overview of why this is #1]
+
+**Key Features:**
+- Feature 1 (specific detail)
+- Feature 2 (specific detail)
+- Feature 3 (specific detail)
+
+**Pros:**
+- ✅ Specific benefit found in testing
+- ✅ Performance advantage
+- ✅ Value proposition
+
+**Cons:**
+- ❌ Limitation discovered
+- ❌ Trade-off to consider
+
+**Our Testing:**
+[Specific results - species caught, conditions tested, performance notes]
+
+**Bottom Line:**
+[Who should buy this and why]
+
+**[Buy on Amazon](affiliate-link)** (affiliate link)
+
+---
+
+### 2. [Product Name] - Best Value
+
+[Repeat structure]
+
+---
+
+[Continue for remaining products]
+
+---
+
+## Comparison Table
+
+| Product | Price | Feature 1 | Feature 2 | Best For | Rating |
+|---------|-------|-----------|-----------|----------|--------|
+| Product 1 | $XX | X | Y | All-around | 4.5/5 |
+| Product 2 | $XX | X | Y | Value | 4.0/5 |
+
+---
+
+## Buying Guide: What to Look For
+
+### [Key Factor 1]
+[Explanation of what matters and why]
+
+### [Key Factor 2]
+[Explanation]
+
+### [Key Factor 3]
+[Explanation]
+
+### Price Ranges Explained
+
+**Under $XX:** [What to expect]
+**$XX-$XX:** [Sweet spot]
+**$XX+:** [Premium features]
+
+---
+
+## FAQs
+
+### [Question about products]?
+[Answer]
+
+### [Comparison question]?
+[Answer]
+
+[Minimum 5 FAQs]
+
+---
+
+## Final Recommendation
+
+[2-3 paragraphs summarizing recommendations by user type]
+
+**Want to log your catches and track what gear works best?** [App CTA]
+
+---
+
+## Related Reviews
+
+- [Link to related gear review]
+- [Link to how-to guide]
+- [Link to species guide]
+```
+
+---
+
 ## Implementation Checklist
 
 ### Editorial Standards
@@ -802,9 +1200,20 @@ The following sources were consulted in creating this guide:
 - [ ] Pruning policy established
 - [ ] Monitoring system in place
 
+### Gear Review Standards
+- [ ] Testing requirements documented
+- [ ] Disclosure templates created
+- [ ] Pros/cons format standardized
+- [ ] Affiliate link policy established
+
+### Content Templates
+- [ ] How-to article template created
+- [ ] Gear review template created
+- [ ] Templates accessible to content team
+
 ---
 
-**Last Updated:** 2024  
+**Last Updated:** 2026-01-14
 **Status:** Ready for implementation
 
 

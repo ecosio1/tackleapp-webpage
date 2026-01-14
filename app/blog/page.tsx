@@ -62,16 +62,24 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
   if (blogPosts.length === 0) {
     return (
       <div className="home-main">
-        <header className="page-header" style={{ textAlign: 'center' }}>
-          <h1>Fishing Blog</h1>
-          <p className="page-intro">
+        <header className="page-header text-center mb-12 py-8">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
+            Fishing Blog
+          </h1>
+          <p className="page-intro text-lg text-gray-600 max-w-2xl mx-auto">
             Expert tips, techniques, gear reviews, and fishing advice from the Tackle Fishing Team.
           </p>
         </header>
-        <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-          <p style={{ fontSize: '1.2rem', color: '#666', marginBottom: '2rem' }}>
-            No blog posts available yet. Check back soon for new content!
-          </p>
+        <div className="text-center py-16 px-4">
+          <div className="max-w-md mx-auto">
+            <div className="text-6xl mb-4">🎣</div>
+            <p className="text-xl text-gray-700 mb-2 font-semibold">
+              No blog posts available yet
+            </p>
+            <p className="text-gray-600">
+              Check back soon for new fishing tips, guides, and expert advice!
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -79,29 +87,26 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
   
   return (
     <div className="home-main">
-      <header className="page-header" style={{ textAlign: 'center' }}>
-        <h1>Fishing Blog</h1>
-        <p className="page-intro">
+      <header className="page-header text-center mb-12 py-8">
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
+          Fishing Blog
+        </h1>
+        <p className="page-intro text-lg text-gray-600 max-w-2xl mx-auto">
           Expert tips, techniques, gear reviews, and fishing advice from the Tackle Fishing Team.
         </p>
       </header>
 
       {categories.length > 0 && (
-        <section style={{ marginBottom: '3rem' }}>
-          <h2>Categories</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-4">Browse by Category</h2>
+          <div className="flex flex-wrap gap-3">
             {categories.map((cat) => (
               <Link
                 key={cat.slug}
                 href={`/blog/category/${cat.slug}`}
-                style={{
-                  padding: '0.5rem 1rem',
-                  background: '#f5f5f5',
-                  borderRadius: '8px',
-                  display: 'inline-block'
-                }}
+                className="px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg text-blue-800 font-medium transition-all duration-200 hover:shadow-md"
               >
-                {cat.name} ({cat.count})
+                {cat.name} <span className="text-blue-600">({cat.count})</span>
               </Link>
             ))}
           </div>
@@ -122,7 +127,12 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
 
         {/* Featured Post (only on page 1) */}
         {page === 1 && blogPosts.length > 0 && (
-          <div className="mb-8">
+          <div className="mb-12">
+            <div className="mb-4">
+              <span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
+                ⭐ Featured Post
+              </span>
+            </div>
             <ModernBlogCard
               slug={blogPosts[0].slug}
               title={blogPosts[0].title}
@@ -132,14 +142,14 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
               readTime={blogPosts[0].readTime}
               author={blogPosts[0].author}
               featured={true}
-              image={blogPosts[0].heroImage || '/images/blog/featured.jpg'}
+              image={blogPosts[0].heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop'}
             />
           </div>
         )}
 
         {/* Posts Grid */}
         {blogPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {(page === 1 ? blogPosts.slice(1) : blogPosts).map((post) => (
             <ModernBlogCard
               key={post.slug}
@@ -150,28 +160,25 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
               date={post.publishedAt}
               readTime={post.readTime}
               author={post.author}
-              image={post.heroImage || '/images/blog/default.jpg'}
+              image={post.heroImage || 'https://images.unsplash.com/photo-1592329347327-27c7e288b5f6?w=800&h=600&fit=crop'}
             />
           ))}
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-            <p style={{ fontSize: '1.1rem', color: '#666' }}>
-              No posts found on this page.
-            </p>
-            {page > 1 && (
-              <Link
-                href="/blog"
-                style={{
-                  display: 'inline-block',
-                  marginTop: '1rem',
-                  color: '#2563eb',
-                  textDecoration: 'underline'
-                }}
-              >
-                Go to first page
-              </Link>
-            )}
+          <div className="text-center py-16 px-4">
+            <div className="max-w-md mx-auto">
+              <p className="text-lg text-gray-600 mb-4">
+                No posts found on this page.
+              </p>
+              {page > 1 && (
+                <Link
+                  href="/blog"
+                  className="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  ← Go to first page
+                </Link>
+              )}
+            </div>
           </div>
         )}
 
