@@ -99,7 +99,7 @@ export function ModernBlogCard({
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <Link href={`/blog/${slug}`} className="block">
-        <div className="relative h-52 w-full overflow-hidden bg-gray-200">
+        <div className="relative h-40 w-full overflow-hidden bg-gray-200">
           <Image
             src={imageUrl}
             alt={title}
