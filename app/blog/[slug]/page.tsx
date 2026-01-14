@@ -24,6 +24,7 @@ import { ReadingProgress } from '@/components/blog/ReadingProgress';
 import { SocialShare } from '@/components/blog/SocialShare';
 import { ScrollToTop } from '@/components/blog/ScrollToTop';
 import { BlogImage } from '@/components/blog/BlogImage';
+import { AuthorSection } from '@/components/blog/AuthorSection';
 import Image from 'next/image';
 
 interface BlogPostPageProps {
@@ -363,6 +364,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </>
             );
           })()}
+        </div>
+
+        {/* Author Section */}
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <AuthorSection author={post.author} />
         </div>
 
         {/* Sources Section */}
