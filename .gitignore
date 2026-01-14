@@ -40,3 +40,9 @@ next-env.d.ts
 
 # claude temp files
 tmpclaude-*-cwd
+
+# legacy static HTML files (Next.js app should serve these routes)
+index.html
+privacy-policy.html
+terms-of-service.html
+superdesign-canvas.html
