@@ -124,7 +124,7 @@ Format as a numbered list: "1. Technique Name - reason"`;
   try {
     logger.info(`Querying Perplexity to brainstorm ${options.entityType} entities...`);
     const response = await researchTopic(query, {
-      model: 'sonar-pro', // Use pro model for better brainstorming
+      model: 'llama-3.1-sonar-large-128k-online', // Use larger model for better brainstorming
       temperature: 0.4, // Slightly higher for more creativity
       maxTokens: 2000,
     });

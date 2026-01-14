@@ -8,6 +8,7 @@ import path from 'path';
 import { loadAllBlogPosts, getBlogPostBySlug, getAllBlogCategories } from '../lib/content/blog';
 import { runQualityGate } from './pipeline/quality-gate';
 import { getAllPostSlugs } from '../lib/content/index';
+import { BlogPostDoc } from './pipeline/types';
 
 interface VerificationResult {
   requirement: string;

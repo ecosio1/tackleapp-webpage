@@ -85,11 +85,10 @@ Format as a structured list.`;
     logger.info(`Discovered ${tools.length} micro-tool opportunities`);
     
     // Validate with DataForSEO if requested
-    if (options.minVolume || options.maxDifficulty) {
+    if (options.minVolume) {
       logger.info('Validating tools with DataForSEO...');
       const validatedTools = await validateTools(tools, {
         minVolume: options.minVolume,
-        maxDifficulty: options.maxDifficulty,
       });
       return validatedTools;
     }

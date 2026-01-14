@@ -174,22 +174,22 @@ npm run pipeline:generate-matrix -- --validate
 
 ### Page Types
 
-1. **Species Guides** (`/species/{species}`)
+1. **Species Guides** (\`/species/{species}\`)
    - How to catch specific fish
    - Best techniques, lures, locations
    - Regulations and limits
 
-2. **How-To Guides** (`/how-to/{topic}`)
+2. **How-To Guides** (\`/how-to/{topic}\`)
    - Fishing techniques
    - Gear usage
    - Location-specific tips
 
-3. **Location Guides** (`/locations/{state}/{city}`)
+3. **Location Guides** (\`/locations/{state}/{city}\`)
    - Best fishing spots
    - Species available
    - Local conditions and regulations
 
-4. **Blog Posts** (`/blog/{slug}`)
+4. **Blog Posts** (\`/blog/{slug}\`)
    - Gear comparisons (X vs. Y)
    - Technique guides
    - Seasonal tips

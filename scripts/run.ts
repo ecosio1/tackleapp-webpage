@@ -453,7 +453,7 @@ program
       
       // STEP 2: Generate combinations from entities
       logger.info('📊 Step 2: Generating combinations from entities...');
-      const patterns = options.patterns.split(',').map(p => p.trim());
+      const patterns = options.patterns.split(',').map((p: string) => p.trim());
       
       logger.info(`   Patterns: ${patterns.join(', ')}`);
       logger.info(`   Max combinations to validate: ${options.maxCombinations}`);
@@ -658,7 +658,8 @@ program
       console.log(`\n✅ Tool component generated!`);
       console.log(`📄 Component: ${componentPath}`);
       if (component.serverCode) {
-        console.log(`📄 API Route: ${apiPath}`);
+        const apiRoutePath = join(process.cwd(), 'app', 'api', 'tools', tool.name.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-'), 'route.ts');
+        console.log(`📄 API Route: ${apiRoutePath}`);
       }
       console.log(`\n💡 Usage:`);
       console.log(`   import { ${componentName} } from '@/components/tools/${componentName}';`);
@@ -859,8 +860,8 @@ program
         logger.info(`Validation: Enabled (Volume: ${options.minVolume}-${options.maxVolume}, Intent: informational)`);
       }
       
-      const includePatterns = options.patterns 
-        ? options.patterns.split(',').map(p => p.trim())
+      const includePatterns = options.patterns
+        ? options.patterns.split(',').map((p: string) => p.trim())
         : undefined;
       
       if (includePatterns) {
@@ -1103,14 +1104,14 @@ program
       
       // Build cadence controls from options
       const allowedCategories = options.categories
-        ? options.categories.split(',').map(c => c.trim())
+        ? options.categories.split(',').map((c: string) => c.trim())
         : undefined;
       
       // For first blog post, use relaxed cadence controls
       const cadenceControls = {
         ...DEFAULT_CADENCE_CONTROLS,
         minOpportunityScore: parseInt(options.minScore, 10) || 50, // Lower default for first post
-        allowedIntents: options.onlyInformational ? ['informational'] : DEFAULT_CADENCE_CONTROLS.allowedIntents,
+        allowedIntents: options.onlyInformational ? ['informational' as const] : DEFAULT_CADENCE_CONTROLS.allowedIntents,
         allowedCategories,
         minSearchVolume: parseInt(options.minVolume, 10) || 10, // Lower default
         maxKeywordDifficulty: parseInt(options.maxDifficulty, 10) || 70,
@@ -1276,7 +1277,7 @@ program
       const { batchPublishBlogs } = await import('./pipeline/batch-publish');
       
       const allowedCategories = options.categories
-        ? options.categories.split(',').map(c => c.trim())
+        ? options.categories.split(',').map((c: string) => c.trim())
         : undefined;
       
       const result = await batchPublishBlogs({

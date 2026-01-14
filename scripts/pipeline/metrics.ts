@@ -289,7 +289,7 @@ export function printMetricsSummary(metrics: PublishMetrics): void {
         console.log(`   ❌ [${new Date(failure.timestamp).toLocaleString()}] ${failure.paths.join(', ')}`);
         console.log(`      Error: ${failure.error.substring(0, 80)}${failure.error.length > 80 ? '...' : ''}`);
         if (failure.retryAttempt > 0) {
-          console.log(`      Retry Attempt: ${failure.retryAttempt}/${REVALIDATION_MAX_RETRIES || 2}`);
+          console.log(`      Retry Attempt: ${failure.retryAttempt}/2`);
         }
       });
     }

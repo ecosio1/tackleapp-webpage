@@ -77,7 +77,7 @@ export async function generateAutoLinks(doc: GeneratedDoc): Promise<InternalLink
         );
         suggestions.locations = locationMatches.map(l => ({
           slug: l.slug,
-          title: l.city || l.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          title: l.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
           reason: `Location mentioned in "${doc.title}" or related to ${doc.primaryKeyword}`,
         }));
       }
@@ -104,8 +104,8 @@ export async function generateAutoLinks(doc: GeneratedDoc): Promise<InternalLink
       );
       suggestions.relatedPosts = postMatches.map(p => ({
         slug: p.slug,
-        title: p.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        reason: `Related topic: ${p.category || 'fishing tips'}`,
+        title: p.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        reason: `Related fishing topic`,
       }));
 
       break;
@@ -121,7 +121,7 @@ export async function generateAutoLinks(doc: GeneratedDoc): Promise<InternalLink
       );
       suggestions.locations = speciesMatches.map(l => ({
         slug: l.slug,
-        title: l.city || l.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        title: l.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
         reason: `Common location for ${doc.primaryKeyword}`,
       }));
 
@@ -174,7 +174,7 @@ export async function generateAutoLinks(doc: GeneratedDoc): Promise<InternalLink
       );
       suggestions.locations = locationMatches.map(l => ({
         slug: l.slug,
-        title: l.city || l.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        title: l.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
         reason: `Good location for ${doc.primaryKeyword}`,
       }));
 

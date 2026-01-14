@@ -21,46 +21,57 @@ export function generateRetentionOutline(brief: {
 
   return [
     {
+      level: 2,
       title: 'Above the Fold (5-Second Decision)',
       description: `Start with a 1-sentence promise, "Best for: [skill level]", "What you need: [2-4 items]", and a **DO THIS FIRST** callout with the single highest-leverage action. This prevents bounce.`,
     },
     {
+      level: 2,
       title: 'Quick Answer (Instant Value)',
       description: `Provide 3-6 bullets that directly answer the query: lure/bait choice, where to fish it, retrieve pattern, and best conditions (tide/time/wind). NO long intro before this section.`,
     },
     {
+      level: 2,
       title: 'Tackle Box Snapshot (Copyable Setup)',
       description: `Give a complete "grab-and-go" setup: lure/bait options (3-5 specific products), hook/jig weights by depth, line/leader setup, retrieve patterns for each type, and target depth/structure. Make it copyable. **END WITH IMAGE**: After this section, include an image of tackle/gear laid out with caption.`,
     },
     {
+      level: 2,
       title: 'Step-by-Step (The Actual How-To)',
       description: `Provide 5 numbered steps: (1) Where to start (structure + position), (2) First casts (angle + distance with measurements), (3) Retrieve cadence (what to feel for), (4) Hookset and landing tips with technique details, (5) What to change after 10-15 minutes with no bites. Be specific with distances, depths, and times. **END WITH IMAGE**: Include image of angler/casting technique after this section.`,
     },
     {
+      level: 2,
       title: 'Decision Tree (Conditions + Adjustments)',
       description: `Create "If this... do that" blocks for 6 real conditions: (1) If water is clear, (2) If water is stained, (3) If windy, (4) If cold front/pressure drop, (5) If bait is present, (6) If no bait visible. Each should have specific adjustments (colors, retrieve speed, depth, lure size). This prevents "it didn't work for me" bounce.`,
     },
     {
+      level: 2,
       title: 'Spot Playbook (How Fish Relate to Structure)',
       description: `Describe best structure types for ${species} with specific depth ranges. Explain where fish stage (edges, current seams, shadows, drop-offs) and approach strategies (stealth, distance, angle). Include strike zone explanation. Make it feel real with specific details. **END WITH IMAGE**: Include image of structure/habitat (mangroves, docks, etc.) after this section.`,
     },
     {
+      level: 2,
       title: 'Mistakes That Kill the Bite (High Engagement)',
       description: `List 10-12 specific mistakes with consequences: too fast retrieve, wrong depth, noisy approach, working lure too much, wrong angle to current, not pausing long enough, changing spots too quickly, setting hook on topwater explosion, fishing wrong tide stage, using dull hooks, leader too short, ignoring shadow lines. Each bullet should explain WHY it's a mistake. **OPTIONAL IMAGE BEFORE THIS SECTION**: Include fish/detail closeup.`,
     },
     {
+      level: 2,
       title: 'Frequently Asked Questions',
       description: `Answer 5-8 real questions anglers ask. Each answer should be 2-4 sentences with specific, actionable information. Include questions about best lures/techniques, colors, timing, sizing, conditions, and common concerns.`,
     },
     {
+      level: 2,
       title: '1-Minute Action Plan (Closure)',
       description: `Provide a tight checklist format: (1) Rig to tie on (exact setup), (2) 2 places to try first (specific locations/structure), (3) First retrieve cadence (exact pattern), (4) One adjustment if no bites (what to change). Give a "try this tomorrow" plan.`,
     },
     {
+      level: 2,
       title: 'Next Steps: Keep Learning',
       description: `Frame 3-5 internal links as contextual choices using "If you're..." format: "If you're fishing mangroves next...", "If you need the right rod setup...", "If you want to learn knots...", "If you're targeting [other species]...". Not random related posts.`,
     },
     {
+      level: 2,
       title: 'Always Check Current Regulations',
       description: `Single neutral reminder ONLY: "Fishing regulations vary by location and change regularly. Always verify current rules with local authorities before fishing." Link to official FWC or relevant government source. CRITICAL: Do NOT mention ANY specific regulations, limits, sizes, or seasons - only include this generic reminder.`,
     },

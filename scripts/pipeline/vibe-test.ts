@@ -285,8 +285,8 @@ Avoid generic advice. Focus on specific, tested observations that show real expe
     
     // If no list found, split by sentences
     if (insights.length === 0) {
-      const sentences = response.split(/[.!?]+/).filter(s => s.trim().length > 20);
-      insights.push(...sentences.slice(0, 5).map(s => s.trim()));
+      const sentences = response.split(/[.!?]+/).filter((s: string) => s.trim().length > 20);
+      insights.push(...sentences.slice(0, 5).map((s: string) => s.trim()));
     }
     
     return insights.slice(0, 5);
@@ -330,8 +330,8 @@ Make it sound like real, lived experience, not generic advice.`;
     }
     
     if (notes.length === 0) {
-      const sentences = response.split(/[.!?]+/).filter(s => s.trim().length > 20);
-      notes.push(...sentences.slice(0, 3).map(s => s.trim()));
+      const sentences = response.split(/[.!?]+/).filter((s: string) => s.trim().length > 20);
+      notes.push(...sentences.slice(0, 3).map((s: string) => s.trim()));
     }
     
     return notes.slice(0, 3);
