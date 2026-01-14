@@ -73,7 +73,7 @@ export function TableOfContents({ content, minHeadings = 3 }: TableOfContentsPro
   }
 
   return (
-    <nav className="toc-container">
+    <nav className="toc-container toc-sidebar">
       <div className="toc-header">
         <h4>Table of Contents</h4>
       </div>
@@ -83,7 +83,19 @@ export function TableOfContents({ content, minHeadings = 3 }: TableOfContentsPro
             key={id}
             className={`toc-item toc-level-${level} ${activeId === id ? 'toc-active' : ''}`}
           >
-            <a href={`#${id}`} className="toc-link">
+            <a href={`#${id}`} className="toc-link" onClick={(e) => {
+              e.preventDefault();
+              const element = document.getElementById(id);
+              if (element) {
+                const offset = 100; // Account for sticky header
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth'
+                });
+              }
+            }}>
               {text}
             </a>
           </li>

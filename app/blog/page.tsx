@@ -12,6 +12,7 @@ import { ModernBlogCard } from '@/components/blog/ModernBlogCard';
 import { Pagination } from '@/components/blog/Pagination';
 import { getAllBlogCategories } from '@/lib/content/blog';
 import { getPaginatedBlogPosts } from '@/lib/content/blog-pagination';
+import { BlogPostsGrid } from '@/components/ui/blog-posts';
 
 interface BlogIndexPageProps {
   searchParams: Promise<{ page?: string }>;
@@ -85,8 +86,34 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
     );
   }
   
+  // Transform blog posts for the featured grid component (only on page 1, show first 3 posts)
+  const featuredPosts = page === 1 && blogPosts.length >= 3
+    ? blogPosts.slice(0, 3).map((post, index) => ({
+        id: index + 1,
+        title: post.title,
+        category: post.category.replace('-', ' '),
+        imageUrl: post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop',
+        href: `/blog/${post.slug}`,
+        views: Math.floor(Math.random() * 2000) + 500, // Placeholder views (could be replaced with actual analytics)
+        readTime: post.readTime || 5,
+        rating: 5, // Default rating
+      }))
+    : [];
+
   return (
     <div className="home-main">
+      {/* Featured Blog Posts Grid - Only on page 1 */}
+      {page === 1 && featuredPosts.length >= 3 && (
+        <BlogPostsGrid
+          title="Featured Articles"
+          description="Discover the most engaging fishing tips, techniques, and expert advice from our community"
+          backgroundLabel="BLOG"
+          backgroundPosition="left"
+          posts={featuredPosts}
+          className="mb-16"
+        />
+      )}
+
       <header className="page-header text-center mb-12 py-8">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
           Fishing Blog
@@ -125,32 +152,11 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
           )}
         </div>
 
-        {/* Featured Post (only on page 1) */}
-        {page === 1 && blogPosts.length > 0 && (
-          <div className="mb-12">
-            <div className="mb-4">
-              <span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
-                ⭐ Featured Post
-              </span>
-            </div>
-            <ModernBlogCard
-              slug={blogPosts[0].slug}
-              title={blogPosts[0].title}
-              description={blogPosts[0].description}
-              category={blogPosts[0].category}
-              date={blogPosts[0].publishedAt}
-              readTime={blogPosts[0].readTime}
-              author={blogPosts[0].author}
-              featured={true}
-              image={blogPosts[0].heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop'}
-            />
-          </div>
-        )}
-
-        {/* Posts Grid */}
+        {/* Posts Grid - 3 Column Layout */}
         {blogPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {(page === 1 ? blogPosts.slice(1) : blogPosts).map((post) => (
+          <div className="blog-posts-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
+            {/* Skip first 3 posts on page 1 since they're shown in featured grid */}
+            {(page === 1 ? blogPosts.slice(3) : blogPosts).map((post) => (
             <ModernBlogCard
               key={post.slug}
               slug={post.slug}
