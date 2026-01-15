@@ -256,60 +256,55 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {post.faqs && Array.isArray(post.faqs) && post.faqs.length > 0 && <FaqSchema faqs={post.faqs} />}
 
       <article className="blog-post-container">
-        {/* Full-width header section */}
-        <div className="blog-post-header-wrapper">
-          <nav className="mb-6 text-sm text-gray-600">
-            <Link href="/" className="hover:text-blue-600">Home</Link>
-            {' / '}
-            <Link href="/blog" className="hover:text-blue-600">Blog</Link>
-            {' / '}
-            <span>{post.title}</span>
-          </nav>
-
-          <header className="mb-12">
-            <div className="mb-4">
-              <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800">
-                {post.categorySlug.replace('-', ' ')}
-              </span>
-            </div>
-            <h1 style={{ fontSize: '3rem', fontWeight: '700', lineHeight: '1.15', letterSpacing: '-0.03em', color: '#0f172a', marginBottom: '1.5rem' }}>
-              {post.title}
-            </h1>
-            <div className="flex items-center gap-4 text-sm" style={{ color: 'rgba(15, 23, 42, 0.7)', marginBottom: '1rem' }}>
-              <time dateTime={post.dates.publishedAt}>
-                {new Date(post.dates.publishedAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
-              <span>•</span>
-              <span>{Math.ceil(post.body.split(/\s+/).length / 200)} min read</span>
-              <span>•</span>
-              <span>By {post.author.name}</span>
-            </div>
-            <div className="mt-4">
-              <LastUpdated date={post.dates.updatedAt} />
-            </div>
-          </header>
-
-          {/* Hero Image - Temporarily removed */}
-
-          {/* Social Share Buttons */}
-          <div>
-            <SocialShare title={post.title} url={canonicalUrl} />
-          </div>
-        </div>
-
-        {/* Two-column layout: TOC sidebar + Content */}
+        {/* Two-column layout from the start */}
         <div className="blog-post-layout">
           {/* Sticky Table of Contents Sidebar */}
-          <aside className="blog-toc-sidebar" style={{ position: 'sticky', top: '100px' }}>
+          <aside className="blog-toc-sidebar">
             <TableOfContents content={post.body} minHeadings={3} />
           </aside>
 
-          {/* Main Content - Render Markdown with structured CTAs */}
+          {/* Main Content Column - Header + Body */}
           <div className="blog-content-wrapper">
+            {/* Header section */}
+            <nav className="mb-6 text-sm text-gray-600">
+              <Link href="/" className="hover:text-blue-600">Home</Link>
+              {' / '}
+              <Link href="/blog" className="hover:text-blue-600">Blog</Link>
+              {' / '}
+              <span>{post.title}</span>
+            </nav>
+
+            <header className="mb-8">
+              <div className="mb-4">
+                <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800">
+                  {post.categorySlug.replace('-', ' ')}
+                </span>
+              </div>
+              <h1 style={{ fontSize: '2.5rem', fontWeight: '700', lineHeight: '1.15', letterSpacing: '-0.03em', color: '#0f172a', marginBottom: '1rem' }}>
+                {post.title}
+              </h1>
+              <div className="flex items-center gap-4 text-sm" style={{ color: 'rgba(15, 23, 42, 0.7)', marginBottom: '0.75rem' }}>
+                <time dateTime={post.dates.publishedAt}>
+                  {new Date(post.dates.publishedAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+                <span>•</span>
+                <span>{Math.ceil(post.body.split(/\s+/).length / 200)} min read</span>
+                <span>•</span>
+                <span>By {post.author.name}</span>
+              </div>
+              <LastUpdated date={post.dates.updatedAt} />
+            </header>
+
+            {/* Social Share Buttons */}
+            <div className="mb-8">
+              <SocialShare title={post.title} url={canonicalUrl} />
+            </div>
+
+            {/* Article Content */}
             <div className="blog-content mb-12 prose prose-lg max-w-none"
                  style={{
                    fontSize: '1.125rem',

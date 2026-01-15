@@ -9,6 +9,7 @@ import { generateCanonical } from '@/lib/seo/canonical';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getPostsByCategory, getAllBlogCategories } from '@/lib/content/blog';
+import { ModernBlogCard } from '@/components/blog/ModernBlogCard';
 
 // Helper function to format category slug to display name
 function formatCategoryName(slug: string): string {
@@ -95,55 +96,51 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const categoryDescription = getCategoryDescription(category);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <nav className="mb-4 text-sm text-gray-600">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
-        {' / '}
-        <Link href="/blog" className="hover:text-blue-600">Blog</Link>
-        {' / '}
-        <span>{categoryName}</span>
-      </nav>
-
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">{categoryName}</h1>
-        <p className="text-lg text-gray-600">{categoryDescription}</p>
-        <p className="text-sm text-gray-500 mt-2">{posts.length} {posts.length === 1 ? 'article' : 'articles'}</p>
+    <div className="home-main">
+      <header className="page-header text-center mb-12 py-8">
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
+          {categoryName}
+        </h1>
+        <p className="page-intro text-lg text-gray-600 max-w-2xl mx-auto">
+          {categoryDescription}
+        </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => (
-          <article key={post.slug} className="border rounded-lg p-6 hover:shadow-lg transition-shadow">
-            <div className="text-sm text-gray-500 mb-2">
-              {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </div>
-            <h2 className="text-2xl font-semibold mb-2">
-              <Link href={`/blog/${post.slug}`} className="text-blue-600 hover:text-blue-800">
-                {post.title}
-              </Link>
-            </h2>
-            <p className="text-gray-600 mb-4">{post.description}</p>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">{post.readTime || 5} min read</span>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Read More →
-              </Link>
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div className="mt-8">
-        <Link href="/blog" className="text-blue-600 hover:text-blue-800">
-          ← Back to All Posts
+      <section className="mb-8">
+        <Link
+          href="/blog"
+          className="inline-block px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg text-blue-800 font-medium transition-all duration-200 hover:shadow-md"
+        >
+          ← All Categories
         </Link>
-      </div>
+      </section>
+
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">
+            Latest Posts
+          </h2>
+          <p className="text-sm text-gray-500 font-medium">
+            {posts.length} {posts.length === 1 ? 'article' : 'articles'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {posts.map((post) => (
+            <ModernBlogCard
+              key={post.slug}
+              slug={post.slug}
+              title={post.title}
+              description={post.description}
+              category={post.category}
+              date={post.publishedAt}
+              readTime={post.readTime}
+              author={post.author}
+              image={post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop'}
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

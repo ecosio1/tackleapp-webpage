@@ -73,43 +73,36 @@ export function TableOfContents({ content, minHeadings = 3 }: TableOfContentsPro
   }
 
   return (
-    <nav className="sticky top-24 h-fit max-h-[calc(100vh-8rem)] overflow-y-auto">
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-        <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
-          Table of Contents
-        </h4>
-        <ul className="space-y-2">
-          {headings.map(({ id, text, level }) => (
-            <li
-              key={id}
-              className={`${level === 3 ? 'ml-4' : ''}`}
+    <nav className="toc-minimal">
+      <h4 className="toc-title">Table of Contents</h4>
+      <ul className="toc-list">
+        {headings.map(({ id, text, level }) => (
+          <li
+            key={id}
+            className={`toc-item ${level === 3 ? 'toc-item-nested' : ''} ${activeId === id ? 'toc-item-active' : ''}`}
+          >
+            <a
+              href={`#${id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                const element = document.getElementById(id);
+                if (element) {
+                  const offset = 100;
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - offset;
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
             >
-              <a
-                href={`#${id}`}
-                className={`block text-sm transition-colors hover:text-blue-600 ${
-                  activeId === id
-                    ? 'text-blue-600 font-semibold'
-                    : 'text-gray-600'
-                }`}
-                onClick={(e) => {
-              e.preventDefault();
-              const element = document.getElementById(id);
-              if (element) {
-                const offset = 100; // Account for sticky header
-                const elementPosition = element.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - offset;
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth'
-                });
-              }
-                }}>
-                {text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+              {activeId === id && <span className="toc-indicator">▸</span>}
+              {text}
+            </a>
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }
