@@ -10,44 +10,67 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // Revalidate hourly
 
 export async function GET() {
-  const posts = await getAllBlogPostDocs();
-  const categories = await getAllCategorySlugs();
-  
-  // Add category pages
-  const categoryUrls = categories.map((cat) => ({
-    path: `/blog/category/${cat}`,
-    lastmod: new Date().toISOString(),
-  }));
-  
-  // Build URLs
-  const postUrls = posts.map((post) => {
-    const path = `/blog/${post.slug}`;
-    return {
-      path,
-      lastmod: getLastmodDate(post),
-    };
-  });
-  
-  const allUrls = [...postUrls, ...categoryUrls];
-  
-  const urls = allUrls.map((url) => `  <url>
+  try {
+    const posts = await getAllBlogPostDocs();
+    const categories = await getAllCategorySlugs();
+    
+    // Add category pages
+    const categoryUrls = categories.map((cat) => ({
+      path: `/blog/category/${cat}`,
+      lastmod: new Date().toISOString(),
+    }));
+    
+    // Build URLs
+    const postUrls = posts.map((post) => {
+      const path = `/blog/${post.slug}`;
+      return {
+        path,
+        lastmod: getLastmodDate(post),
+      };
+    });
+    
+    const allUrls = [...postUrls, ...categoryUrls];
+    
+    const urls = allUrls.map((url) => `  <url>
     <loc>${xmlEscape(absoluteUrl(url.path))}</loc>
     <lastmod>${url.lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>`).join('\n');
-  
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls}
 </urlset>`;
-  
-  return new NextResponse(xml, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-    },
-  });
+    
+    return new NextResponse(xml, {
+      headers: {
+        'Content-Type': 'application/xml',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    });
+  } catch (error) {
+    console.error('[sitemap-blog.xml] Error generating blog sitemap:', error);
+    // Return minimal valid sitemap even on error
+    const now = new Date().toISOString();
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${xmlEscape(absoluteUrl('/blog'))}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>`;
+    
+    return new NextResponse(xml, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/xml',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    });
+  }
 }
 
 
