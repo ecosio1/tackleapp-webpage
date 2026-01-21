@@ -3,7 +3,7 @@
  */
 
 interface AppStoreUrlParams {
-  pageType: 'blog' | 'species' | 'how-to' | 'location';
+  pageType: 'blog' | 'species' | 'how-to' | 'location' | 'download' | 'landing' | 'nav';
   slug: string;
   location?: string;
   species?: string;
