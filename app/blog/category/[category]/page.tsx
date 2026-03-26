@@ -10,6 +10,9 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getPostsByCategory, getAllBlogCategories } from '@/lib/content/blog';
 import { ModernBlogCard } from '@/components/blog/ModernBlogCard';
+import { CategoryNav } from '@/components/blog/CategoryNav';
+import { BreadcrumbSchema, generateBreadcrumbsFromPath } from '@/components/seo/BreadcrumbSchema';
+import { getCategoryFallbackImage } from '@/lib/image-fallbacks';
 
 // Helper function to format category slug to display name
 function formatCategoryName(slug: string): string {
@@ -94,10 +97,28 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   const categoryName = formatCategoryName(category);
   const categoryDescription = getCategoryDescription(category);
+  const allCategories = await getAllBlogCategories();
+  const breadcrumbs = generateBreadcrumbsFromPath(
+    `/blog/category/${category}`,
+    { blog: 'Blog', category: 'Category' },
+    categoryName
+  );
 
   return (
     <div className="home-main">
-      <header className="page-header text-center mb-12 py-8">
+      {/* Breadcrumb Schema */}
+      <BreadcrumbSchema items={breadcrumbs} />
+
+      {/* Visual Breadcrumbs */}
+      <nav className="mb-6 text-sm text-gray-500">
+        <Link href="/" className="hover:text-blue-600">Home</Link>
+        {' / '}
+        <Link href="/blog" className="hover:text-blue-600">Blog</Link>
+        {' / '}
+        <span className="text-gray-900 font-medium">{categoryName}</span>
+      </nav>
+
+      <header className="page-header text-center mb-10 py-6">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
           {categoryName}
         </h1>
@@ -106,19 +127,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </p>
       </header>
 
-      <section className="mb-8">
-        <Link
-          href="/blog"
-          className="inline-block px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg text-blue-800 font-medium transition-all duration-200 hover:shadow-md"
-        >
-          ← All Categories
-        </Link>
-      </section>
+      {/* Category Navigation */}
+      {allCategories.length > 0 && (
+        <CategoryNav categories={allCategories} activeCategory={category} />
+      )}
 
       <section className="mb-16">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold text-gray-900">
-            Latest Posts
+            {categoryName} Articles
           </h2>
           <p className="text-sm text-gray-500 font-medium">
             {posts.length} {posts.length === 1 ? 'article' : 'articles'}
@@ -136,7 +153,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               date={post.publishedAt}
               readTime={post.readTime}
               author={post.author}
-              image={post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop'}
+              image={post.heroImage || getCategoryFallbackImage(post.category)}
             />
           ))}
         </div>

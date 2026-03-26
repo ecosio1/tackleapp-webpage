@@ -3,7 +3,7 @@
 .container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 160px 48px 120px;
+  padding: 110px 48px 120px;
 }
 
 .featuresGrid {
@@ -22,9 +22,9 @@
 }
 
 .featureCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-  border-color: rgba(37, 99, 235, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px var(--shadow-blue, rgba(29, 111, 184, 0.15));
+  border-color: rgba(29, 111, 184, 0.2);
 }
 
 .featureImage {

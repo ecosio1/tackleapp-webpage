@@ -14,6 +14,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'Redfish Fishing Guide: Habitat, Behavior, and Techniques',
   description: 'Learn everything about redfish fishing including habitat, behavior, best times to catch them, and proven techniques. Expert guide for targeting redfish in Florida waters.',
@@ -88,6 +89,24 @@ export default function RedfishSpeciesPage() {
             Redfish, also known as red drum, are one of Florida's most popular inshore gamefish. Known for their distinctive black spot near the tail, powerful fights, and excellent table fare, redfish provide exciting fishing opportunities on shallow flats and inshore waters. This guide covers redfish habitat, behavior patterns, best times to catch them, and proven techniques for success.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1562819102-a085309d64ce?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Angler fishing in calm waters - redfish territory"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>

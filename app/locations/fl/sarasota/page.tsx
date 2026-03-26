@@ -14,6 +14,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'Fishing in Sarasota, Florida: Complete Guide to Sarasota Fishing',
   description: 'Discover the best fishing spots, species, and techniques in Sarasota. Get expert tips for inshore, pier, and offshore fishing in Sarasota, Florida.',
@@ -89,6 +90,24 @@ export default function SarasotaLocationPage() {
             Sarasota offers excellent fishing opportunities in its extensive inshore flats and backwater systems. From shallow flats teeming with redfish and snook to nearshore reefs holding grouper and snapper, Sarasota provides diverse fishing experiences. This guide covers the best species, seasons, techniques, and locations for fishing in Sarasota.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1609697101432-cd892bdac51e?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Sunset over Sarasota coastal waters"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>

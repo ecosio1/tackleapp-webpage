@@ -13,6 +13,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'Best Time of Day to Fish: Morning vs Evening Guide',
   description: 'Discover the best time of day to fish. Learn why early morning and evening are productive, and how to adapt to different times and conditions.',
@@ -87,6 +88,24 @@ export default function BestTimeOfDayToFishPage() {
             The time of day you choose to fish significantly impacts your success. While fish can be caught at any time, certain periods offer better conditions for active feeding and easier fishing. This guide explains why early morning and evening are often most productive, how to adapt to different times, and what factors influence the best fishing times throughout the day.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1749468385812-34c53d2d7b74?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Fisherman fishing at sunset over the ocean"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>

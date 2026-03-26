@@ -13,6 +13,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'How Weather Affects Fishing: Complete Weather Guide',
   description: 'Learn how weather conditions affect fish behavior and feeding. Understand barometric pressure, wind, temperature, and cloud cover for better fishing success.',
@@ -87,6 +88,24 @@ export default function HowWeatherAffectsFishingPage() {
             Weather conditions significantly influence fish behavior and feeding activity. Understanding how barometric pressure, wind, temperature, cloud cover, and storms affect fishing helps you choose the best times to go out and adapt your techniques for different conditions. This guide explains how each weather factor impacts fish and how to use weather knowledge to improve your fishing success.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1662568580477-2ed6de5a86d5?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Boats on the water under dramatic weather clouds"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>

@@ -4,6 +4,8 @@
 
 import { Metadata } from 'next';
 import { generateCanonical } from '@/lib/seo/canonical';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { LastUpdated } from '@/components/content/LastUpdated';
 
 export const metadata: Metadata = {
@@ -16,7 +18,9 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <article>
+    <>
+    <Header />
+    <article className="page-container-narrow">
       <header className="page-header">
         <h1>Privacy Policy</h1>
         <LastUpdated date="2024-01-01" />
@@ -106,6 +110,8 @@ export default function PrivacyPage() {
         </p>
       </section>
     </article>
+    <Footer />
+    </>
   );
 }
 

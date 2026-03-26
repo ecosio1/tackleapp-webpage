@@ -8,10 +8,15 @@ import { Metadata } from 'next';
 import { generateCanonical } from '@/lib/seo/canonical';
 import Link from 'next/link';
 import { PrimaryCTA } from '@/components/conversion/PrimaryCTA';
+import { ContentUpgradeCTA } from '@/components/conversion/ContentUpgradeCTA';
 import { ModernBlogCard } from '@/components/blog/ModernBlogCard';
+import { CategoryNav } from '@/components/blog/CategoryNav';
+import { BlogSearch } from '@/components/blog/BlogSearch';
 import { Pagination } from '@/components/blog/Pagination';
+import { BreadcrumbSchema, generateBreadcrumbsFromPath } from '@/components/seo/BreadcrumbSchema';
 import { getAllBlogCategories } from '@/lib/content/blog';
 import { getPaginatedBlogPosts } from '@/lib/content/blog-pagination';
+import { getCategoryFallbackImage } from '@/lib/image-fallbacks';
 
 interface BlogIndexPageProps {
   searchParams: Promise<{ page?: string }>;
@@ -27,17 +32,24 @@ export async function generateMetadata({ searchParams }: BlogIndexPageProps): Pr
     : generateCanonical(`/blog?page=${page}`);
 
   return {
-    title: page === 1 
-      ? 'Fishing Blog | Tips, Guides & Expert Advice'
+    title: page === 1
+      ? 'Fishing Blog | Tips, Guides & Expert Advice | Tackle'
       : `Fishing Blog - Page ${page} | Tips, Guides & Expert Advice`,
-    description: 'Read the latest fishing tips, gear reviews, techniques, and expert advice from Tackle Fishing Team.',
+    description: 'Read the latest fishing tips, gear reviews, techniques, and expert advice from Tackle Fishing Team. Lure guides, species breakdowns, and more.',
     alternates: {
       canonical,
     },
-    robots: page === 1 
-      ? undefined 
+    openGraph: {
+      title: 'Fishing Blog | Tackle',
+      description: 'Expert fishing tips, gear reviews, techniques, and species guides from the Tackle Fishing Team.',
+      url: canonical,
+      siteName: 'Tackle',
+      type: 'website',
+      locale: 'en_US',
+    },
+    robots: page === 1
+      ? undefined
       : {
-          // Allow indexing of paginated pages
           index: true,
           follow: true,
         },
@@ -85,9 +97,56 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
     );
   }
   
+  // Breadcrumbs for SEO
+  const breadcrumbs = generateBreadcrumbsFromPath('/blog', {}, 'Blog');
+
+  // Featured post (first post on page 1 only)
+  const featuredPost = page === 1 ? blogPosts[0] : null;
+  const gridPosts = page === 1 ? blogPosts.slice(1) : blogPosts;
+
+  // CollectionPage JSON-LD for SEO
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Tackle Fishing Blog',
+    description: 'Expert fishing tips, gear reviews, techniques, and species guides.',
+    url: generateCanonical('/blog'),
+    publisher: {
+      '@type': 'Organization',
+      name: 'Tackle',
+      url: generateCanonical('/'),
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: pagination.totalPosts,
+      itemListElement: blogPosts.slice(0, 10).map((post, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: generateCanonical(`/blog/${post.slug}`),
+        name: post.title,
+      })),
+    },
+  };
+
   return (
     <div className="home-main">
-      <header className="page-header text-center mb-12 py-8">
+      {/* CollectionPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+      />
+
+      {/* Breadcrumb Schema */}
+      <BreadcrumbSchema items={breadcrumbs} />
+
+      {/* Visual Breadcrumbs */}
+      <nav className="mb-6 text-sm text-gray-500">
+        <Link href="/" className="hover:text-blue-600">Home</Link>
+        {' / '}
+        <span className="text-gray-900 font-medium">Blog</span>
+      </nav>
+
+      <header className="page-header text-center mb-10 py-6">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
           Fishing Blog
         </h1>
@@ -96,39 +155,64 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
         </p>
       </header>
 
+      {/* Category Navigation */}
       {categories.length > 0 && (
+        <CategoryNav categories={categories} />
+      )}
+
+      {/* Featured Hero Post (page 1 only) */}
+      {featuredPost && (
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">Browse by Category</h2>
-          <div className="flex flex-wrap gap-3">
-            {categories.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/blog/category/${cat.slug}`}
-                className="px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg text-blue-800 font-medium transition-all duration-200 hover:shadow-md"
-              >
-                {cat.name} <span className="text-blue-600">({cat.count})</span>
-              </Link>
-            ))}
-          </div>
+          <ModernBlogCard
+            slug={featuredPost.slug}
+            title={featuredPost.title}
+            description={featuredPost.description}
+            category={featuredPost.category}
+            date={featuredPost.publishedAt}
+            readTime={featuredPost.readTime}
+            author={featuredPost.author}
+            image={featuredPost.heroImage || getCategoryFallbackImage(featuredPost.category)}
+            featured={true}
+          />
         </section>
       )}
 
+      {/* Email Capture */}
+      {page === 1 && (
+        <div className="mb-12">
+          <ContentUpgradeCTA pageType="blog" slug="index" />
+        </div>
+      )}
+
       <section className="mb-16">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 gap-4">
           <h2 className="text-3xl font-bold text-gray-900">
             {page === 1 ? 'Latest Posts' : `All Posts (Page ${page})`}
           </h2>
-          {pagination.totalPosts > 0 && (
-            <p className="text-sm text-gray-500 font-medium">
-              Showing {((page - 1) * pagination.pageSize) + 1}-{Math.min(page * pagination.pageSize, pagination.totalPosts)} of {pagination.totalPosts} posts
-            </p>
-          )}
+          <div className="flex items-center gap-4">
+            {pagination.totalPosts > 0 && (
+              <p className="text-sm text-gray-500 font-medium hidden sm:block">
+                {pagination.totalPosts} articles
+              </p>
+            )}
+            {/* Search */}
+            <BlogSearch posts={blogPosts.map((p) => ({
+              slug: p.slug,
+              title: p.title,
+              description: p.description,
+              category: p.category,
+              publishedAt: p.publishedAt,
+              readTime: p.readTime,
+              author: p.author,
+              heroImage: p.heroImage || getCategoryFallbackImage(p.category),
+            }))} />
+          </div>
         </div>
 
-        {/* All Posts - 4-Column Card Grid */}
-        {blogPosts.length > 0 ? (
+        {/* Post Grid */}
+        {gridPosts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
-            {blogPosts.map((post) => (
+            {gridPosts.map((post) => (
               <ModernBlogCard
                 key={post.slug}
                 slug={post.slug}
@@ -138,7 +222,7 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
                 date={post.publishedAt}
                 readTime={post.readTime}
                 author={post.author}
-                image={post.heroImage || 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop'}
+                image={post.heroImage || getCategoryFallbackImage(post.category)}
               />
             ))}
           </div>
@@ -153,7 +237,7 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexPageProps
                   href="/blog"
                   className="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  ← Go to first page
+                  &larr; Go to first page
                 </Link>
               )}
             </div>

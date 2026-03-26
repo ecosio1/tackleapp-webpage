@@ -39,9 +39,17 @@ npm run lint         # Run ESLint
 
 ---
 
+## Design Skill
+
+When building or modifying frontend UI, ALWAYS reference:
+- **Frontend Design Skill**: `.claude/skills/frontend-design.md` - Distinctive, production-grade design guidelines
+
+---
+
 ## Important Notes
 
 - Images use Next.js Image component for optimization
-- External images from Unsplash are pre-configured
+- External images from Unsplash are pre-configured (API key in .env.local)
 - Blog posts render markdown with React Markdown
 - SEO schemas included (Article, FAQ, Breadcrumb, Author)
+- Unsplash API service at `lib/unsplash.ts` with caching (50 req/hr demo limit)

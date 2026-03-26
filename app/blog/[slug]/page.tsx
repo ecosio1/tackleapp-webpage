@@ -16,6 +16,8 @@ import { getBlogPostBySlug, getRelatedBlogPosts } from '@/lib/content/blog';
 import { getAllPostSlugs } from '@/lib/content/index';
 import { getAutoLinksForBlog } from '@/lib/content/auto-links';
 import { AppCTA } from '@/components/blog/AppCTA';
+import { StickyBottomCTA } from '@/components/conversion/StickyBottomCTA';
+import { ContentUpgradeCTA } from '@/components/conversion/ContentUpgradeCTA';
 import { RegulationsBlock } from '@/components/blog/RegulationsBlock';
 import { splitMarkdownAfterFirstSection } from '@/lib/blog-utils';
 import ReactMarkdown from 'react-markdown';
@@ -25,7 +27,10 @@ import { SocialShare } from '@/components/blog/SocialShare';
 import { ScrollToTop } from '@/components/blog/ScrollToTop';
 import { BlogImage } from '@/components/blog/BlogImage';
 import { AuthorSection } from '@/components/blog/AuthorSection';
+import { FeedSidebar } from '@/components/feed/FeedSidebar';
+import { getRelatedFeedItems } from '@/lib/content/feed';
 import Image from 'next/image';
+import { isUnsplashUrl } from '@/lib/unsplash';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -128,6 +133,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     autoLinks = await getAutoLinksForBlog(slug);
   } catch (error) {
     console.warn(`[BlogPostPage] Failed to load auto links for ${slug}:`, error);
+  }
+
+  // Get related feed items based on post tags/keywords
+  let relatedFeedItems: Awaited<ReturnType<typeof getRelatedFeedItems>> = [];
+  try {
+    // Use post keywords as tags for matching
+    const tags = [
+      post.primaryKeyword,
+      ...post.secondaryKeywords,
+      post.categorySlug,
+    ].filter(Boolean);
+    relatedFeedItems = await getRelatedFeedItems(tags, 4);
+  } catch (error) {
+    console.warn(`[BlogPostPage] Failed to load related feed items for ${slug}:`, error);
   }
 
   // Generate breadcrumbs dynamically from URL path
@@ -261,6 +280,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Sticky Table of Contents Sidebar */}
           <aside className="blog-toc-sidebar">
             <TableOfContents content={post.body} minHeadings={3} />
+            {/* Related Videos from Feed */}
+            {relatedFeedItems.length > 0 && (
+              <div className="mt-6">
+                <FeedSidebar
+                  items={relatedFeedItems}
+                  title="Related Videos"
+                  maxItems={4}
+                  showViewAll={true}
+                />
+              </div>
+            )}
           </aside>
 
           {/* Main Content Column - Header + Body */}
@@ -273,6 +303,40 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {' / '}
               <span>{post.title}</span>
             </nav>
+
+            {/* Hero Image - Always show section, with fallback */}
+            <div className="mb-8 -mx-4 sm:mx-0">
+              <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl bg-gray-200">
+                {(post.heroImage || post.featuredImage) ? (
+                  <Image
+                    src={post.heroImage || post.featuredImage || ''}
+                    alt={post.heroImageAlt || `${post.title} - Featured image`}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+                    <div className="text-center text-gray-400">
+                      <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-sm">{post.heroImageGuideline || 'Hero image placeholder'}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* Unsplash attribution */}
+              {(post.heroImage || post.featuredImage) && isUnsplashUrl(post.heroImage || post.featuredImage || '') && (
+                <p className="text-xs text-gray-400 mt-2 text-right">
+                  Photo via{' '}
+                  <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
+                    Unsplash
+                  </a>
+                </p>
+              )}
+            </div>
 
             <header className="mb-8">
               <div className="mb-4">
@@ -418,6 +482,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               className="mt-8"
             />
 
+            {/* Email Capture */}
+            <div className="mt-12 mb-8">
+              <ContentUpgradeCTA
+                pageType="blog"
+                slug={slug}
+                location={post.related?.locationSlugs?.[0]}
+              />
+            </div>
+
             {/* Internal Links - Species, Locations, Techniques */}
             {autoLinks && Array.isArray(autoLinks) && autoLinks.length > 0 && (
               <section className="mt-12 pt-8 border-t border-gray-200">
@@ -482,6 +555,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* Scroll to Top Button */}
       <ScrollToTop />
+
+      {/* Sticky Bottom CTA for mobile */}
+      <StickyBottomCTA pageType="blog" slug={slug} />
     </>
   );
 }

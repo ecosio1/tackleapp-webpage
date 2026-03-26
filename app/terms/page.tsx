@@ -4,6 +4,8 @@
 
 import { Metadata } from 'next';
 import { generateCanonical } from '@/lib/seo/canonical';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { LastUpdated } from '@/components/content/LastUpdated';
 
 export const metadata: Metadata = {
@@ -16,7 +18,9 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <>
+    <Header />
+    <div className="page-container-narrow">
       <header className="mb-8">
         <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
         <LastUpdated date="2024-01-01" />
@@ -113,6 +117,8 @@ export default function TermsPage() {
         </section>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }
 

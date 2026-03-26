@@ -13,6 +13,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'Best Fishing Times: When to Fish for Maximum Success',
   description: 'Learn the best times to fish based on weather, tides, moon phases, and time of day. Get expert tips for optimal fishing conditions.',
@@ -87,6 +88,24 @@ export default function BestFishingTimesPage() {
             Timing is everything in fishing. Understanding when fish are most active can dramatically improve your success rate. The best fishing times depend on several factors including time of day, tides, moon phases, weather conditions, and seasonal patterns. This guide explains how each factor affects fish behavior and helps you plan your fishing trips for optimal results.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1755870344289-00ac1db1b144?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Two anglers fishing from a boat at sunrise - the best time to fish"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>

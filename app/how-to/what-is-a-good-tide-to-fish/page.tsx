@@ -13,6 +13,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'What Is a Good Tide to Fish: Best Tide Conditions Explained',
   description: 'Learn what makes a good tide for fishing. Understand incoming vs outgoing tide, spring tides, and how to read tide conditions for better catches.',
@@ -87,6 +88,24 @@ export default function WhatIsAGoodTideToFishPage() {
             A good tide for fishing is one with active water movement that triggers fish feeding behavior. While fish can be caught at any tide, understanding what makes a tide "good" helps you time your trips for maximum success. This guide explains the characteristics of productive tides and how to identify the best tide conditions for your fishing location.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1620055750222-5cc0be3534b6?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Fishing rod on the shore during tidal conditions"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>

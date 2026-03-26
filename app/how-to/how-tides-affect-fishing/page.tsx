@@ -13,6 +13,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'How Tides Affect Fishing: Complete Guide to Tide Fishing',
   description: 'Learn how tides affect fish behavior and feeding patterns. Master tide fishing with expert tips on reading tide charts and timing your trips.',
@@ -87,6 +88,24 @@ export default function HowTidesAffectFishingPage() {
             Understanding tides is essential for successful saltwater fishing. Tides create water movement that influences where fish feed, how they behave, and when they're most active. This guide explains how tides work, how they affect fish behavior, and how to use tide knowledge to improve your fishing success.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1596433141587-65a1e50fec82?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Fisherman on a boat during tidal waters"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>

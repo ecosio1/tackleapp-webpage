@@ -14,6 +14,7 @@ import { FaqSchema } from '@/components/seo/FaqSchema';
 import { LastUpdated } from '@/components/content/LastUpdated';
 import Link from 'next/link';
 
+import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'Tarpon Fishing Guide: Habitat, Behavior, and Techniques',
   description: 'Learn everything about tarpon fishing including habitat, behavior, best times to catch them, and proven techniques. Expert guide for targeting tarpon in Florida waters.',
@@ -88,6 +89,24 @@ export default function TarponSpeciesPage() {
             Tarpon are one of Florida's most iconic and challenging gamefish. Known for their massive size, acrobatic jumps, and powerful fights, tarpon provide some of the most exciting fishing opportunities in Florida. This guide covers tarpon habitat, behavior patterns, best times to catch them, and proven techniques for success.
           </p>
         </header>
+
+        {/* Hero Image */}
+        <div className="mb-8 -mx-4 sm:mx-0">
+          <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
+            <Image
+              src="https://images.unsplash.com/photo-1772909497294-f3bfc4011e4b?w=1200&h=600&fit=crop&auto=format&q=80"
+              alt="Large fish swimming underwater - tarpon in their natural habitat"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Photo via <a href="https://unsplash.com/?utm_source=tackle&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">Unsplash</a>
+          </p>
+        </div>
+
 
         <nav className="table-of-contents">
           <h2>Table of Contents</h2>
