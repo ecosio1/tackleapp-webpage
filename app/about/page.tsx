@@ -32,7 +32,7 @@ export default function AboutPage() {
 
         <div className={styles.heroImage}>
           <Image
-            src="https://images.unsplash.com/photo-1445363284150-a25e06aa2f92?w=1200&q=80"
+            src="https://images.unsplash.com/photo-1759668936073-74f75365a2ed?w=1200&q=80"
             alt="Fishing on the water"
             width={1200}
             height={400}

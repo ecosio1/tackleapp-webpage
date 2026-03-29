@@ -33,7 +33,7 @@ export default function ContactPage() {
 
         <div className={styles.heroImage}>
           <Image
-            src="https://images.unsplash.com/photo-1484156818044-c040be3be5d1?w=1200&q=80"
+            src="https://images.unsplash.com/photo-1752650143889-2ac819371ca1?w=1200&q=80"
             alt="Contact Tackle Team"
             width={1200}
             height={400}

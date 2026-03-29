@@ -35,7 +35,7 @@ export default function FeaturesPage() {
           <div className={styles.featureCard}>
             <div className={styles.featureImage}>
               <Image
-                src="https://images.unsplash.com/photo-1524704796725-9fc3044a58b1?w=800&q=80"
+                src="https://images.unsplash.com/photo-1755126088334-95bdfac86f35?w=800&q=80"
                 alt="AI Fish Identification"
                 width={400}
                 height={300}
@@ -87,7 +87,7 @@ export default function FeaturesPage() {
           <div className={styles.featureCard}>
             <div className={styles.featureImage}>
               <Image
-                src="https://images.unsplash.com/photo-1534943441045-1974ee2171e7?w=800&q=80"
+                src="https://images.unsplash.com/photo-1647980516886-aa8b2d6fdbc4?w=800&q=80"
                 alt="AI Captain Chat"
                 width={400}
                 height={300}
@@ -113,7 +113,7 @@ export default function FeaturesPage() {
           <div className={styles.featureCard}>
             <div className={styles.featureImage}>
               <Image
-                src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80"
+                src="https://images.unsplash.com/photo-1533060498584-2f538c6f84fc?w=800&q=80"
                 alt="Real-Time Conditions"
                 width={400}
                 height={300}
@@ -138,7 +138,7 @@ export default function FeaturesPage() {
           <div className={styles.featureCard}>
             <div className={styles.featureImage}>
               <Image
-                src="https://images.unsplash.com/photo-1466354424719-343280fe118b?w=800&q=80"
+                src="https://images.unsplash.com/photo-1757362531488-3685a9330f37?w=800&q=80"
                 alt="Fishing Guides & Resources"
                 width={400}
                 height={300}
@@ -163,7 +163,7 @@ export default function FeaturesPage() {
           <div className={styles.featureCard}>
             <div className={styles.featureImage}>
               <Image
-                src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80"
+                src="https://images.unsplash.com/photo-1761197379857-907b020f6251?w=800&q=80"
                 alt="Fishing Analytics"
                 width={400}
                 height={300}

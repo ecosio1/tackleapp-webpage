@@ -62,7 +62,7 @@ export default function HowItWorksPage() {
         <section className={`${styles.step} ${styles.stepReverse}`}>
           <div className={styles.stepImage}>
             <Image
-              src="https://images.unsplash.com/photo-1524704796725-9fc3044a58b1?w=1000&q=80"
+              src="https://images.unsplash.com/photo-1755126088334-95bdfac86f35?w=1000&q=80"
               alt="Fish identification"
               width={600}
               height={450}
@@ -104,7 +104,7 @@ export default function HowItWorksPage() {
           </div>
           <div className={styles.stepImage}>
             <Image
-              src="https://images.unsplash.com/photo-1534943441045-1974ee2171e7?w=1000&q=80"
+              src="https://images.unsplash.com/photo-1647980516886-aa8b2d6fdbc4?w=1000&q=80"
               alt="Person fishing with mobile app"
               width={600}
               height={450}
@@ -117,7 +117,7 @@ export default function HowItWorksPage() {
         <section className={`${styles.step} ${styles.stepReverse}`}>
           <div className={styles.stepImage}>
             <Image
-              src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1000&q=80"
+              src="https://images.unsplash.com/photo-1533060498584-2f538c6f84fc?w=1000&q=80"
               alt="Real-time fishing conditions"
               width={600}
               height={450}
@@ -159,7 +159,7 @@ export default function HowItWorksPage() {
           </div>
           <div className={styles.stepImage}>
             <Image
-              src="https://images.unsplash.com/photo-1466354424719-343280fe118b?w=1000&q=80"
+              src="https://images.unsplash.com/photo-1757362531488-3685a9330f37?w=1000&q=80"
               alt="Fishing education and learning"
               width={600}
               height={450}

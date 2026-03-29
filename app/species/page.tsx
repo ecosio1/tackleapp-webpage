@@ -20,7 +20,7 @@ const species = [
     slug: 'snook',
     name: 'Snook',
     description: 'Learn about snook fishing, including habitat, behavior, and the best techniques for catching this popular inshore species.',
-    image: 'https://images.unsplash.com/photo-1642647219795-b42946151a14?w=600&h=400&fit=crop&auto=format&q=80',
+    image: 'https://images.unsplash.com/photo-1560997494-75629423e3f6?w=600&h=400&fit=crop&auto=format&q=80',
   },
   {
     slug: 'redfish',
@@ -44,7 +44,7 @@ const species = [
     slug: 'tarpon',
     name: 'Tarpon',
     description: 'The ultimate guide to tarpon fishing, including migration patterns, tackle requirements, and fighting techniques.',
-    image: 'https://images.unsplash.com/photo-1772909497294-f3bfc4011e4b?w=600&h=400&fit=crop&auto=format&q=80',
+    image: 'https://images.unsplash.com/photo-1766998112384-b8cecd7a45c7?w=600&h=400&fit=crop&auto=format&q=80',
   },
 ];
 

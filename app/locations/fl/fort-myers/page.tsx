@@ -95,7 +95,7 @@ export default function FortMyersLocationPage() {
         <div className="mb-8 -mx-4 sm:mx-0">
           <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
             <Image
-              src="https://images.unsplash.com/photo-1625504541884-dc03490c56ce?w=1200&h=600&fit=crop&auto=format&q=80"
+              src="https://images.unsplash.com/photo-1762895628023-531bfe46bb0b?w=1200&h=600&fit=crop&auto=format&q=80"
               alt="Boat on the water near Fort Myers mangroves"
               fill
               priority

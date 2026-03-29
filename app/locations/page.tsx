@@ -35,14 +35,14 @@ const locations = [
     city: 'miami',
     name: 'Miami, Florida',
     description: 'Discover Miami fishing opportunities, including Biscayne Bay, the Keys, and offshore fishing.',
-    image: 'https://images.unsplash.com/photo-1663086246578-b6878c41b618?w=600&h=400&fit=crop&auto=format&q=80',
+    image: 'https://images.unsplash.com/photo-1621362770024-5952f6090a00?w=600&h=400&fit=crop&auto=format&q=80',
   },
   {
     state: 'fl',
     city: 'fort-myers',
     name: 'Fort Myers, Florida',
     description: 'Learn about the best fishing in Fort Myers, from Caloosahatchee River to Sanibel Island.',
-    image: 'https://images.unsplash.com/photo-1625504541884-dc03490c56ce?w=600&h=400&fit=crop&auto=format&q=80',
+    image: 'https://images.unsplash.com/photo-1762895628023-531bfe46bb0b?w=600&h=400&fit=crop&auto=format&q=80',
   },
   {
     state: 'fl',

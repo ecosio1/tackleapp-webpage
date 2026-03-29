@@ -94,7 +94,7 @@ export default function TarponSpeciesPage() {
         <div className="mb-8 -mx-4 sm:mx-0">
           <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
             <Image
-              src="https://images.unsplash.com/photo-1772909497294-f3bfc4011e4b?w=1200&h=600&fit=crop&auto=format&q=80"
+              src="https://images.unsplash.com/photo-1766998112384-b8cecd7a45c7?w=1200&h=600&fit=crop&auto=format&q=80"
               alt="Large fish swimming underwater - tarpon in their natural habitat"
               fill
               priority

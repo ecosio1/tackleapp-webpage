@@ -94,7 +94,7 @@ export default function SnookSpeciesPage() {
         <div className="mb-8 -mx-4 sm:mx-0">
           <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
             <Image
-              src="https://images.unsplash.com/photo-1642647219795-b42946151a14?w=1200&h=600&fit=crop&auto=format&q=80"
+              src="https://images.unsplash.com/photo-1560997494-75629423e3f6?w=1200&h=600&fit=crop&auto=format&q=80"
               alt="Inshore fishing in Florida mangrove waters - prime snook habitat"
               fill
               priority

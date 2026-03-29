@@ -95,7 +95,7 @@ export default function MiamiLocationPage() {
         <div className="mb-8 -mx-4 sm:mx-0">
           <div className="relative w-full aspect-[2/1] overflow-hidden rounded-none sm:rounded-xl">
             <Image
-              src="https://images.unsplash.com/photo-1663086246578-b6878c41b618?w=1200&h=600&fit=crop&auto=format&q=80"
+              src="https://images.unsplash.com/photo-1621362770024-5952f6090a00?w=1200&h=600&fit=crop&auto=format&q=80"
               alt="Overlooking Miami waters - premier fishing destination"
               fill
               priority

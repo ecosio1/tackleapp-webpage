@@ -5,14 +5,14 @@
  */
 
 const categoryFallbacks: Record<string, string> = {
-  'fishing-tips': 'https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?w=1200&h=600&fit=crop&auto=format&q=80',
-  'techniques': 'https://images.unsplash.com/photo-1500463959177-e0869687df26?w=1200&h=600&fit=crop&auto=format&q=80',
-  'gear-reviews': 'https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=1200&h=600&fit=crop&auto=format&q=80',
-  'species': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=600&fit=crop&auto=format&q=80',
-  'conditions': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop&auto=format&q=80',
+  'fishing-tips': 'https://images.unsplash.com/photo-1680529642520-5897a7e9707b?w=1200&h=600&fit=crop&auto=format&q=80',
+  'techniques': 'https://images.unsplash.com/photo-1598901690327-3ec1e95fd35d?w=1200&h=600&fit=crop&auto=format&q=80',
+  'gear-reviews': 'https://images.unsplash.com/photo-1761171865044-f6f959fd07ea?w=1200&h=600&fit=crop&auto=format&q=80',
+  'species': 'https://images.unsplash.com/photo-1533060498584-2f538c6f84fc?w=1200&h=600&fit=crop&auto=format&q=80',
+  'conditions': 'https://images.unsplash.com/photo-1762895628023-531bfe46bb0b?w=1200&h=600&fit=crop&auto=format&q=80',
 };
 
-const DEFAULT_FALLBACK = 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1200&h=600&fit=crop&auto=format&q=80';
+const DEFAULT_FALLBACK = 'https://images.unsplash.com/photo-1559332425-ccdf0eae9480?w=1200&h=600&fit=crop&auto=format&q=80';
 
 /**
  * Get a category-appropriate fallback image URL
