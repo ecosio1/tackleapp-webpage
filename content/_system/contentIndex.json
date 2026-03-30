@@ -18,7 +18,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/best-bass-lures/hero.jpg",
       "keywords": [
         "best bass lures",
         "fishing-tips"
@@ -40,7 +40,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1558623162-0936c1a9c49a?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/best-fishing-baits-for-freshwater/hero.jpg",
       "keywords": [
         "best fishing baits for freshwater",
         "what are the best fish lures",
@@ -71,7 +71,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1607025908053-ec221dfe3913?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/best-fishing-knots/hero.jpg",
       "keywords": [
         "best fishing knots",
         "what is the strongest fishing knot",
@@ -102,7 +102,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1619054976487-7198b8924922?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/best-fishing-rods-florida/hero.jpg",
       "keywords": [
         "best fishing rods for florida",
         "florida fishing rods",
@@ -132,7 +132,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1642647219795-b42946151a14?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/best-lures-for-snook-florida/hero.jpg",
       "keywords": [
         "best lures for snook florida",
         "snook fishing lures",
@@ -162,7 +162,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1765715996540-5e55b4f462d3?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/best-time-to-fish/hero.jpg",
       "keywords": [
         "best time to fish",
         "what is the best way to catch fish",
@@ -193,7 +193,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1667743434626-55717acec9a8?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/fishing-rod-selection-guide/hero.jpg",
       "keywords": [
         "fishing rod selection guide",
         "what is the best rod for fish",
@@ -224,7 +224,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1717190040412-7b9794ed729e?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/fishing-safety-tips/hero.jpg",
       "keywords": [
         "fishing safety tips",
         "what is the best way to catch fish",
@@ -255,7 +255,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1773000583214-2b9dd5a84c67?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/fishing-tips-for-beginners/hero.jpg",
       "keywords": [
         "fishing tips for beginners",
         "what are the best bass lures",
@@ -286,7 +286,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1675615420014-cc5c28ec1617?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-cast-accurately/hero.jpg",
       "keywords": [
         "how to cast accurately",
         "how do you catch fish",
@@ -317,7 +317,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1532724414795-8a873d116fab?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-choose-fishing-line/hero.jpg",
       "keywords": [
         "how to choose fishing line",
         "how do you catch fish",
@@ -348,7 +348,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1771357010303-dafdf16cc7e0?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-clean-and-store-fishing-gear/hero.jpg",
       "keywords": [
         "how to clean and store fishing gear",
         "how do you catch fish",
@@ -379,7 +379,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1754472903321-8858f4ccbb6f?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-read-water-for-fishing/hero.jpg",
       "keywords": [
         "how to read water for fishing",
         "how do you catch fish",
@@ -410,7 +410,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1688770522956-bf5eeb06c9c1?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-set-up-a-fishing-rig/hero.jpg",
       "keywords": [
         "how to set up a fishing rig",
         "how do you catch fish",
@@ -441,7 +441,7 @@
         "draft": false,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1763770880683-b2b642607669?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-tie-a-fishing-hook/hero.jpg",
       "keywords": [
         "how to tie a fishing hook",
         "fishing hook knot",
@@ -474,7 +474,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1598901690327-3ec1e95fd35d?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-jerkbaits/hero.jpg",
       "keywords": [
         "how to use jerkbaits",
         "jerkbait fishing",
@@ -500,7 +500,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1680529642520-5897a7e9707b?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-a-texas-rig/hero.jpg",
       "keywords": [
         "how to use a texas rig",
         "texas rig bass fishing",
@@ -526,7 +526,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1598901690327-3ec1e95fd35d?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-chatterbaits/hero.jpg",
       "keywords": [
         "how to use chatterbaits",
         "chatterbait fishing",
@@ -552,7 +552,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1647980516886-aa8b2d6fdbc4?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-swimbaits/hero.jpg",
       "keywords": [
         "how to use swimbaits",
         "swimbait fishing",
@@ -578,7 +578,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1559332425-ccdf0eae9480?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-a-wacky-rig/hero.jpg",
       "keywords": [
         "how to use a wacky rig",
         "wacky rig bass fishing",
@@ -604,7 +604,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1680529642520-5897a7e9707b?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-a-carolina-rig/hero.jpg",
       "keywords": [
         "how to use a carolina rig",
         "carolina rig bass fishing",
@@ -630,7 +630,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1559332425-ccdf0eae9480?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-a-drop-shot-rig/hero.jpg",
       "keywords": [
         "how to use a drop shot rig",
         "drop shot bass fishing",
@@ -656,7 +656,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1761197379857-907b020f6251?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-topwater-lures/hero.jpg",
       "keywords": [
         "how to use topwater lures",
         "topwater bass fishing",
@@ -682,7 +682,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1755126088334-95bdfac86f35?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-soft-plastic-lures/hero.jpg",
       "keywords": [
         "how to use soft plastic lures",
         "soft plastic bass fishing",
@@ -708,7 +708,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1761171865044-f6f959fd07ea?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-fishing-spoons/hero.jpg",
       "keywords": [
         "how to use fishing spoons",
         "fishing spoon lures",
@@ -734,7 +734,7 @@
         "draft": true,
         "noindex": false
       },
-      "heroImage": "https://images.unsplash.com/photo-1559332425-ccdf0eae9480?w=1200&h=600&fit=crop&auto=format&q=80",
+      "heroImage": "/images/posts/how-to-use-a-ned-rig/hero.jpg",
       "keywords": [
         "how to use a ned rig",
         "ned rig bass fishing",
@@ -761,7 +761,7 @@
         "panfish"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1680529642520-5897a7e9707b?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-bluegill/hero.jpg",
       "readingTime": 8,
       "wordCount": 1959,
       "draft": true
@@ -779,7 +779,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1559332425-ccdf0eae9480?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-carp/hero.jpg",
       "readingTime": 10,
       "wordCount": 2287,
       "draft": true
@@ -797,7 +797,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1761197379857-907b020f6251?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-catfish/hero.jpg",
       "readingTime": "10 min read",
       "wordCount": 2480,
       "draft": true
@@ -816,7 +816,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1761197379857-907b020f6251?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-channel-catfish/hero.jpg",
       "readingTime": 11,
       "wordCount": 2487,
       "draft": true
@@ -834,7 +834,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1680529642520-5897a7e9707b?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-crappie/hero.jpg",
       "readingTime": "10 min read",
       "wordCount": 2450,
       "draft": true
@@ -852,7 +852,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1762895628023-531bfe46bb0b?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-flounder/hero.jpg",
       "readingTime": 8,
       "wordCount": 2487,
       "draft": true
@@ -871,7 +871,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1762655210992-e2dd74cf3118?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-largemouth-bass/hero.jpg",
       "readingTime": 8,
       "wordCount": 2087,
       "draft": true
@@ -892,7 +892,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1766998112384-b8cecd7a45c7?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-mahi-mahi/hero.jpg",
       "readingTime": 10,
       "wordCount": 2467,
       "draft": true
@@ -911,7 +911,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1680529642520-5897a7e9707b?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-perch/hero.jpg",
       "readingTime": 10,
       "wordCount": 2492,
       "draft": true
@@ -929,7 +929,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1598901690327-3ec1e95fd35d?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-pike/hero.jpg",
       "readingTime": 8,
       "wordCount": 2410,
       "draft": true
@@ -948,7 +948,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1533060498584-2f538c6f84fc?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-rainbow-trout/hero.jpg",
       "readingTime": 8,
       "wordCount": 2487,
       "draft": true
@@ -968,7 +968,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1647980516886-aa8b2d6fdbc4?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-redfish/hero.jpg",
       "readingTime": 8,
       "wordCount": 2490,
       "draft": true
@@ -987,7 +987,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1559332425-ccdf0eae9480?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-salmon/hero.jpg",
       "readingTime": 10,
       "wordCount": 2487,
       "draft": true
@@ -1005,7 +1005,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1761197379857-907b020f6251?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-sheepshead/hero.jpg",
       "readingTime": 8,
       "wordCount": 2387,
       "draft": true
@@ -1024,7 +1024,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1762655210992-e2dd74cf3118?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-smallmouth-bass/hero.jpg",
       "readingTime": 10,
       "wordCount": 2387,
       "draft": true
@@ -1044,7 +1044,7 @@
         "florida"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1560997494-75629423e3f6?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-snook/hero.jpg",
       "readingTime": 8,
       "wordCount": 2487,
       "draft": true
@@ -1063,7 +1063,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1755126088334-95bdfac86f35?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-striped-bass/hero.jpg",
       "readingTime": 8,
       "wordCount": 2387,
       "draft": true
@@ -1082,7 +1082,7 @@
         "florida"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1766998112384-b8cecd7a45c7?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-tarpon/hero.jpg",
       "readingTime": 8,
       "wordCount": 2487,
       "draft": true
@@ -1100,7 +1100,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1533060498584-2f538c6f84fc?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-trout/hero.jpg",
       "readingTime": 9,
       "wordCount": 2305,
       "draft": true
@@ -1118,7 +1118,7 @@
         "how to catch"
       ],
       "category": "Species Guides",
-      "heroImage": "https://images.unsplash.com/photo-1598901690327-3ec1e95fd35d?w=1200&q=80",
+      "heroImage": "/images/posts/how-to-catch-walleye/hero.jpg",
       "readingTime": 8,
       "wordCount": 2000,
       "draft": true
